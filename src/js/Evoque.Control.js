@@ -1,6 +1,5 @@
-//Dependency: tjm.js
-
-var mControlManager = (function (self)
+//Dependency: Evoque.js
+Evoque.control = (function (self)
 {
     self.rangeSelect = function (inputId)
     {
@@ -13,5 +12,5 @@ var mControlManager = (function (self)
     };
 
     return self;
-}(mControlManager || {}));
+}(Evoque.control || {}));
 
