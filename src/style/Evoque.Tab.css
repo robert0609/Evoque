@@ -1,0 +1,20 @@
+/*tab切换*/
+.mtab-title{
+    display:-webkit-box;
+    display:box;
+}
+.mtab-title>div{
+    -webkit-box-flex:1;
+    box-flex:1;
+    padding:.3em;
+    text-align: center;
+    font-size:15px;
+    border:1px solid #d8d8d8;
+    border-bottom:none;
+    background: #dcdcdc;
+    -webkit-border-radius: 3px 3px 0 0;
+    border-radius: 3px 3px 0 0;
+}
+.mtab-title>.active{
+    background-color:#fff;
+}

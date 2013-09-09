@@ -1,0 +1,47 @@
+.mdialog-bg-div{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #777;
+    opacity: 0.5;
+    z-index: 10000;
+    margin: 0;
+    padding: 0;
+}
+.mdialog-dg-div{
+    border: 1px solid #336699;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    color: #FFF;
+    font: 1.2em/1.5em HelveticaNeue, Helvetica, STHeiTi, sans-serif;
+    text-align: center;
+    line-height: 25px;
+    z-index: 10001;
+    margin: 0;
+    padding: 0;
+}
+.mdialog-title-div{
+    text-align: center;
+    height: 1.5;
+    font-size: 1.2em;
+    margin-top: 6px;
+    padding: 0;
+}
+.mdialog-content-div{
+    margin-top: 6px;
+    margin-bottom: 10px;
+    padding: 0;
+}
+.mdialog-button-div{
+    margin-bottom: 10px;
+    padding: 0;
+}
+.mdialog-button-input{
+    width: 5em;
+    height: 3em;
+    margin-left: 1em;
+    margin-right: 1em;
+}
