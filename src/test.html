@@ -2,16 +2,16 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <script type="text/javascript" src="js/Evoque.js"></script>
-    <script type="text/javascript" src="js/Evoque.Dialog.js"></script>
-    <script type="text/javascript" src="js/Evoque.Container.js"></script>
-    <script type="text/javascript" src="js/Evoque.Calendar.js"></script>
-    <script type="text/javascript" src="js/Evoque.Tab.js"></script>
-    <script type="text/javascript" src="js/Evoque.Validate.js"></script>
-    <script type="text/javascript" src="js/eDebugger.js"></script>
-    <link rel="stylesheet" type="text/css" href="style/Evoque.Calendar.css" />
-    <link rel="stylesheet" type="text/css" href="style/Evoque.Tab.css" />
-    <link rel="stylesheet" type="text/css" href="style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="src/js/Evoque.js"></script>
+    <script type="text/javascript" src="src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="src/js/Evoque.Container.js"></script>
+    <script type="text/javascript" src="src/js/Evoque.Calendar.js"></script>
+    <script type="text/javascript" src="src/js/Evoque.Tab.js"></script>
+    <script type="text/javascript" src="src/js/Evoque.Validate.js"></script>
+    <script type="text/javascript" src="src/js/eDebugger.js"></script>
+    <link rel="stylesheet" type="text/css" href="src/style/Evoque.Calendar.css" />
+    <link rel="stylesheet" type="text/css" href="src/style/Evoque.Tab.css" />
+    <link rel="stylesheet" type="text/css" href="src/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         function click()
         {
@@ -58,6 +58,10 @@
                 onShow: function () {},
                 onHide: function () {}
             });
+
+            var dd = $('#d_d')[0];
+
+            container.display('d2');
 
             $('#testTab').tab.create({
                 tabDivId: 'testTab',
@@ -113,8 +117,7 @@
 
 <div id="d2">
     <form>
-        <input type="text" value="" />
-        <input type="button" value="" />
+        <input type="date" name="points" />
     </form>
 </div>
 

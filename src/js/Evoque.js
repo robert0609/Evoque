@@ -353,6 +353,19 @@ var Evoque = (function (self)
             return ret;
         };
 
+        this.setVal = function (val) {
+            if (_innerArray.length > 0)
+            {
+                for (var i = 0; i < _innerArray.length; ++i)
+                {
+                    if (checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
+                    {
+                        _innerArray[0].setAttribute('value', val);
+                    }
+                }
+            }
+        };
+
         for (var fnName in self)
         {
             if (checkType(self[fnName]) === type.eFunction)
