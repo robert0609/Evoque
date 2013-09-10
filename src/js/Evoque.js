@@ -39,15 +39,19 @@ var Evoque = (function (self)
     var core_toString = class2type.toString;
     var core_slice = Array.prototype.slice;
     var core_sort = Array.prototype.sort;
-    function core_addLoadedEvent(fn, useCapture)
+    function core_addReadyHandler(fn, useCapture)
     {
         //DOM标准
-        if (document.addEventListener) {
+        if (document.addEventListener && checkType(fn) === type.eFunction) {
             document.addEventListener('DOMContentLoaded', fn, useCapture);
         }
-        else {
-            //IE方式,忽略useCapture参数
-            window.attachEvent('onload', fn);
+    }
+
+    function core_addLoadedHandler(fn, useCapture)
+    {
+        //DOM标准
+        if (window.addEventListener && checkType(fn) === type.eFunction) {
+            window.addEventListener('load', fn, useCapture);
         }
     }
 
@@ -269,7 +273,7 @@ var Evoque = (function (self)
                 list = list.concat(makeArray(parameter));
                 break;
             case type.eFunction:
-                core_addLoadedEvent(parameter, false);
+                core_addReadyHandler(parameter, false);
                 break;
         }
 
@@ -413,12 +417,8 @@ var Evoque = (function (self)
             if (checkType(this) === type.eElement)
             {
                 //DOM标准
-                if (this.addEventListener) {
+                if (this.addEventListener && checkType(callback) === type.eFunction) {
                     this.addEventListener(evtName, callback, useCapture);
-                }
-                else {
-                    //IE方式,忽略useCapture参数
-                    this.attachEvent('on' + evtName, callback);
                 }
             }
         });
@@ -430,12 +430,8 @@ var Evoque = (function (self)
             if (checkType(this) === type.eElement)
             {
                 //DOM标准
-                if (this.removeEventListener) {
+                if (this.removeEventListener && checkType(callback) === type.eFunction) {
                     this.removeEventListener(evtName, callback, useCapture);
-                }
-                else {
-                    //IE方式,忽略useCapture参数
-                    this.detachEvent('on' + evtName, callback);
                 }
             }
         });
