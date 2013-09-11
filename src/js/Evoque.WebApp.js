@@ -16,5 +16,10 @@ Evoque.webApp = (function (self)
 
     };
 
+    self.autoSize = function ()
+    {
+
+    };
+
     return self;
 }(Evoque.webApp || {}));
