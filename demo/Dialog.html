@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        function click()
+        {
+            $.dialog.alert('alert 1');
+            $.dialog.alert('dialog');
+            $.dialog.showMessageBox({
+                title:'title',
+                icon:'',
+                content:'message text',
+                width:800,
+                button:'yes|no',
+                onClickYes: function(){
+                    alert('click yes');
+                },
+                onClickNo: function(){
+                    alert('click no');
+                    return false;
+                },
+                customButton: [
+                    {
+                        caption: '自定义按钮',
+                        onClick: function(){
+                            alert('click custom button');
+                            return false;
+                        }
+                    }
+                ]
+            });
+        }
+    </script>
+</head>
+<body>
+    <a href="javascript:click()">click here, show dialogs!</a>
+
+    <div id="dialog" style="display: none;"><h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6></div>
+</body>
+</html>

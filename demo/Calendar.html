@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Calendar.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Calendar.css" />
+    <script type="text/javascript">
+        $(function ()
+        {
+            $('#tableCalender').calendar.create({
+                tableElementid: 'tableCalender',
+                callBack: function (e, arg) {
+                    $.dialog.alert(arg.selectDate);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <table id="tableCalender"></table>
+</body>
+</html>
