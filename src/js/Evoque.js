@@ -55,7 +55,7 @@ var Evoque = (function (self)
         }
     }
 
-    //Global method
+    //Extension
     Object.prototype.getValueOfProperty = function (propertyName, defObj)
     {
         var isPropertyExistInThis = false;
@@ -100,6 +100,7 @@ var Evoque = (function (self)
         return this.replace(/\s/g, '');
     };
 
+    //Global method
     window.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {

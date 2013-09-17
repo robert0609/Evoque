@@ -99,5 +99,13 @@ Evoque.tab = (function (self)
         }
     }
 
+    //API
+    Evoque.createTab = function (option)
+    {
+        option = option || {};
+        option.tabDivId = this.id;
+        return self.create(option);
+    };
+
     return self;
 }(Evoque.tab || {}));

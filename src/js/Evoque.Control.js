@@ -131,6 +131,21 @@ Evoque.control = (function (self)
         }
     };
 
+    //API
+    Evoque.createRangeSelect = function (option)
+    {
+        option = option || {};
+        option.inputId = this.id;
+        self.rangeSelect(option);
+    };
+
+    Evoque.createSliderBar = function (option)
+    {
+        option = option || {};
+        option.divId = this.id;
+        self.sliderBar(option);
+    };
+
     return self;
 }(Evoque.control || {}));
 
