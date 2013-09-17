@@ -35,7 +35,7 @@ $.validate = (function (self)
             }
         }
 
-        var inputArray = $('#' + containerId + ' input[type="text"][' + validAttrName + ']');
+        var inputArray = $('#' + containerId + ' input[' + validAttrName + ']');
         for (i = 0; i < inputArray.length; ++i)
         {
             var inp = inputArray[i];
@@ -46,14 +46,6 @@ $.validate = (function (self)
             }
         }
 
-        inputArray = $('#' + containerId + ' input[type="password"][' + validAttrName + ']');
-        for (i = 0; i < inputArray.length; ++i) {
-            var inp = inputArray[i];
-            var validJson = getValidJson(inp);
-            if (!check(inp, validJson)) {
-                return false;
-            }
-        }
         return true;
     };
 
