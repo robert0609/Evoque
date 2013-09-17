@@ -96,6 +96,10 @@ var Evoque = (function (self)
         return y + '-' + m + '-' + d;
     };
 
+    String.prototype.trim = function () {
+        return this.replace(/\s/g, '');
+    };
+
     window.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {

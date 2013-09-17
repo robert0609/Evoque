@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="apple-itunes-app" content="app-id=425349261" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/json2.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
+    <script type="text/javascript">
+        $(function ()
+        {
+        });
+
+        function checkInstall()
+        {
+            $.ajax.get({
+                url : 'newsapp://',
+                onSuccess : function (returnObj) {
+                    $('#console').html(returnObj);
+                },
+                onFail : function () {
+                    $('#console').html('failed!');
+                }
+            });
+
+        }
+    </script>
+</head>
+<body>
+    <a href="javascript:void(0);" onclick="checkInstall()">Check if app was installed!</a>
+    <br />
+    <a href="newsapp://">Open app</a>
+    <div id="console"></div>
+</body>
+</html>
