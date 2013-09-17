@@ -184,6 +184,11 @@ Evoque.calendar = (function (self) {
         return tbody;
     }
 
+    function calendarClass()
+    {
+
+    }
+
     return self;
 }(Evoque.calendar || {}));
 
