@@ -96,11 +96,51 @@ var Evoque = (function (self)
         return y + '-' + m + '-' + d;
     };
 
+    Date.prototype.getYMD = function () {
+        return new Date(this.getFullYear(), this.getMonth(), this.getDate());
+    };
+
     String.prototype.trim = function () {
         return this.replace(/\s/g, '');
     };
 
     //Global method
+    window.wrapperOption = function (option)
+    {
+        option.getValueOfProperty = function (propertyName, defObj)
+        {
+            var isPropertyExistInThis = false;
+            var isPropertyExistInDefObj = false;
+            var thisType, defaultType;
+            if (!isObjectNull(this))
+            {
+                thisType = checkType(this[propertyName]);
+                isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
+            }
+            if (!isObjectNull(defObj))
+            {
+                defaultType = checkType(defObj[propertyName]);
+                isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
+            }
+
+            if (isPropertyExistInThis)
+            {
+                if (isPropertyExistInDefObj)
+                {
+                    if (thisType !== defaultType)
+                    {
+                        throw 'type of [' + propertyName + '] is error!';
+                    }
+                }
+                return this[propertyName];
+            }
+            else
+            {
+                return defObj[propertyName];
+            }
+        };
+    };
+
     window.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
@@ -425,6 +465,16 @@ var Evoque = (function (self)
                 {
                     this.removeAttribute(name);
                 }
+            }
+        });
+    };
+
+    self.setStyle = function (name, value) {
+        this.each(function ()
+        {
+            if (checkType(this) === type.eElement)
+            {
+                this.style[name] = value;
             }
         });
     };

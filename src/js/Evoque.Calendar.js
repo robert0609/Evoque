@@ -35,6 +35,7 @@ Evoque.calendar = (function (self) {
             throw 'Parameter is error!';
         }
         fCallBack = option.getValueOfProperty('callBack', defaultOption);
+        defaultOption.originalDate = (new Date()).getYMD();
         activeDate = option.getValueOfProperty('originalDate', defaultOption);
         checkInData = option.calendarData;
 
@@ -184,7 +185,7 @@ Evoque.calendar = (function (self) {
         return tbody;
     }
 
-    function calendarClass()
+    function calendarClass(tableId, activeDate, checkInData, fCallBack)
     {
 
     }
