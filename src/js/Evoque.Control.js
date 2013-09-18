@@ -135,14 +135,14 @@ Evoque.control = (function (self)
     Evoque.createRangeSelect = function (option)
     {
         option = option || {};
-        option.inputId = this.id;
+        option.inputId = this.getAttr('id');
         self.rangeSelect(option);
     };
 
     Evoque.createSliderBar = function (option)
     {
         option = option || {};
-        option.divId = this.id;
+        option.divId = this.getAttr('id');
         self.sliderBar(option);
     };
 

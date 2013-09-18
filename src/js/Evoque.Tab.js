@@ -103,7 +103,7 @@ Evoque.tab = (function (self)
     Evoque.createTab = function (option)
     {
         option = option || {};
-        option.tabDivId = this.id;
+        option.tabDivId = this.getAttr('id');
         return self.create(option);
     };
 

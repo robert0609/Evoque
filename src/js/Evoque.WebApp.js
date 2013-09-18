@@ -21,5 +21,10 @@ Evoque.webApp = (function (self)
 
     };
 
+    self.cookie = function ()
+    {
+
+    };
+
     return self;
 }(Evoque.webApp || {}));
