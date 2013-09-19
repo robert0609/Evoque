@@ -36,11 +36,11 @@ $.ajax = (function (self)
 
     function checkOption(option)
     {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'option is null!';
         }
-        if (isStringEmpty(option.url))
+        if ($isStringEmpty(option.url))
         {
             throw 'url is empty!';
         }

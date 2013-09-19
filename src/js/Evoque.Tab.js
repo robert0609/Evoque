@@ -13,11 +13,11 @@ Evoque.tab = (function (self)
 
     self.create = function (option)
     {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
-        if (isStringEmpty(option.tabDivId))
+        if ($isStringEmpty(option.tabDivId))
         {
             throw 'Parameter is error!';
         }
@@ -84,7 +84,7 @@ Evoque.tab = (function (self)
                 }
             }
 
-            if (checkType(tabSwitchedHandler) === type.eFunction)
+            if ($checkType(tabSwitchedHandler) === type.eFunction)
             {
                 tabSwitchedHandler({
                     lastSelectIndex : currentIndex,

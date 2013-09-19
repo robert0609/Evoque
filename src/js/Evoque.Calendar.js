@@ -10,13 +10,13 @@ Evoque.calendar = (function (self) {
     };
 
     self.create = function (option) {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
         var tableId = option.getValueOfProperty('tableElementid', defaultOption);
-        if (isStringEmpty(tableId))
+        if ($isStringEmpty(tableId))
         {
             throw 'Parameter is error!';
         }
@@ -96,7 +96,7 @@ Evoque.calendar = (function (self) {
             curM += 1;
             var curD = Number($(event.currentTarget).getAttr('curD'));
             var sel = curY + '-' + curM + '-' + curD;
-            if (checkType(fCallBack) === type.eFunction) {
+            if ($checkType(fCallBack) === type.eFunction) {
                 fCallBack(event, { selectDate: sel });
             }
         };

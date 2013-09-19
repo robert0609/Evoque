@@ -9,13 +9,13 @@ Evoque.control = (function (self)
 
     self.rangeSelect = function (option)
     {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
         var id = option.getValueOfProperty('inputId', defaultOption_RangeSelect);
-        if (isStringEmpty(id))
+        if ($isStringEmpty(id))
         {
             throw 'Parameter is error!';
         }
@@ -101,13 +101,13 @@ Evoque.control = (function (self)
 
     self.sliderBar = function (option)
     {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
         var id = option.getValueOfProperty('divId', defaultOption_SliderBar);
-        if (isStringEmpty(id))
+        if ($isStringEmpty(id))
         {
             throw 'Parameter is error!';
         }

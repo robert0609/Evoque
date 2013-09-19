@@ -37,7 +37,7 @@ $.dialog = (function (self) {
     function exeCmd()
     {
         var cmd = cmdSeq.shift();
-        if (isObjectNull(cmd))
+        if ($isObjectNull(cmd))
         {
             cmdExecuting = false;
             return;
@@ -59,7 +59,7 @@ $.dialog = (function (self) {
             autoClose: false
         });
         //TODO:这里有个Bug：在调用完alert方法之后，接着调用showLoading方法，此处的callback回调会立即调用
-        if (checkType(callback) === type.eFunction)
+        if ($checkType(callback) === type.eFunction)
         {
             var waiting100 = window.setTimeout(function ()
             {
@@ -70,7 +70,7 @@ $.dialog = (function (self) {
     };
 
     self.showMessageBox = function (option) {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
@@ -85,7 +85,7 @@ $.dialog = (function (self) {
     };
 
     self.showModalDialog = function (option) {
-        if (isObjectNull(option))
+        if ($isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
@@ -133,7 +133,7 @@ $.dialog = (function (self) {
 
         btnOK = createButton({ caption: '确定', onClick: function (event)
             {
-                if (checkType(onClickOk) === type.eFunction)
+                if ($checkType(onClickOk) === type.eFunction)
                 {
                     return onClickOk.call(this, event);
                 }
@@ -141,7 +141,7 @@ $.dialog = (function (self) {
         });
         btnCancel = createButton({ caption: '取消', onClick: function (event)
             {
-                if (checkType(onClickCancel) === type.eFunction)
+                if ($checkType(onClickCancel) === type.eFunction)
                 {
                     return onClickCancel.call(this, event);
                 }
@@ -149,7 +149,7 @@ $.dialog = (function (self) {
         });
         btnYes = createButton({ caption: '是', onClick: function (event)
             {
-                if (checkType(onClickYes) === type.eFunction)
+                if ($checkType(onClickYes) === type.eFunction)
                 {
                     return onClickYes.call(this, event);
                 }
@@ -157,7 +157,7 @@ $.dialog = (function (self) {
         });
         btnNo = createButton({ caption: '否', onClick: function (event)
             {
-                if (checkType(onClickNo) === type.eFunction)
+                if ($checkType(onClickNo) === type.eFunction)
                 {
                     return onClickNo.call(this, event);
                 }
@@ -165,7 +165,7 @@ $.dialog = (function (self) {
         });
         btnClose = createButton({ caption: '关闭', onClick: function (event)
             {
-                if (checkType(onClickClose) === type.eFunction)
+                if ($checkType(onClickClose) === type.eFunction)
                 {
                     return onClickClose.call(this, event);
                 }
@@ -178,7 +178,7 @@ $.dialog = (function (self) {
     function reset()
     {
         titleObj.innerHTML = '';
-        if (checkType(contentParentCache) === type.eElement)
+        if ($checkType(contentParentCache) === type.eElement)
         {
             if (contentObj.children.length > 0)
             {
@@ -214,12 +214,12 @@ $.dialog = (function (self) {
 
         dialogObj.style.opacity = 1;
         var title = option.getValueOfProperty('title', defaultOption);
-        if (!isStringEmpty(title)) {
+        if (!$isStringEmpty(title)) {
             titleObj.innerHTML = title;
             dialogObj.appendChild(titleObj);
         }
         var content = option.getValueOfProperty('content', defaultOption);
-        if (!isStringEmpty(content))
+        if (!$isStringEmpty(content))
         {
             var eContent = $('#' + content);
             if (eContent.length > 0)
@@ -238,9 +238,9 @@ $.dialog = (function (self) {
         }
         var buttonProperty = option.getValueOfProperty('button', defaultOption);
         var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
-        if (!isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
+        if (!$isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
         {
-            if (!isStringEmpty(buttonProperty))
+            if (!$isStringEmpty(buttonProperty))
             {
                 var buttonArray = buttonProperty.split('|');
                 for (var i = 0; i < buttonArray.length; ++i)
@@ -273,7 +273,7 @@ $.dialog = (function (self) {
                 for (var j = 0; j < customButtonProperty.length; ++j)
                 {
                     var customBtn = customButtonProperty[j];
-                    if (!isStringEmpty(customBtn.caption))
+                    if (!$isStringEmpty(customBtn.caption))
                     {
                         buttonObj.appendChild(createButton(customBtn));
                     }
@@ -340,7 +340,7 @@ $.dialog = (function (self) {
         $(btn).addEventHandler('click', function (event)
         {
             var result;
-            if (checkType(btnOption.onClick) === type.eFunction)
+            if ($checkType(btnOption.onClick) === type.eFunction)
             {
                 result = btnOption.onClick.call(this, event);
             }

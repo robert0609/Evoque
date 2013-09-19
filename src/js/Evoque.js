@@ -42,7 +42,7 @@ var Evoque = (function (self)
     function core_addReadyHandler(fn, useCapture)
     {
         //DOM标准
-        if (document.addEventListener && checkType(fn) === type.eFunction) {
+        if (document.addEventListener && $checkType(fn) === type.eFunction) {
             document.addEventListener('DOMContentLoaded', fn, useCapture);
         }
     }
@@ -50,7 +50,7 @@ var Evoque = (function (self)
     function core_addLoadedHandler(fn, useCapture)
     {
         //DOM标准
-        if (window.addEventListener && checkType(fn) === type.eFunction) {
+        if (window.addEventListener && $checkType(fn) === type.eFunction) {
             window.addEventListener('load', fn, useCapture);
         }
     }
@@ -71,8 +71,166 @@ var Evoque = (function (self)
         return this.replace(/\s/g, '');
     };
 
-    //Global method
-    window.cancelEventFlow = function (event) {
+    window.$ = function (parameter)
+    {
+        var list = [];
+        switch ($checkType(parameter))
+        {
+            case type.eString:
+                if (document.querySelectorAll) {
+                    try
+                    {
+                        var ret = document.querySelectorAll(parameter);
+                        if (ret !== null && ret.length > 0)
+                        {
+                            list = list.concat($makeArray(ret));
+                        }
+                    }
+                    catch (ex)
+                    {
+                    }
+                }
+                else {
+                    throw 'Your brower does not support Evoque!';
+                }
+                break;
+            case type.eNumber:
+            case type.eBoolean:
+            case type.eElement:
+            case type.eNode:
+            case type.eRegExp:
+            case type.eDate:
+            case type.eError:
+            case type.eObject:
+                list.push(parameter);
+                break;
+            case type.eArray:
+                list = list.concat(parameter);
+                break;
+            case type.eArraylist:
+                list = list.concat($makeArray(parameter));
+                break;
+            case type.eFunction:
+                core_addReadyHandler(parameter, false);
+                break;
+        }
+
+        return new EvoqueClass(list);
+    };
+
+    function EvoqueClass(objArray)
+    {
+        var _innerArray = objArray;
+        resetOrder.call(this);
+
+        function resetOrder()
+        {
+            this.length = _innerArray.length;
+            for (var i = 0; i < _innerArray.length; ++i)
+            {
+                this[i] = _innerArray[i];
+            }
+        }
+
+        this.sort = function (fn) {
+            if ($checkType(fn) === type.eFunction)
+            {
+                core_sort.call(_innerArray, fn);
+            }
+            else
+            {
+                core_sort.call(_innerArray);
+            }
+            resetOrder.call(this);
+            return this;
+        };
+
+        this.each = function (fn) {
+            if ($checkType(fn) === type.eFunction)
+            {
+                for (var i = 0; i < _innerArray.length; ++i)
+                {
+                    if (fn.call(_innerArray[i], i) === false)
+                    {
+                        break;
+                    }
+                }
+            }
+        };
+
+        this.getVal = function () {
+            var ret = null;
+            if (_innerArray.length > 0)
+            {
+                switch ($checkType(_innerArray[0]))
+                {
+                    case type.eElement:
+                        ret = _innerArray[0].getAttribute('value');
+                        break;
+                    case type.eNumber:
+                    case type.eBoolean:
+                        if ($isObject(_innerArray[0]))
+                        {
+                            ret = _innerArray[0].valueOf();
+                        }
+                        else
+                        {
+                            ret = _innerArray[0];
+                        }
+                        break;
+                    case type.eDate:
+                        ret = _innerArray[0].toCustomString();
+                        break;
+                    default:
+                        ret = _innerArray[0].toString();
+                        break;
+                }
+            }
+            return ret;
+        };
+
+        this.setVal = function (val) {
+            if (_innerArray.length > 0)
+            {
+                for (var i = 0; i < _innerArray.length; ++i)
+                {
+                    if ($checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
+                    {
+                        _innerArray[0].setAttribute('value', val);
+                    }
+                }
+            }
+        };
+
+        if (this.length === 0)
+        {
+            for (var fnName in self)
+            {
+                if ($checkType(self[fnName]) === type.eFunction)
+                {
+                    this[fnName] = createFunction(fnName);
+                }
+            }
+        }
+    }
+    EvoqueClass.prototype = self;
+
+    function createFunction(fnName)
+    {
+        var ret = function ()
+        {
+            /*if (this.length == 0)
+            {
+                return null;
+            }
+            return self[fnName].apply(this, arguments);*/
+            return null;
+        };
+        return ret;
+    }
+
+    //Global method begin
+    window.$cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
             event.stopPropagation();
@@ -82,7 +240,7 @@ var Evoque = (function (self)
         }
     };
 
-    window.cancelDefault = function (event) {
+    window.$cancelDefault = function (event) {
         event = event || window.event;
         if (event.preventDefault) {
             event.preventDefault();
@@ -92,22 +250,22 @@ var Evoque = (function (self)
         }
     };
 
-    window.isObjectNull = function (obj)
+    window.$isObjectNull = function (obj)
     {
         if (obj === undefined)
         {
             return true;
         }
-        if (!isObject(obj))
+        if (!$isObject(obj))
         {
             throw 'Parameter is not an object!';
         }
         return obj === null;
     };
 
-    window.isStringEmpty = function (str)
+    window.$isStringEmpty = function (str)
     {
-        var ty = checkType(str);
+        var ty = $checkType(str);
         if (ty === type.eUndefined || ty === type.eNull)
         {
             return true;
@@ -116,7 +274,7 @@ var Evoque = (function (self)
         {
             throw 'Parameter is not a string!';
         }
-        if (isObject(str))
+        if ($isObject(str))
         {
             return str.valueOf() === '';
         }
@@ -126,12 +284,12 @@ var Evoque = (function (self)
         }
     };
 
-    window.isObject = function (obj)
+    window.$isObject = function (obj)
     {
         return 'undefined,number,boolean,string'.indexOf(typeof obj) < 0;
     };
 
-    window.checkType = function (obj)
+    window.$checkType = function (obj)
     {
         var ty = typeof obj;
         if (class2type[ty])
@@ -168,10 +326,10 @@ var Evoque = (function (self)
     function isArrayList(obj)
     {
         /* Real arrays are array-like
-        if (obj instanceof Array)
-        {
-            return true;
-        }*/
+         if (obj instanceof Array)
+         {
+         return true;
+         }*/
         // Arrays must have a length property
         if (!('length' in obj))
         {
@@ -199,176 +357,19 @@ var Evoque = (function (self)
         return true;
     }
 
-    window.loadPage = function (url)
+    window.$loadPage = function (url)
     {
         window.location.href = url;
     };
 
-    window.makeArray = function (obj)
+    window.$makeArray = function (obj)
     {
         return core_slice.call(obj,0);
     };
-
-    window.$ = function (parameter)
-    {
-        var list = [];
-        switch (checkType(parameter))
-        {
-            case type.eString:
-                if (document.querySelectorAll) {
-                    try
-                    {
-                        var ret = document.querySelectorAll(parameter);
-                        if (ret !== null && ret.length > 0)
-                        {
-                            list = list.concat(makeArray(ret));
-                        }
-                    }
-                    catch (ex)
-                    {
-                    }
-                }
-                else {
-                    throw 'Your brower does not support Evoque!';
-                }
-                break;
-            case type.eNumber:
-            case type.eBoolean:
-            case type.eElement:
-            case type.eNode:
-            case type.eRegExp:
-            case type.eDate:
-            case type.eError:
-            case type.eObject:
-                list.push(parameter);
-                break;
-            case type.eArray:
-                list = list.concat(parameter);
-                break;
-            case type.eArraylist:
-                list = list.concat(makeArray(parameter));
-                break;
-            case type.eFunction:
-                core_addReadyHandler(parameter, false);
-                break;
-        }
-
-        return new EvoqueClass(list);
-    };
-
-    function EvoqueClass(objArray)
-    {
-        var _innerArray = objArray;
-        resetOrder.call(this);
-
-        function resetOrder()
-        {
-            this.length = _innerArray.length;
-            for (var i = 0; i < _innerArray.length; ++i)
-            {
-                this[i] = _innerArray[i];
-            }
-        }
-
-        this.sort = function (fn) {
-            if (checkType(fn) === type.eFunction)
-            {
-                core_sort.call(_innerArray, fn);
-            }
-            else
-            {
-                core_sort.call(_innerArray);
-            }
-            resetOrder.call(this);
-            return this;
-        };
-
-        this.each = function (fn) {
-            if (checkType(fn) === type.eFunction)
-            {
-                for (var i = 0; i < _innerArray.length; ++i)
-                {
-                    if (fn.call(_innerArray[i], i) === false)
-                    {
-                        break;
-                    }
-                }
-            }
-        };
-
-        this.getVal = function () {
-            var ret = null;
-            if (_innerArray.length > 0)
-            {
-                switch (checkType(_innerArray[0]))
-                {
-                    case type.eElement:
-                        ret = _innerArray[0].getAttribute('value');
-                        break;
-                    case type.eNumber:
-                    case type.eBoolean:
-                        if (isObject(_innerArray[0]))
-                        {
-                            ret = _innerArray[0].valueOf();
-                        }
-                        else
-                        {
-                            ret = _innerArray[0];
-                        }
-                        break;
-                    case type.eDate:
-                        ret = _innerArray[0].toCustomString();
-                        break;
-                    default:
-                        ret = _innerArray[0].toString();
-                        break;
-                }
-            }
-            return ret;
-        };
-
-        this.setVal = function (val) {
-            if (_innerArray.length > 0)
-            {
-                for (var i = 0; i < _innerArray.length; ++i)
-                {
-                    if (checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
-                    {
-                        _innerArray[0].setAttribute('value', val);
-                    }
-                }
-            }
-        };
-
-        if (this.length === 0)
-        {
-            for (var fnName in self)
-            {
-                if (checkType(self[fnName]) === type.eFunction)
-                {
-                    this[fnName] = createFunction(fnName);
-                }
-            }
-        }
-    }
-    EvoqueClass.prototype = self;
-
-    function createFunction(fnName)
-    {
-        var ret = function ()
-        {
-            /*if (this.length == 0)
-            {
-                return null;
-            }
-            return self[fnName].apply(this, arguments);*/
-            return null;
-        };
-        return ret;
-    }
+    //Global method end
 
     self.getAttr = function (name) {
-        if (checkType(this[0]) === type.eElement)
+        if ($checkType(this[0]) === type.eElement)
         {
             return this[0].getAttribute(name);
         }
@@ -381,7 +382,7 @@ var Evoque = (function (self)
     self.setAttr = function (name, value) {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 this.setAttribute(name, value);
             }
@@ -391,7 +392,7 @@ var Evoque = (function (self)
     self.delAttr = function (name) {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 var t = this.getAttribute(name);
                 if ((t !== undefined && t !== null))
@@ -405,7 +406,7 @@ var Evoque = (function (self)
     self.setStyle = function (name, value) {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 this.style[name] = value;
             }
@@ -413,16 +414,16 @@ var Evoque = (function (self)
     };
 
     self.addEventHandler = function (evtName, callback, useCapture) {
-        if (checkType(useCapture) !== type.eBoolean)
+        if ($checkType(useCapture) !== type.eBoolean)
         {
             useCapture = false;
         }
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 //DOM标准
-                if (this.addEventListener && checkType(callback) === type.eFunction) {
+                if (this.addEventListener && $checkType(callback) === type.eFunction) {
                     this.addEventListener(evtName, callback, useCapture);
                 }
             }
@@ -430,16 +431,16 @@ var Evoque = (function (self)
     };
 
     self.removeEventHandler = function (evtName, callback, useCapture) {
-        if (checkType(useCapture) !== type.eBoolean)
+        if ($checkType(useCapture) !== type.eBoolean)
         {
             useCapture = false;
         }
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 //DOM标准
-                if (this.removeEventListener && checkType(callback) === type.eFunction) {
+                if (this.removeEventListener && $checkType(callback) === type.eFunction) {
                     this.removeEventListener(evtName, callback, useCapture);
                 }
             }
@@ -448,18 +449,18 @@ var Evoque = (function (self)
 
     self.getChild = function (query) {
         var list = [];
-        if (checkType(this[0]) === type.eElement)
+        if ($checkType(this[0]) === type.eElement)
         {
-            if (isStringEmpty(query))
+            if ($isStringEmpty(query))
             {
-                list = makeArray(this[0].children);
+                list = $makeArray(this[0].children);
             }
             else
             {
                 var ret = this[0].querySelectorAll(query);
                 if (ret !== null && ret.length > 0)
                 {
-                    list = makeArray(ret);
+                    list = $makeArray(ret);
                 }
             }
         }
@@ -469,11 +470,11 @@ var Evoque = (function (self)
     self.clearChild = function () {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 if (this.hasChildNodes())
                 {
-                    var lst = makeArray(this.childNodes);
+                    var lst = $makeArray(this.childNodes);
                     for (var i = 0; i < lst.length; ++i)
                     {
                         this.removeChild(lst[i]);
@@ -484,7 +485,7 @@ var Evoque = (function (self)
     };
 
     self.html = function (innerHtml) {
-        var ty = checkType(this[0]);
+        var ty = $checkType(this[0]);
         if (innerHtml === undefined)
         {
             if (ty === type.eElement)
@@ -506,9 +507,9 @@ var Evoque = (function (self)
     };
 
     self.getClassList = function () {
-        if (checkType(this[0]) === type.eElement)
+        if ($checkType(this[0]) === type.eElement)
         {
-            return makeArray(this[0].classList);
+            return $makeArray(this[0].classList);
         }
         else
         {
@@ -519,7 +520,7 @@ var Evoque = (function (self)
     self.addClass = function (className) {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 if (!this.classList.contains(className))
                 {
@@ -532,7 +533,7 @@ var Evoque = (function (self)
     self.removeClass = function (className) {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 if (this.classList.contains(className))
                 {
@@ -545,7 +546,7 @@ var Evoque = (function (self)
     self.hide = function () {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 this.style.display = 'none';
             }
@@ -555,7 +556,7 @@ var Evoque = (function (self)
     self.show = function () {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement)
+            if ($checkType(this) === type.eElement)
             {
                 this.style.display = 'block';
             }
@@ -565,7 +566,7 @@ var Evoque = (function (self)
     self.enable = function () {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
+            if ($checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
             {
                 $(this).delAttr('disabled');
             }
@@ -575,7 +576,7 @@ var Evoque = (function (self)
     self.disable = function () {
         this.each(function ()
         {
-            if (checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
+            if ($checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
             {
                 $(this).setAttr('disabled', 'disabled');
             }
@@ -586,18 +587,18 @@ var Evoque = (function (self)
         var isPropertyExistInThis = false;
         var isPropertyExistInDefObj = false;
         var thisType, defaultType;
-        if (!isObjectNull(this[0]))
+        if (!$isObjectNull(this[0]))
         {
-            thisType = checkType(this[0][propertyName]);
+            thisType = $checkType(this[0][propertyName]);
             isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
         }
-        if (isObjectNull(defObj))
+        if ($isObjectNull(defObj))
         {
             defObj = {};
         }
         else
         {
-            defaultType = checkType(defObj[propertyName]);
+            defaultType = $checkType(defObj[propertyName]);
             isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
         }
 

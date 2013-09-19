@@ -53,8 +53,7 @@ Evoque.adapter = (function (self)
         }
     };
 
-    window.IsObjectNull = function (obj)
-    {
+    window.IsObjectNull = function (obj) {
         if (obj == undefined || obj == null)
         {
             return true;
@@ -62,8 +61,7 @@ Evoque.adapter = (function (self)
         return false;
     };
 
-    window.IsStringEmpty = function (str)
-    {
+    window.IsStringEmpty = function (str) {
         if (IsObjectNull(str) || str == '')
         {
             return true;
@@ -71,13 +69,74 @@ Evoque.adapter = (function (self)
         return false;
     };
 
-    window.clearChild = function (element)
-    {
-        var array = makeArray(element.childNodes);
+    window.clearChild = function (element) {
+        var array = $makeArray(element.childNodes);
         for (var i = 0; i < array.length; ++i)
         {
             element.removeChild(array[i]);
         }
+    };
+
+
+
+    window.cancelEventFlow = function (event) {
+        event = event || window.event;
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        }
+        else {
+            event.cancelBubble = true;
+        }
+    };
+
+    window.cancelDefault = function (event) {
+        event = event || window.event;
+        if (event.preventDefault) {
+            event.preventDefault();
+        }
+        else {
+            event.returnValue = false;
+        }
+    };
+
+    window.isObjectNull = function (obj) {
+        if (obj === undefined)
+        {
+            return true;
+        }
+        if (!isObject(obj))
+        {
+            throw 'Parameter is not an object!';
+        }
+        return obj === null;
+    };
+
+    window.isStringEmpty = function (str) {
+        var ty = checkType(str);
+        if (ty === type.eUndefined || ty === type.eNull)
+        {
+            return true;
+        }
+        if (ty !== type.eString)
+        {
+            throw 'Parameter is not a string!';
+        }
+        if (isObject(str))
+        {
+            return str.valueOf() === '';
+        }
+        else
+        {
+            return str === '';
+        }
+    };
+
+    window.loadPage = function (url) {
+        window.location.href = url;
+    };
+
+    window.makeArray = function (obj) {
+        return core_slice.call(obj,0);
     };
 
     return self;
