@@ -13,6 +13,7 @@ $.container = (function (self)
         {
             throw 'Parameter is null!';
         }
+        option = $(option);
         var divIdList = option.getValueOfProperty('divIdList', defaultOption);
         var onShowMtd = option.getValueOfProperty('onShow', defaultOption);
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);

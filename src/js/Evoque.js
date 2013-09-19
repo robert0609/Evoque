@@ -56,39 +56,6 @@ var Evoque = (function (self)
     }
 
     //Extension
-    Object.prototype.getValueOfProperty = function (propertyName, defObj)
-    {
-        var isPropertyExistInThis = false;
-        var isPropertyExistInDefObj = false;
-        var thisType, defaultType;
-        if (!isObjectNull(this))
-        {
-            thisType = checkType(this[propertyName]);
-            isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
-        }
-        if (!isObjectNull(defObj))
-        {
-            defaultType = checkType(defObj[propertyName]);
-            isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
-        }
-
-        if (isPropertyExistInThis)
-        {
-            if (isPropertyExistInDefObj)
-            {
-                if (thisType !== defaultType)
-                {
-                    throw 'type of [' + propertyName + '] is error!';
-                }
-            }
-            return this[propertyName];
-        }
-        else
-        {
-            return defObj[propertyName];
-        }
-    };
-
     Date.prototype.toCustomString = function () {
         var y = Number(this.getFullYear());
         var m = Number(this.getMonth()) + 1;
@@ -105,42 +72,6 @@ var Evoque = (function (self)
     };
 
     //Global method
-    window.wrapperOption = function (option)
-    {
-        option.getValueOfProperty = function (propertyName, defObj)
-        {
-            var isPropertyExistInThis = false;
-            var isPropertyExistInDefObj = false;
-            var thisType, defaultType;
-            if (!isObjectNull(this))
-            {
-                thisType = checkType(this[propertyName]);
-                isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
-            }
-            if (!isObjectNull(defObj))
-            {
-                defaultType = checkType(defObj[propertyName]);
-                isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
-            }
-
-            if (isPropertyExistInThis)
-            {
-                if (isPropertyExistInDefObj)
-                {
-                    if (thisType !== defaultType)
-                    {
-                        throw 'type of [' + propertyName + '] is error!';
-                    }
-                }
-                return this[propertyName];
-            }
-            else
-            {
-                return defObj[propertyName];
-            }
-        };
-    };
-
     window.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
@@ -339,8 +270,7 @@ var Evoque = (function (self)
             }
         }
 
-        this.sort = function (fn)
-        {
+        this.sort = function (fn) {
             if (checkType(fn) === type.eFunction)
             {
                 core_sort.call(_innerArray, fn);
@@ -353,8 +283,7 @@ var Evoque = (function (self)
             return this;
         };
 
-        this.each = function (fn)
-        {
+        this.each = function (fn) {
             if (checkType(fn) === type.eFunction)
             {
                 for (var i = 0; i < _innerArray.length; ++i)
@@ -411,11 +340,14 @@ var Evoque = (function (self)
             }
         };
 
-        for (var fnName in self)
+        if (this.length === 0)
         {
-            if (checkType(self[fnName]) === type.eFunction)
+            for (var fnName in self)
             {
-                this[fnName] = createFunction(fnName);
+                if (checkType(self[fnName]) === type.eFunction)
+                {
+                    this[fnName] = createFunction(fnName);
+                }
             }
         }
     }
@@ -425,11 +357,12 @@ var Evoque = (function (self)
     {
         var ret = function ()
         {
-            if (this.length == 0)
+            /*if (this.length == 0)
             {
-                return;
+                return null;
             }
-            return self[fnName].apply(this, arguments);
+            return self[fnName].apply(this, arguments);*/
+            return null;
         };
         return ret;
     }
@@ -639,6 +572,42 @@ var Evoque = (function (self)
                 $(this).setAttr('disabled', 'disabled');
             }
         });
+    };
+
+    self.getValueOfProperty = function (propertyName, defObj) {
+        var isPropertyExistInThis = false;
+        var isPropertyExistInDefObj = false;
+        var thisType, defaultType;
+        if (!isObjectNull(this[0]))
+        {
+            thisType = checkType(this[0][propertyName]);
+            isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
+        }
+        if (isObjectNull(defObj))
+        {
+            defObj = {};
+        }
+        else
+        {
+            defaultType = checkType(defObj[propertyName]);
+            isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
+        }
+
+        if (isPropertyExistInThis)
+        {
+            if (isPropertyExistInDefObj)
+            {
+                if (thisType !== defaultType)
+                {
+                    throw 'type of [' + propertyName + '] is error!';
+                }
+            }
+            return this[0][propertyName];
+        }
+        else
+        {
+            return defObj[propertyName];
+        }
     };
 
     return self;

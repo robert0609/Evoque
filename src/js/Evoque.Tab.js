@@ -21,7 +21,8 @@ Evoque.tab = (function (self)
         {
             throw 'Parameter is error!';
         }
-        return new tabClass(option.tabDivId, option.getValueOfProperty('onTabSwitched', defaultOption));
+        option = $(option);
+        return new tabClass(option.getValueOfProperty('tabDivId', defaultOption), option.getValueOfProperty('onTabSwitched', defaultOption));
     };
 
     function tabClass(tabDivId, onTabSwitched)

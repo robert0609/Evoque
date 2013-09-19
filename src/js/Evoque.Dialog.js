@@ -74,6 +74,7 @@ $.dialog = (function (self) {
         {
             throw 'Parameter is null!';
         }
+        option = $(option);
         cmdSeq.push(new cmdClass('show', option));
         if (cmdExecuting)
         {
@@ -88,6 +89,7 @@ $.dialog = (function (self) {
         {
             throw 'Parameter is null!';
         }
+        option = $(option);
         cmdSeq.push(new cmdClass('show', option));
         if (cmdExecuting)
         {

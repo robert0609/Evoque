@@ -13,6 +13,7 @@ Evoque.control = (function (self)
         {
             throw 'Parameter is null!';
         }
+        option = $(option);
         var id = option.getValueOfProperty('inputId', defaultOption_RangeSelect);
         if (isStringEmpty(id))
         {
@@ -104,6 +105,7 @@ Evoque.control = (function (self)
         {
             throw 'Parameter is null!';
         }
+        option = $(option);
         var id = option.getValueOfProperty('divId', defaultOption_SliderBar);
         if (isStringEmpty(id))
         {

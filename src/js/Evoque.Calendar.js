@@ -29,6 +29,7 @@ Evoque.calendar = (function (self) {
         {
             throw 'Parameter is null!';
         }
+        option = $(option);
         tableId = option.getValueOfProperty('tableElementid', defaultOption);
         if (isStringEmpty(tableId))
         {
@@ -37,7 +38,7 @@ Evoque.calendar = (function (self) {
         fCallBack = option.getValueOfProperty('callBack', defaultOption);
         defaultOption.originalDate = (new Date()).getYMD();
         activeDate = option.getValueOfProperty('originalDate', defaultOption);
-        checkInData = option.calendarData;
+        checkInData = option.getValueOfProperty('calendarData', defaultOption);;
 
         var startYear = Number(activeDate.getFullYear());
         var startMonth = Number(activeDate.getMonth());

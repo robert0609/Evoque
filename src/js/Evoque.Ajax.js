@@ -16,6 +16,7 @@ $.ajax = (function (self)
     self.get = function (option)
     {
         checkOption(option);
+        option = $(option);
         var xmlhttp = new XMLHttpRequest();
         bindEvent(xmlhttp, option);
         xmlhttp.open('get', option.getValueOfProperty('url', defaultOption) + '?' + serialize(option.getValueOfProperty('parameter', defaultOption)), true);
@@ -25,6 +26,7 @@ $.ajax = (function (self)
     self.post = function (option)
     {
         checkOption(option);
+        option = $(option);
         var xmlhttp = new XMLHttpRequest();
         bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
