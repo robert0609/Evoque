@@ -12,8 +12,8 @@
     <script type="text/javascript">
         $(function ()
         {
-            $('#tableCalender').calendar.create({
-                tableElementid: 'tableCalender',
+            $('#tableCalender').createCalendar({
+                originalDate: new Date(2013, 9, 30),
                 callBack: function (e, arg) {
                     $.dialog.alert(arg.selectDate);
                 }

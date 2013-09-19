@@ -413,6 +413,10 @@ var Evoque = (function (self)
     };
 
     self.addEventHandler = function (evtName, callback, useCapture) {
+        if (checkType(useCapture) !== type.eBoolean)
+        {
+            useCapture = false;
+        }
         this.each(function ()
         {
             if (checkType(this) === type.eElement)
@@ -426,6 +430,10 @@ var Evoque = (function (self)
     };
 
     self.removeEventHandler = function (evtName, callback, useCapture) {
+        if (checkType(useCapture) !== type.eBoolean)
+        {
+            useCapture = false;
+        }
         this.each(function ()
         {
             if (checkType(this) === type.eElement)
