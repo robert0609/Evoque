@@ -26,6 +26,7 @@ Evoque.calendar = (function (self) {
         var checkInData = option.getValueOfProperty('calendarData', defaultOption);
         cache[tableId] = new calendarClass(tableId, activeDate, checkInData, fCallBack);
         cache[tableId].init();
+        return cache[tableId];
     };
 
     function calendarClass(tableId, activeDate, checkInData, fCallBack)
