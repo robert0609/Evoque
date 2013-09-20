@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Control.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Control.css" />
+    <script type="text/javascript">
+        $(function ()
+        {
+            $('#btn').createButton({
+                onclick: clickHandler
+            });
+        });
+
+        function clickHandler() { alert('clicked me!'); }
+    </script>
+</head>
+<body>
+<form>
+    <input type="button" id="btn" value="点我试试" onclick="alert('asfadf');" />
+</form>
+</body>
+</html>
