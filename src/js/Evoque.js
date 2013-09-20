@@ -42,7 +42,7 @@ var Evoque = (function (self)
     function core_addReadyHandler(fn, useCapture)
     {
         //DOM标准
-        if (document.addEventListener && $checkType(fn) === type.eFunction) {
+        if (document.addEventListener && $.checkType(fn) === type.eFunction) {
             document.addEventListener('DOMContentLoaded', fn, useCapture);
         }
     }
@@ -50,7 +50,7 @@ var Evoque = (function (self)
     function core_addLoadedHandler(fn, useCapture)
     {
         //DOM标准
-        if (window.addEventListener && $checkType(fn) === type.eFunction) {
+        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
             window.addEventListener('load', fn, useCapture);
         }
     }
@@ -74,7 +74,7 @@ var Evoque = (function (self)
     window.$ = function (parameter)
     {
         var list = [];
-        switch ($checkType(parameter))
+        switch ($.checkType(parameter))
         {
             case type.eString:
                 if (document.querySelectorAll) {
@@ -83,7 +83,7 @@ var Evoque = (function (self)
                         var ret = document.querySelectorAll(parameter);
                         if (ret !== null && ret.length > 0)
                         {
-                            list = list.concat($makeArray(ret));
+                            list = list.concat($.makeArray(ret));
                         }
                     }
                     catch (ex)
@@ -108,7 +108,7 @@ var Evoque = (function (self)
                 list = list.concat(parameter);
                 break;
             case type.eArraylist:
-                list = list.concat($makeArray(parameter));
+                list = list.concat($.makeArray(parameter));
                 break;
             case type.eFunction:
                 core_addReadyHandler(parameter, false);
@@ -133,7 +133,7 @@ var Evoque = (function (self)
         }
 
         this.sort = function (fn) {
-            if ($checkType(fn) === type.eFunction)
+            if ($.checkType(fn) === type.eFunction)
             {
                 core_sort.call(_innerArray, fn);
             }
@@ -146,7 +146,7 @@ var Evoque = (function (self)
         };
 
         this.each = function (fn) {
-            if ($checkType(fn) === type.eFunction)
+            if ($.checkType(fn) === type.eFunction)
             {
                 for (var i = 0; i < _innerArray.length; ++i)
                 {
@@ -162,14 +162,14 @@ var Evoque = (function (self)
             var ret = null;
             if (_innerArray.length > 0)
             {
-                switch ($checkType(_innerArray[0]))
+                switch ($.checkType(_innerArray[0]))
                 {
                     case type.eElement:
                         ret = _innerArray[0].getAttribute('value');
                         break;
                     case type.eNumber:
                     case type.eBoolean:
-                        if ($isObject(_innerArray[0]))
+                        if ($.isObject(_innerArray[0]))
                         {
                             ret = _innerArray[0].valueOf();
                         }
@@ -194,7 +194,7 @@ var Evoque = (function (self)
             {
                 for (var i = 0; i < _innerArray.length; ++i)
                 {
-                    if ($checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
+                    if ($.checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
                     {
                         _innerArray[0].setAttribute('value', val);
                     }
@@ -206,7 +206,7 @@ var Evoque = (function (self)
         {
             for (var fnName in self)
             {
-                if ($checkType(self[fnName]) === type.eFunction)
+                if ($.checkType(self[fnName]) === type.eFunction)
                 {
                     this[fnName] = createFunction(fnName);
                 }
@@ -230,7 +230,7 @@ var Evoque = (function (self)
     }
 
     //Global method begin
-    window.$cancelEventFlow = function (event) {
+    $.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
             event.stopPropagation();
@@ -240,7 +240,7 @@ var Evoque = (function (self)
         }
     };
 
-    window.$cancelDefault = function (event) {
+    $.cancelDefault = function (event) {
         event = event || window.event;
         if (event.preventDefault) {
             event.preventDefault();
@@ -250,22 +250,22 @@ var Evoque = (function (self)
         }
     };
 
-    window.$isObjectNull = function (obj)
+    $.isObjectNull = function (obj)
     {
         if (obj === undefined)
         {
             return true;
         }
-        if (!$isObject(obj))
+        if (!$.isObject(obj))
         {
             throw 'Parameter is not an object!';
         }
         return obj === null;
     };
 
-    window.$isStringEmpty = function (str)
+    $.isStringEmpty = function (str)
     {
-        var ty = $checkType(str);
+        var ty = $.checkType(str);
         if (ty === type.eUndefined || ty === type.eNull)
         {
             return true;
@@ -274,7 +274,7 @@ var Evoque = (function (self)
         {
             throw 'Parameter is not a string!';
         }
-        if ($isObject(str))
+        if ($.isObject(str))
         {
             return str.valueOf() === '';
         }
@@ -284,12 +284,12 @@ var Evoque = (function (self)
         }
     };
 
-    window.$isObject = function (obj)
+    $.isObject = function (obj)
     {
         return 'undefined,number,boolean,string'.indexOf(typeof obj) < 0;
     };
 
-    window.$checkType = function (obj)
+    $.checkType = function (obj)
     {
         var ty = typeof obj;
         if (class2type[ty])
@@ -357,19 +357,19 @@ var Evoque = (function (self)
         return true;
     }
 
-    window.$loadPage = function (url)
+    $.loadPage = function (url)
     {
         window.location.href = url;
     };
 
-    window.$makeArray = function (obj)
+    $.makeArray = function (obj)
     {
         return core_slice.call(obj,0);
     };
     //Global method end
 
     self.getAttr = function (name) {
-        if ($checkType(this[0]) === type.eElement)
+        if ($.checkType(this[0]) === type.eElement)
         {
             return this[0].getAttribute(name);
         }
@@ -382,7 +382,7 @@ var Evoque = (function (self)
     self.setAttr = function (name, value) {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 this.setAttribute(name, value);
             }
@@ -392,7 +392,7 @@ var Evoque = (function (self)
     self.delAttr = function (name) {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 var t = this.getAttribute(name);
                 if ((t !== undefined && t !== null))
@@ -406,7 +406,7 @@ var Evoque = (function (self)
     self.setStyle = function (name, value) {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 this.style[name] = value;
             }
@@ -414,16 +414,16 @@ var Evoque = (function (self)
     };
 
     self.addEventHandler = function (evtName, callback, useCapture) {
-        if ($checkType(useCapture) !== type.eBoolean)
+        if ($.checkType(useCapture) !== type.eBoolean)
         {
             useCapture = false;
         }
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 //DOM标准
-                if (this.addEventListener && $checkType(callback) === type.eFunction) {
+                if (this.addEventListener && $.checkType(callback) === type.eFunction) {
                     this.addEventListener(evtName, callback, useCapture);
                 }
             }
@@ -431,16 +431,16 @@ var Evoque = (function (self)
     };
 
     self.removeEventHandler = function (evtName, callback, useCapture) {
-        if ($checkType(useCapture) !== type.eBoolean)
+        if ($.checkType(useCapture) !== type.eBoolean)
         {
             useCapture = false;
         }
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 //DOM标准
-                if (this.removeEventListener && $checkType(callback) === type.eFunction) {
+                if (this.removeEventListener && $.checkType(callback) === type.eFunction) {
                     this.removeEventListener(evtName, callback, useCapture);
                 }
             }
@@ -449,18 +449,18 @@ var Evoque = (function (self)
 
     self.getChild = function (query) {
         var list = [];
-        if ($checkType(this[0]) === type.eElement)
+        if ($.checkType(this[0]) === type.eElement)
         {
-            if ($isStringEmpty(query))
+            if ($.isStringEmpty(query))
             {
-                list = $makeArray(this[0].children);
+                list = $.makeArray(this[0].children);
             }
             else
             {
                 var ret = this[0].querySelectorAll(query);
                 if (ret !== null && ret.length > 0)
                 {
-                    list = $makeArray(ret);
+                    list = $.makeArray(ret);
                 }
             }
         }
@@ -470,11 +470,11 @@ var Evoque = (function (self)
     self.clearChild = function () {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 if (this.hasChildNodes())
                 {
-                    var lst = $makeArray(this.childNodes);
+                    var lst = $.makeArray(this.childNodes);
                     for (var i = 0; i < lst.length; ++i)
                     {
                         this.removeChild(lst[i]);
@@ -485,7 +485,7 @@ var Evoque = (function (self)
     };
 
     self.html = function (innerHtml) {
-        var ty = $checkType(this[0]);
+        var ty = $.checkType(this[0]);
         if (innerHtml === undefined)
         {
             if (ty === type.eElement)
@@ -507,9 +507,9 @@ var Evoque = (function (self)
     };
 
     self.getClassList = function () {
-        if ($checkType(this[0]) === type.eElement)
+        if ($.checkType(this[0]) === type.eElement)
         {
-            return $makeArray(this[0].classList);
+            return $.makeArray(this[0].classList);
         }
         else
         {
@@ -520,7 +520,7 @@ var Evoque = (function (self)
     self.addClass = function (className) {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 if (!this.classList.contains(className))
                 {
@@ -533,7 +533,7 @@ var Evoque = (function (self)
     self.removeClass = function (className) {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 if (this.classList.contains(className))
                 {
@@ -546,7 +546,7 @@ var Evoque = (function (self)
     self.hide = function () {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 this.style.display = 'none';
             }
@@ -556,7 +556,7 @@ var Evoque = (function (self)
     self.show = function () {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement)
+            if ($.checkType(this) === type.eElement)
             {
                 this.style.display = 'block';
             }
@@ -566,7 +566,7 @@ var Evoque = (function (self)
     self.enable = function () {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
+            if ($.checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
             {
                 $(this).delAttr('disabled');
             }
@@ -576,7 +576,7 @@ var Evoque = (function (self)
     self.disable = function () {
         this.each(function ()
         {
-            if ($checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
+            if ($.checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
             {
                 $(this).setAttr('disabled', 'disabled');
             }
@@ -587,18 +587,18 @@ var Evoque = (function (self)
         var isPropertyExistInThis = false;
         var isPropertyExistInDefObj = false;
         var thisType, defaultType;
-        if (!$isObjectNull(this[0]))
+        if (!$.isObjectNull(this[0]))
         {
-            thisType = $checkType(this[0][propertyName]);
+            thisType = $.checkType(this[0][propertyName]);
             isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
         }
-        if ($isObjectNull(defObj))
+        if ($.isObjectNull(defObj))
         {
             defObj = {};
         }
         else
         {
-            defaultType = $checkType(defObj[propertyName]);
+            defaultType = $.checkType(defObj[propertyName]);
             isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
         }
 

@@ -9,7 +9,7 @@ $.container = (function (self)
 
     self.create = function (option)
     {
-        if ($isObjectNull(option))
+        if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
@@ -17,7 +17,7 @@ $.container = (function (self)
         var divIdList = option.getValueOfProperty('divIdList', defaultOption);
         var onShowMtd = option.getValueOfProperty('onShow', defaultOption);
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);
-        if ($checkType(divIdList) !== type.eArray)
+        if ($.checkType(divIdList) !== type.eArray)
         {
             throw 'Parameter is error!';
         }
@@ -26,8 +26,8 @@ $.container = (function (self)
 
     function containerClass(divIdList, onShow, onHide)
     {
-        var onShowIsFn = $checkType(onShow) === type.eFunction;
-        var onHideIsFn = $checkType(onHide) === type.eFunction;
+        var onShowIsFn = $.checkType(onShow) === type.eFunction;
+        var onHideIsFn = $.checkType(onHide) === type.eFunction;
 
         var ids = divIdList;
         var divList = [];
@@ -44,7 +44,7 @@ $.container = (function (self)
         this.display = function(divId, option)
         {
             var parameter = createOption();
-            if (!$isObjectNull(option) && $checkType(option.remainHideDivInput) === type.eBoolean)
+            if (!$.isObjectNull(option) && $.checkType(option.remainHideDivInput) === type.eBoolean)
             {
                 parameter.remainHideDivInput = option.remainHideDivInput;
             }
@@ -59,7 +59,7 @@ $.container = (function (self)
                 }
                 else
                 {
-                    if (!$isStringEmpty(currentDisplayId) && ids[i] === currentDisplayId)
+                    if (!$.isStringEmpty(currentDisplayId) && ids[i] === currentDisplayId)
                     {
                         var toHideDiv = this.currentDisplay;
                         hide(toHideDiv, parameter.remainHideDivInput);

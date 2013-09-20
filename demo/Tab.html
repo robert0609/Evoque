@@ -10,9 +10,9 @@
     <script type="text/javascript">
         $(function ()
         {
-            $('#testTab').tab.create({
-                tabDivId: 'testTab',
+            $('#testTab').createTab({
                 onTabSwitched: function (e) {
+                    alert(e.currentSelectIndex);
                 }
             });
         });

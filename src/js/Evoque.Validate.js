@@ -67,7 +67,7 @@ $.validate = (function (self)
         var obj = castArray(validJson[require]);
         for (var i = 0; i < obj.length; ++i)
         {
-            if (!$isObjectNull(obj[i]) && !validRequire(ele, obj[i]))
+            if (!$.isObjectNull(obj[i]) && !validRequire(ele, obj[i]))
             {
                 return false;
             }
@@ -75,7 +75,7 @@ $.validate = (function (self)
         obj = castArray(validJson[len]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$isObjectNull(obj[i]) && !validLen(ele, obj[i]))
+            if (!$.isObjectNull(obj[i]) && !validLen(ele, obj[i]))
             {
                 return false;
             }
@@ -83,7 +83,7 @@ $.validate = (function (self)
         obj = castArray(validJson[range]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$isObjectNull(obj[i]) && !validRange(ele, obj[i]))
+            if (!$.isObjectNull(obj[i]) && !validRange(ele, obj[i]))
             {
                 return false;
             }
@@ -91,7 +91,7 @@ $.validate = (function (self)
         obj = castArray(validJson[regex]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$isObjectNull(obj[i]) && !validRegex(ele, obj[i]))
+            if (!$.isObjectNull(obj[i]) && !validRegex(ele, obj[i]))
             {
                 return false;
             }
@@ -99,7 +99,7 @@ $.validate = (function (self)
         obj = castArray(validJson[compare]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$isObjectNull(obj[i]) && !validCompare(ele, obj[i]))
+            if (!$.isObjectNull(obj[i]) && !validCompare(ele, obj[i]))
             {
                 return false;
             }
@@ -109,7 +109,7 @@ $.validate = (function (self)
 
     function castArray(obj)
     {
-        if ($isObjectNull(obj))
+        if ($.isObjectNull(obj))
         {
             return [];
         }
@@ -130,14 +130,14 @@ $.validate = (function (self)
         var ret = true;
         var val = ele.value;
         var empty = json[require_empty];
-        if ($isStringEmpty(val))
+        if ($.isStringEmpty(val))
         {
             $.dialog.alert(json[errorMsg]);
             ret = false;
         }
         else
         {
-            if (!$isStringEmpty(empty))
+            if (!$.isStringEmpty(empty))
             {
                 if (val == empty)
                 {
@@ -156,7 +156,7 @@ $.validate = (function (self)
         var max = json[len_max];
         var min = json[len_min];
 
-        if (!$isStringEmpty(max))
+        if (!$.isStringEmpty(max))
         {
             if (val.length > Number(max))
             {
@@ -164,7 +164,7 @@ $.validate = (function (self)
                 ret = false;
             }
         }
-        if (!$isStringEmpty(min))
+        if (!$.isStringEmpty(min))
         {
             if (val.length < Number(min))
             {
@@ -181,7 +181,7 @@ $.validate = (function (self)
         var val = Number(ele.value);
         var max = json[range_max];
         var min = json[range_min];
-        if (!$isStringEmpty(max))
+        if (!$.isStringEmpty(max))
         {
             if (val > Number(max))
             {
@@ -189,7 +189,7 @@ $.validate = (function (self)
                 ret = false;
             }
         }
-        if (!$isStringEmpty(min))
+        if (!$.isStringEmpty(min))
         {
             if (val < Number(min))
             {
@@ -206,7 +206,7 @@ $.validate = (function (self)
         var ret = true;
         var val = ele.value;
         var regStr = json[regex_expression];
-        if (!$isStringEmpty(regStr))
+        if (!$.isStringEmpty(regStr))
         {
             var reg = new RegExp(regStr);
             if (!reg.test(val))
@@ -223,10 +223,10 @@ $.validate = (function (self)
         var ret = true;
         var val = ele.value;
         var tarId = json[compare_target];
-        if (!$isStringEmpty(tarId))
+        if (!$.isStringEmpty(tarId))
         {
             var tarVal = $('#' + tarId).getVal();
-            if (!$isStringEmpty(tarVal))
+            if (!$.isStringEmpty(tarVal))
             {
                 if (val != tarVal)
                 {

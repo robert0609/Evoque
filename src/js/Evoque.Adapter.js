@@ -70,73 +70,35 @@ Evoque.adapter = (function (self)
     };
 
     window.clearChild = function (element) {
-        var array = $makeArray(element.childNodes);
+        var array = $.makeArray(element.childNodes);
         for (var i = 0; i < array.length; ++i)
         {
             element.removeChild(array[i]);
         }
     };
 
-
-
     window.cancelEventFlow = function (event) {
-        event = event || window.event;
-        if (event.stopPropagation) {
-            event.stopPropagation();
-        }
-        else {
-            event.cancelBubble = true;
-        }
+        return $.cancelEventFlow(event);
     };
 
     window.cancelDefault = function (event) {
-        event = event || window.event;
-        if (event.preventDefault) {
-            event.preventDefault();
-        }
-        else {
-            event.returnValue = false;
-        }
+        return $.cancelDefault(event);
     };
 
     window.isObjectNull = function (obj) {
-        if (obj === undefined)
-        {
-            return true;
-        }
-        if (!isObject(obj))
-        {
-            throw 'Parameter is not an object!';
-        }
-        return obj === null;
+        return $.isObjectNull(obj);
     };
 
     window.isStringEmpty = function (str) {
-        var ty = checkType(str);
-        if (ty === type.eUndefined || ty === type.eNull)
-        {
-            return true;
-        }
-        if (ty !== type.eString)
-        {
-            throw 'Parameter is not a string!';
-        }
-        if (isObject(str))
-        {
-            return str.valueOf() === '';
-        }
-        else
-        {
-            return str === '';
-        }
+        return $.isStringEmpty(str);
     };
 
     window.loadPage = function (url) {
-        window.location.href = url;
+        return $.loadPage(url);
     };
 
     window.makeArray = function (obj) {
-        return core_slice.call(obj,0);
+        return $.makeArray(obj);
     };
 
     return self;
