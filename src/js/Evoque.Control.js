@@ -88,9 +88,30 @@ Evoque.control = (function (self)
         }
     };
 
-    self.button = function ()
-    {
+    var defaultOption_Button = {
+        inputId: '',
+        onclick: function () {}
+    };
 
+    self.button = function (option)
+    {
+        if ($.isObjectNull(option))
+        {
+            throw 'Parameter is null!';
+        }
+        option = $(option);
+        var id = option.getValueOfProperty('inputId', defaultOption_Button);
+        if ($.isStringEmpty(id))
+        {
+            throw 'Parameter is error!';
+        }
+        $('#' + id)[0].onclick = null;
+        var handler = option.getValueOfProperty('onclick', defaultOption_Button);
+        $('#' + id).addEventHandler('click', function () {
+            $.dialog.showLoading('click event!!!!');
+            handler.apply(this, arguments);
+            location.reload();
+        });
     };
 
     var defaultOption_SliderBar = {
@@ -139,6 +160,13 @@ Evoque.control = (function (self)
         option = option || {};
         option.inputId = this.getAttr('id');
         self.rangeSelect(option);
+    };
+
+    Evoque.createButton = function (option)
+    {
+        option = option || {};
+        option.inputId = this.getAttr('id');
+        self.button(option);
     };
 
     Evoque.createSliderBar = function (option)
