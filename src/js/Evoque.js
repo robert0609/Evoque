@@ -71,6 +71,15 @@ var Evoque = (function (self)
         return this.replace(/\s/g, '');
     };
 
+    String.prototype.toDate = function () {
+        if (!/^\d{1,4}-\d{1,2}-\d{1,2}$/.test(this))
+        {
+            throw 'Invalided string value!';
+        }
+        var strs = this.split('-');
+        return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
+    };
+
     window.$ = function (parameter)
     {
         var list = [];
