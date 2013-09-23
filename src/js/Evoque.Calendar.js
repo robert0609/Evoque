@@ -97,7 +97,7 @@ Evoque.calendar = (function (self) {
             var curD = Number($(event.currentTarget).getAttr('curD'));
             var sel = curY + '-' + curM + '-' + curD;
             if ($.checkType(fCallBack) === type.eFunction) {
-                fCallBack(event, { selectDate: sel });
+                fCallBack(event, { selectDate: sel, selectDateValue: new Date(curY, curM - 1, curD) });
             }
         };
 
