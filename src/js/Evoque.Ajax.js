@@ -19,7 +19,17 @@ $.ajax = (function (self)
         option = $(option);
         var xmlhttp = new XMLHttpRequest();
         bindEvent(xmlhttp, option);
-        xmlhttp.open('get', option.getValueOfProperty('url', defaultOption) + '?' + serialize(option.getValueOfProperty('parameter', defaultOption)), true);
+        var urlTemp = option.getValueOfProperty('url', defaultOption);
+        var spliter = '';
+        if (urlTemp.indexOf('?') > -1)
+        {
+            spliter = '&';
+        }
+        else
+        {
+            spliter = '?';
+        }
+        xmlhttp.open('get', urlTemp + spliter + serialize(option.getValueOfProperty('parameter', defaultOption)), true);
         xmlhttp.send();
     };
 

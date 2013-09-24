@@ -4,7 +4,6 @@
     left: 0;
     background: #777;
     opacity: 0.5;
-    z-index: 10000;
     margin: 0;
     padding: 0;
 }
@@ -19,7 +18,6 @@
     font: 1.2em/1.5em HelveticaNeue, Helvetica, STHeiTi, sans-serif;
     text-align: center;
     line-height: 25px;
-    z-index: 10001;
     margin: 0;
     padding: 0;
 }

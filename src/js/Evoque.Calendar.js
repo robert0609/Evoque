@@ -128,7 +128,7 @@ Evoque.calendar = (function (self) {
             if ($.checkType(fCallBack) === type.eFunction) {
                 fCallBack(event, { selectDate: sel, selectDateValue: new Date(curY, curM - 1, curD) });
             }
-        };
+        }
 
         function setPrevNext() {
             var title = tableObj.getChild('#thTitle');
