@@ -4,6 +4,7 @@ Evoque.calendar = (function (self) {
 
     var defaultOption = {
         tableElementid: '',
+        startDate: (new Date()).getYMD(),
         calendarData: null,
         originalDate: (new Date()).getYMD(),
         callBack: function () {}
@@ -24,14 +25,16 @@ Evoque.calendar = (function (self) {
         defaultOption.originalDate = (new Date()).getYMD();
         var activeDate = option.getValueOfProperty('originalDate', defaultOption);
         var checkInData = option.getValueOfProperty('calendarData', defaultOption);
-        cache[tableId] = new calendarClass(tableId, activeDate, checkInData, fCallBack);
+        defaultOption.startDate = (new Date()).getYMD();
+        var startDate = option.getValueOfProperty('startDate', defaultOption);
+        cache[tableId] = new calendarClass(tableId, startDate, activeDate, checkInData, fCallBack);
         cache[tableId].init();
         return cache[tableId];
     };
 
-    function calendarClass(tableId, activeDate, checkInData, fCallBack)
+    function calendarClass(tableId, startDate, activeDate, checkInData, fCallBack)
     {
-        var now = (new Date()).getYMD();
+        var now = startDate;
         var currentYear = Number(now.getFullYear());
         var currentMonth = Number(now.getMonth());
         var currentDay = Number(now.getDate());
@@ -43,6 +46,10 @@ Evoque.calendar = (function (self) {
         var maxDay = Number(max.getDate());
         var maxWeek = Number(max.getDay());
 
+        if (activeDate < now)
+        {
+            activeDate = now;
+        }
         var startYear = Number(activeDate.getFullYear());
         var startMonth = Number(activeDate.getMonth());
         var startDay = Number(activeDate.getDate());
