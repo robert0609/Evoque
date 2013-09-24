@@ -6,27 +6,27 @@ $.dialog = (function (self) {
     var gDialog = new dialogClass(dialogGUID, zIndexStack.slice(zIndexStack.length - 1)[0]);
     ++dialogGUID;
 
-    var apiNames = [ 'alert', 'showLoading', 'showMessageBox', 'showModalDialog', 'closeCurrentDialog'];
-
-    for (var apiIndex = 0; apiIndex < apiNames.length; ++apiIndex)
+    self.alert = function (message)
     {
-        self[apiNames[apiIndex]] = createFunction(gDialog[apiNames[apiIndex]]);
-        //API
-        Evoque[apiNames[apiIndex]] = function () {
-            genDialog.apply(this);
-            this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-            return this.dialog[apiNames[apiIndex]](arguments);
-        };
-    }
+        return gDialog.alert(message);
+    };
 
-    function createFunction(fn)
+    self.showLoading = function (loadingMsg, callback)
     {
-        var ret = function ()
-        {
-            return fn.apply(gDialog, arguments);
-        };
-        return ret;
-    }
+        return gDialog.showLoading(loadingMsg, callback);
+    };
+
+    self.showMessageBox = function (option) {
+        return gDialog.showMessageBox(option);
+    };
+
+    self.showModalDialog = function (option) {
+        return gDialog.showModalDialog(option);
+    };
+
+    self.closeCurrentDialog = function () {
+        return gDialog.closeCurrentDialog();
+    };
 
     function dialogClass(dialogGUID, zIdx)
     {
@@ -439,6 +439,42 @@ $.dialog = (function (self) {
             return option;
         }
     }
+
+    //API
+    Evoque.alert = function (message)
+    {
+        genDialog.apply(this);
+        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
+        return this.dialog.alert(message);
+    };
+
+    Evoque.showLoading = function (loadingMsg, callback)
+    {
+        genDialog.apply(this);
+        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
+        return this.dialog.showLoading(loadingMsg, callback);
+    };
+
+    Evoque.showMessageBox = function (option)
+    {
+        genDialog.apply(this);
+        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
+        return this.dialog.showMessageBox(option);
+    };
+
+    Evoque.showModalDialog = function (option)
+    {
+        genDialog.apply(this);
+        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
+        return this.dialog.showModalDialog(option);
+    };
+
+    Evoque.closeCurrentDialog = function ()
+    {
+        genDialog.apply(this);
+        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
+        return this.dialog.closeCurrentDialog();
+    };
 
     function genDialog()
     {
