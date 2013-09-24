@@ -2,36 +2,73 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="apple-itunes-app" content="app-id=425349261" />
+    <!--<meta name="apple-itunes-app" content="app-id=425349261" />-->
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/json2.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
     <script type="text/javascript">
         $(function ()
         {
         });
 
-        function checkInstall()
+        function checkNewsInstall()
         {
-            $.ajax.get({
-                url : 'newsapp://',
-                onSuccess : function (returnObj) {
-                    $('#console').html(returnObj);
-                },
-                onFail : function () {
-                    $('#console').html('failed!');
-                }
-            });
-
+            window.location = 'newsapp://';
+//            window.location='itms-apps://itunes.apple.com/cn/app/id425349261';
+            window.setTimeout(function () {
+                window.location='itms-apps://itunes.apple.com/cn/app/id425349261';
+            }, 10);
         }
+
+        function checkBaiduInstall(event)
+        {
+            window.location='com.baidu.tieba://';
+//            window.location='itms-apps://itunes.apple.com/cn/app/id477927812';
+            window.setTimeout(function () {
+                window.location='itms-apps://itunes.apple.com/cn/app/id477927812';
+            }, 10);
+        }
+
     </script>
 </head>
 <body>
-    <a href="javascript:void(0);" onclick="checkInstall()">Check if app was installed!</a>
+    <a href="javascript:void(0);" onclick="checkNewsInstall()">Check if newsapp was installed!</a>
     <br />
-    <a href="newsapp://">Open app</a>
+    <a href="javascript:void(0);" onclick="checkBaiduInstall(event)">Check if tiebaapp was installed!</a>
+    <br />
     <div id="console"></div>
+    <br />
+    <a href="itms-apps://itunes.apple.com/cn/app/id477927812" id="openApp">贴吧客户端</a>
+    <script type="text/javascript">
+        document.getElementById('openApp').onclick = function(){
+            // 通过iframe的方式试图打开APP，如果能正常打开，会直接切换到APP，并自动阻止a标签的默认行为
+            // 否则打开a标签的href链接
+            var ifr = document.createElement('iframe');
+            ifr.src = 'com.baidu.tieba://';
+            ifr.style.display = 'none';
+            document.body.appendChild(ifr);
+            window.setTimeout(function(){
+                document.body.removeChild(ifr);
+            },10)
+        };
+    </script>
+    <br />
+    <a href="itms-apps://itunes.apple.com/cn/app/id425349261" id="openNewsApp">网易新闻客户端</a>
+    <script type="text/javascript">
+        document.getElementById('openNewsApp').onclick = function(){
+            // 通过iframe的方式试图打开APP，如果能正常打开，会直接切换到APP，并自动阻止a标签的默认行为
+            // 否则打开a标签的href链接
+            var ifr = document.createElement('iframe');
+            ifr.src = 'newsapp://';
+            ifr.style.display = 'none';
+            document.body.appendChild(ifr);
+            window.setTimeout(function(){
+                document.body.removeChild(ifr);
+            },10)
+        };
+    </script>
 </body>
 </html>
