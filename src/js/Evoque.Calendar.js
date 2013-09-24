@@ -10,16 +10,24 @@ Evoque.calendar = (function (self) {
         callBack: function () {}
     };
 
-    self.create = function (option) {
+    self.create = function (option, tableElement) {
         if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
-        var tableId = option.getValueOfProperty('tableElementid', defaultOption);
-        if ($.isStringEmpty(tableId))
+        var tableId;
+        if ($.checkType(tableElement) === type.eElement)
         {
-            throw 'Parameter is error!';
+            tableId = tableElement;
+        }
+        else
+        {
+            tableId = option.getValueOfProperty('tableElementid', defaultOption);
+            if ($.isStringEmpty(tableId))
+            {
+                throw 'Parameter is error!';
+            }
         }
         var fCallBack = option.getValueOfProperty('callBack', defaultOption);
         defaultOption.originalDate = (new Date()).getYMD();
@@ -32,7 +40,7 @@ Evoque.calendar = (function (self) {
         return cache[tableId];
     };
 
-    function calendarClass(tableId, startDate, activeDate, checkInData, fCallBack)
+    function calendarClass(tableElement, startDate, activeDate, checkInData, fCallBack)
     {
         var now = startDate;
         var currentYear = Number(now.getFullYear());
@@ -55,49 +63,63 @@ Evoque.calendar = (function (self) {
         var startDay = Number(activeDate.getDate());
         var startWeek = Number(activeDate.getDay());
 
+        var tableObj = null;
+        if ($.checkType(tableElement) === type.eElement)
+        {
+            tableObj = $(tableElement);
+        }
+        else if ($.checkType(tableElement) === type.eString)
+        {
+            tableObj = $('#' + tableElement);
+        }
+        else
+        {
+            throw 'Invalid parameter!';
+        }
+
         this.init = function ()
         {
-            $('#' + tableId).addClass('table-wrap');
-            $('#' + tableId).addClass('table-calendar');
+            tableObj.addClass('table-wrap');
+            tableObj.addClass('table-calendar');
 
             var strHtml = '<thead><tr><th id="thPrev" class="prev disable">←</th><th id="thTitle" colspan="5" class="switch"></th><th id="thNext" class="next">→</th></tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody id="tbodyMonth"></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot>';
-            $('#' + tableId).html(strHtml);
+            tableObj.html(strHtml);
             //绑定上下个月事件
-            $('#' + tableId + ' #thPrev').addEventHandler('click', function ()
+            tableObj.getChild('#thPrev').addEventHandler('click', function ()
             {
-                var title = $('#' + tableId + ' #thTitle');
+                var title = tableObj.getChild('#thTitle');
                 var curY = Number(title.getAttr('curY'));
                 var curM = Number(title.getAttr('curM'));
                 if (curY == currentYear && curM == currentMonth) {
                     return;
                 }
-                $('#' + tableId + ' #tbodyMonth').html(loadMonth(new Date(curY, curM - 1, 1)));
+                tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM - 1, 1)));
                 //绑定日期的选择事件
-                $('#' + tableId + ' td[enablePick]').addEventHandler('click', onClickDay);
+                tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
                 setPrevNext();
             });
-            $('#' + tableId + ' #thNext').addEventHandler('click', function ()
+            tableObj.getChild('#thNext').addEventHandler('click', function ()
             {
-                var title = $('#' + tableId + ' #thTitle');
+                var title = tableObj.getChild('#thTitle');
                 var curY = Number(title.getAttr('curY'));
                 var curM = Number(title.getAttr('curM'));
                 if (curY == maxYear && curM == maxMonth) {
                     return;
                 }
-                $('#' + tableId + ' #tbodyMonth').html(loadMonth(new Date(curY, curM + 1, 1)));
+                tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM + 1, 1)));
                 //绑定日期的选择事件
-                $('#' + tableId + ' td[enablePick]').addEventHandler('click', onClickDay);
+                tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
                 setPrevNext();
             });
 
-            $('#' + tableId + ' #tbodyMonth').html(loadMonth(new Date(startYear, startMonth, 1)));
+            tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(startYear, startMonth, 1)));
             //绑定日期的选择事件
-            $('#' + tableId + ' td[enablePick]').addEventHandler('click', onClickDay);
+            tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
             setPrevNext();
         };
 
         function onClickDay(event) {
-            var title = $('#' + tableId + ' #thTitle');
+            var title = tableObj.getChild('#thTitle');
             var curY = Number(title.getAttr('curY'));
             var curM = Number(title.getAttr('curM'));
             curM += 1;
@@ -109,20 +131,20 @@ Evoque.calendar = (function (self) {
         };
 
         function setPrevNext() {
-            var title = $('#' + tableId + ' #thTitle');
+            var title = tableObj.getChild('#thTitle');
             var curY = Number(title.getAttr('curY'));
             var curM = Number(title.getAttr('curM'));
             if (curY == currentYear && curM == currentMonth) {
-                $('#' + tableId + ' #thPrev').addClass('disable');
+                tableObj.getChild('#thPrev').addClass('disable');
             }
             else {
-                $('#' + tableId + ' #thPrev').removeClass('disable');
+                tableObj.getChild('#thPrev').removeClass('disable');
             }
             if (curY == maxYear && curM == maxMonth) {
-                $('#' + tableId + ' #thNext').addClass('disable');
+                tableObj.getChild('#thNext').addClass('disable');
             }
             else {
-                $('#' + tableId + ' #thNext').removeClass('disable');
+                tableObj.getChild('#thNext').removeClass('disable');
             }
         }
 
@@ -132,7 +154,7 @@ Evoque.calendar = (function (self) {
             var month = Number(dateDiplay.getMonth());
 
             var monthStr = month + 1;
-            var title = $('#' + tableId + ' #thTitle');
+            var title = tableObj.getChild('#thTitle');
             title.html(year + '年' + monthStr + '月');
             title.setAttr('curY', year);
             title.setAttr('curM', month);
@@ -211,8 +233,11 @@ Evoque.calendar = (function (self) {
     Evoque.createCalendar = function (option)
     {
         option = option || {};
-        option.tableElementid = this.getAttr('id');
-        return self.create(option);
+        if (this.length < 1)
+        {
+            return null;
+        }
+        return self.create(option, this[0]);
     };
 
     return self;
