@@ -257,6 +257,8 @@ $.dialog = (function (self) {
 
             buttonObj.innerHTML = '';
             $(dialogObj).clearChild();
+            dialogObj.style.backgroundColor = '';
+            dialogObj.style.borderColor = '';
             document.body.removeChild(dialogObj);
             if ($('#m-bgDiv_' + dialogGUID).length > 0)
             {
@@ -288,6 +290,8 @@ $.dialog = (function (self) {
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
                     ele.style.display = 'block';
+                    dialogObj.style.backgroundColor = 'transparent';
+                    dialogObj.style.borderColor = 'transparent';
                 }
                 else
                 {
