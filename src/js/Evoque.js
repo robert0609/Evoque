@@ -206,6 +206,7 @@ var Evoque = (function (self)
                     if ($.checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
                     {
                         _innerArray[0].setAttribute('value', val);
+                        _innerArray[0].value = val;
                     }
                 }
             }
