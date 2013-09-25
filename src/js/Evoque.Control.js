@@ -7,17 +7,26 @@ Evoque.control = (function (self)
         maxVal: 0
     };
 
-    self.rangeSelect = function (option)
+    self.rangeSelect = function (option, inputElement)
     {
         if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
-        var id = option.getValueOfProperty('inputId', defaultOption_RangeSelect);
-        if ($.isStringEmpty(id))
+        var input;
+        if ($.checkType(inputElement) === type.eElement)
         {
-            throw 'Parameter is error!';
+            input = $(inputElement);
+        }
+        else
+        {
+            var id = option.getValueOfProperty('inputId', defaultOption_RangeSelect);
+            if ($.isStringEmpty(id))
+            {
+                throw 'Parameter is error!';
+            }
+            input = $('input[id="' + id + '"]');
         }
         var min = option.getValueOfProperty('minVal', defaultOption_RangeSelect);
         var max = option.getValueOfProperty('maxVal', defaultOption_RangeSelect);
@@ -25,8 +34,11 @@ Evoque.control = (function (self)
         {
             throw 'Error:[min] > [max]';
         }
-        $('input[id="' + id + '"][type="text"]').each(function () {
-            generateRange(this);
+        input.each(function () {
+            if ($(this).getAttr('type') == 'text')
+            {
+                generateRange(this);
+            }
         });
 
         function generateRange(input)
@@ -93,21 +105,30 @@ Evoque.control = (function (self)
         onclick: function () {}
     };
 
-    self.button = function (option)
+    self.button = function (option, inputElement)
     {
         if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
-        var id = option.getValueOfProperty('inputId', defaultOption_Button);
-        if ($.isStringEmpty(id))
+        var btn;
+        if ($.checkType(inputElement) === type.eElement)
         {
-            throw 'Parameter is error!';
+            btn = $(inputElement);
         }
-        $('#' + id)[0].onclick = null;
+        else
+        {
+            var id = option.getValueOfProperty('inputId', defaultOption_Button);
+            if ($.isStringEmpty(id))
+            {
+                throw 'Parameter is error!';
+            }
+            btn = $('#' + id);
+        }
+        btn[0].onclick = null;
         var handler = option.getValueOfProperty('onclick', defaultOption_Button);
-        $('#' + id).addEventHandler('click', function () {
+        btn.addEventHandler('click', function () {
             $.dialog.showLoading('click event!!!!');
             handler.apply(this, arguments);
             location.reload();
@@ -120,20 +141,28 @@ Evoque.control = (function (self)
         dock: 'top'
     };
 
-    self.sliderBar = function (option)
+    self.sliderBar = function (option, divElement)
     {
         if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
         option = $(option);
-        var id = option.getValueOfProperty('divId', defaultOption_SliderBar);
-        if ($.isStringEmpty(id))
+        var divCollection;
+        if ($.checkType(divElement) === type.eElement)
         {
-            throw 'Parameter is error!';
+            divCollection = $(divElement);
+        }
+        else
+        {
+            var id = option.getValueOfProperty('divId', defaultOption_SliderBar);
+            if ($.isStringEmpty(id))
+            {
+                throw 'Parameter is error!';
+            }
+            divCollection = $('#' + id);
         }
         var dock = option.getValueOfProperty('dock', defaultOption_SliderBar).toLowerCase();
-        var divCollection = $('#' + id);
         if (divCollection.length > 0)
         {
             divCollection[0].style.position = 'fixed';
@@ -158,22 +187,29 @@ Evoque.control = (function (self)
     Evoque.createRangeSelect = function (option)
     {
         option = option || {};
-        option.inputId = this.getAttr('id');
-        self.rangeSelect(option);
+        this.each(function () {
+            self.rangeSelect(option, this);
+        });
     };
 
     Evoque.createButton = function (option)
     {
         option = option || {};
-        option.inputId = this.getAttr('id');
-        self.button(option);
+        if (this.length < 1)
+        {
+            return null;
+        }
+        self.button(option, this[0]);
     };
 
     Evoque.createSliderBar = function (option)
     {
         option = option || {};
-        option.divId = this.getAttr('id');
-        self.sliderBar(option);
+        if (this.length < 1)
+        {
+            return null;
+        }
+        self.sliderBar(option, this[0]);
     };
 
     return self;

@@ -11,36 +11,57 @@ Evoque.tab = (function (self)
         onTabSwitched: function () {}
     };
 
-    self.create = function (option)
+    self.create = function (option, tabDivElement)
     {
         if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
-        if ($.isStringEmpty(option.tabDivId))
-        {
-            throw 'Parameter is error!';
-        }
         option = $(option);
-        return new tabClass(option.getValueOfProperty('tabDivId', defaultOption), option.getValueOfProperty('onTabSwitched', defaultOption));
+        var tabId;
+        if ($.checkType(tabDivElement) === type.eElement)
+        {
+            tabId = tabDivElement;
+        }
+        else
+        {
+            tabId = option.getValueOfProperty('tabDivId', defaultOption);
+            if ($.isStringEmpty(tabId))
+            {
+                throw 'Parameter is error!';
+            }
+        }
+        return new tabClass(tabId, option.getValueOfProperty('onTabSwitched', defaultOption));
     };
 
-    function tabClass(tabDivId, onTabSwitched)
+    function tabClass(tabDivElement, onTabSwitched)
     {
-        var tabList = new Array();
+        var tabList = {};
 
-        this.Id = tabDivId;
-        var currentIndex = -1;
+        var currentIndex;
 
-        var titleArray = $('#' + tabDivId + '>.' + titleClass + '>div').sort(sortBy);
-        var contentArray = $('#' + tabDivId + '>.' + contentClass + '>div').sort(sortBy);
+        var tabDivObj = null;
+        if ($.checkType(tabDivElement) === type.eElement)
+        {
+            tabDivObj = $(tabDivElement);
+        }
+        else if ($.checkType(tabDivElement) === type.eString)
+        {
+            tabDivObj = $('#' + tabDivElement);
+        }
+        else
+        {
+            throw 'Invalid parameter!';
+        }
+        var titleArray = tabDivObj.getChild('.' + titleClass + '>div[' + indexAttrName + ']').sort(sortBy);
+        var contentArray = tabDivObj.getChild('.' + contentClass + '>div[' + indexAttrName + ']').sort(sortBy);
 
         for (var i = 0; i < titleArray.length; ++i)
         {
             var title = titleArray[i];
             var idx = title.getAttribute(indexAttrName);
             var content = contentArray[i];
-            tabList.push(new tcPairClass(idx, title, content));
+            tabList[idx] = new tcPairClass(idx, title, content);
         }
 
         function tcPairClass(index, title, content)
@@ -65,28 +86,22 @@ Evoque.tab = (function (self)
 
         function switchTo(tabIndex, tabSwitchedHandler)
         {
-            if (currentIndex == tabIndex)
+            if ($.checkType(currentIndex) !== type.eUndefined)
             {
-                return;
-            }
-            for (var i = 0; i < tabList.length; ++i)
-            {
-                var pair = tabList[i];
-                if (pair.TabIndex == tabIndex)
+                if (currentIndex == tabIndex)
                 {
-                    pair.Content.style.display = 'block';
-                    $(pair.Title).addClass('active');
+                    return;
                 }
-                else
-                {
-                    pair.Content.style.display = 'none';
-                    $(pair.Title).removeClass('active');
-                }
+                $(tabList[currentIndex].Title).removeClass('active');
+                $(tabList[currentIndex].Content).hide();
             }
+
+            $(tabList[tabIndex].Title).addClass('active');
+            $(tabList[tabIndex].Content).show();
 
             if ($.checkType(tabSwitchedHandler) === type.eFunction)
             {
-                tabSwitchedHandler({
+                tabSwitchedHandler.call(tabList[tabIndex].Content, {
                     lastSelectIndex : currentIndex,
                     currentSelectIndex : tabIndex
                 });
@@ -94,9 +109,10 @@ Evoque.tab = (function (self)
             currentIndex = tabIndex;
         }
 
-        if (tabList.length > 0)
+        contentArray.hide();
+        if (titleArray.length > 0)
         {
-            switchTo(tabList[0].TabIndex);
+            switchTo(Number(titleArray.getAttr(indexAttrName)));
         }
     }
 
@@ -104,8 +120,9 @@ Evoque.tab = (function (self)
     Evoque.createTab = function (option)
     {
         option = option || {};
-        option.tabDivId = this.getAttr('id');
-        return self.create(option);
+        this.each(function () {
+            self.create(option, this);
+        });
     };
 
     return self;
