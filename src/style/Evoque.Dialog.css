@@ -15,9 +15,16 @@
     background-color: rgba(0, 0, 0, 0.75);
     border-radius: 5px;
     color: #FFF;
-    font: 1.2em/1.5em HelveticaNeue, Helvetica, STHeiTi, sans-serif;
+    /*font: 1.2em/1.5em HelveticaNeue, Helvetica, STHeiTi, sans-serif;*/
     text-align: center;
     line-height: 25px;
+    margin: 0;
+    padding: 0;
+}
+.mdialog-dg-div-raw{
+    position: absolute;
+    left: 50%;
+    top: 50%;
     margin: 0;
     padding: 0;
 }
@@ -31,6 +38,10 @@
 .mdialog-content-div{
     margin-top: 6px;
     margin-bottom: 10px;
+    padding: 0;
+}
+.mdialog-content-div-raw{
+    margin: 0;
     padding: 0;
 }
 .mdialog-button-div{

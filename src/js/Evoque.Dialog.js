@@ -173,7 +173,6 @@ $.dialog = (function (self) {
 
             dialogObj = document.createElement('div');
             dialogObj.setAttribute('align', 'center');
-            $(dialogObj).addClass('mdialog-dg-div');
             dialogObj.style.zIndex = zIdx + 1;
 
             titleObj = document.createElement('div');
@@ -181,7 +180,6 @@ $.dialog = (function (self) {
             $(titleObj).addClass('mdialog-title-div');
 
             contentObj = document.createElement('div');
-            $(contentObj).addClass('mdialog-content-div');
 
             buttonObj = document.createElement('div');
             $(buttonObj).addClass('mdialog-button-div');
@@ -257,8 +255,8 @@ $.dialog = (function (self) {
 
             buttonObj.innerHTML = '';
             $(dialogObj).clearChild();
-            dialogObj.style.backgroundColor = '';
-            dialogObj.style.borderColor = '';
+            $(dialogObj).setAttr('class', '');
+            $(contentObj).setAttr('class', '');
             document.body.removeChild(dialogObj);
             if ($('#m-bgDiv_' + dialogGUID).length > 0)
             {
@@ -290,12 +288,14 @@ $.dialog = (function (self) {
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
                     ele.style.display = 'block';
-                    dialogObj.style.backgroundColor = 'transparent';
-                    dialogObj.style.borderColor = 'transparent';
+                    $(dialogObj).addClass('mdialog-dg-div-raw');
+                    $(contentObj).addClass('mdialog-content-div-raw');
                 }
                 else
                 {
                     contentObj.innerHTML = content;
+                    $(dialogObj).addClass('mdialog-dg-div');
+                    $(contentObj).addClass('mdialog-content-div');
                 }
                 dialogObj.appendChild(contentObj);
             }
