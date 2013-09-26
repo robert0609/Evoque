@@ -51,6 +51,7 @@ $.dialog = (function (self) {
         var onClickYes = null;
         var onClickNo = null;
         var onClickClose = null;
+        var onQuiting = null;
 
         var contentParentCache = null;
 
@@ -167,7 +168,17 @@ $.dialog = (function (self) {
             bgObj.style.height = getbackgroundHeight() + 'px';
             bgObj.style.zIndex = zIdx;
             bgObj.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
-            $(bgObj).addEventHandler('click', function () {
+            //增加点击背景返回的事件处理器
+            $(bgObj).addEventHandler('click', function (event) {
+                var result;
+                if ($.checkType(onQuiting) === type.eFunction)
+                {
+                    result = onQuiting.call(this, event);
+                }
+                if (result == false)
+                {
+                    return;
+                }
                 reset();
             });
 
@@ -363,6 +374,7 @@ $.dialog = (function (self) {
                     document.body.appendChild(bgObj);
                 }
             }
+            onQuiting = option.getValueOfProperty('onQuiting', defaultOption);
 
             document.body.appendChild(dialogObj);
             var w = option.getValueOfProperty('width', defaultOption);
@@ -435,6 +447,7 @@ $.dialog = (function (self) {
                 onClickYes: function(){},
                 onClickNo: function(){},
                 onClickClose: function(){},
+                onQuiting: function(){},
                 // customButton example:{ caption: 'xxxx', onClick: function(){} }
                 customButton: [],
                 autoClose: true
