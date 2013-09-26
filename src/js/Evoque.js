@@ -315,10 +315,6 @@ var Evoque = (function (self)
         {
             return class2type[ty];
         }
-        else if (isArrayList(obj))
-        {
-            return type.eArraylist;
-        }
         else if (obj instanceof Element)
         {
             return type.eElement;
@@ -326,6 +322,10 @@ var Evoque = (function (self)
         else if (obj instanceof Node)
         {
             return type.eNode;
+        }
+        else if (isArrayList(obj))
+        {
+            return type.eArraylist;
         }
         else
         {
