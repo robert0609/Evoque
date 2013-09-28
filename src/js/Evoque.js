@@ -174,7 +174,18 @@ var Evoque = (function (self)
                 switch ($.checkType(_innerArray[0]))
                 {
                     case type.eElement:
-                        ret = _innerArray[0].getAttribute('value');
+                        if (_innerArray[0] instanceof HTMLInputElement)
+                        {
+                            ret = _innerArray[0].value;
+                            if ($.isStringEmpty(ret))
+                            {
+                                ret = _innerArray[0].getAttribute('value');
+                            }
+                        }
+                        else
+                        {
+                            ret = _innerArray[0].getAttribute('value');
+                        }
                         break;
                     case type.eNumber:
                     case type.eBoolean:
