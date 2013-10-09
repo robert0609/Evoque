@@ -10,25 +10,34 @@
     <script type="text/javascript">
         $(function ()
         {
-            $('#testTab').createTab({
-                onTabSwitched: function (e) {
-                    alert(e.currentSelectIndex);
-                }
-            });
+            $('.mtab').createTab();
         });
     </script>
 </head>
 <body>
-    <div id="testTab">
+    <div id="tabT1" class="mtab">
         <div class="mtab-title">
-            <div tabIndex="2">title2</div>
-            <div tabIndex="1">title1</div>
-            <div tabIndex="3">title3</div>
+            <div tabIndex="2">tabT1_title2</div>
+            <div tabIndex="1">tabT1_title1</div>
+            <div tabIndex="3">tabT1_title3</div>
         </div>
         <div class="mtab-content">
-            <div tabIndex="1">content1</div>
-            <div tabIndex="2">content2</div>
-            <div tabIndex="3">content3</div>
+            <div tabIndex="1">tabT1_content1</div>
+            <div tabIndex="2">tabT1_content2</div>
+            <div tabIndex="3">tabT1_content3</div>
+        </div>
+    </div>
+
+    <div id="tabT2" class="mtab">
+        <div class="mtab-title">
+            <div tabIndex="1">tabT2_title1</div>
+            <div tabIndex="2">tabT2_title2</div>
+            <div tabIndex="3">tabT2_title3</div>
+        </div>
+        <div class="mtab-content">
+            <div tabIndex="1">tabT2_content1</div>
+            <div tabIndex="2">tabT2_content2</div>
+            <div tabIndex="3">tabT2_content3</div>
         </div>
     </div>
 </body>

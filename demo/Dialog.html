@@ -10,8 +10,8 @@
     <script type="text/javascript">
         function click()
         {
-            $.dialog.alert('alert 1');
-            $.dialog.alert('dialog');
+            //$.dialog.alert('alert 1');
+            //$.dialog.alert('dialog');
             $.dialog.showMessageBox({
                 title:'title',
                 icon:'',
@@ -33,7 +33,23 @@
                             return false;
                         }
                     }
-                ]
+                ],
+                onQuiting: function () {
+                    alert('onQuiting---1');
+                },
+                onDialogClosed: function () {
+                    alert('onDialogClosed---1');
+                }
+            });
+            $.dialog.showModalDialog({
+                content:'dialog',
+                onQuiting: function () {
+                    alert('onQuiting---2');
+                },
+                onDialogClosed: function () {
+                    alert('onDialogClosed---2');
+                },
+                autoClose: false
             });
         }
     </script>
@@ -41,6 +57,6 @@
 <body>
     <a href="javascript:click()">click here, show dialogs!</a>
 
-    <div id="dialog" style="display: none;"><h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6></div>
+    <div id="dialog" style="background-color: green; display: none;"><h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6></div>
 </body>
 </html>

@@ -13,7 +13,8 @@
         $(function ()
         {
             $('#tableCalender').createCalendar({
-                originalDate: new Date(2013, 8, 30),
+                startDate: new Date(2013, 7, 13),
+                originalDate: new Date(2013, 7, 25),
                 callBack: function (e, arg) {
                     $.dialog.alert(arg.selectDate);
                 }
