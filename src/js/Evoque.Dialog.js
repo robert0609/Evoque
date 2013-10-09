@@ -52,6 +52,7 @@ $.dialog = (function (self) {
         var onClickNo = null;
         var onClickClose = null;
         var onQuiting = null;
+        var onDialogClosed = null;
 
         var contentParentCache = null;
 
@@ -274,6 +275,10 @@ $.dialog = (function (self) {
                 document.body.removeChild(bgObj);
             }
 
+            if ($.checkType(onDialogClosed) === type.eFunction)
+            {
+                onDialogClosed.call(window);
+            }
             //弹出消息序列中下一个消息框
             exeCmd();
         }
@@ -375,6 +380,7 @@ $.dialog = (function (self) {
                 }
             }
             onQuiting = option.getValueOfProperty('onQuiting', defaultOption);
+            onDialogClosed = option.getValueOfProperty('onDialogClosed', defaultOption);
 
             document.body.appendChild(dialogObj);
             var w = option.getValueOfProperty('width', defaultOption);
@@ -450,6 +456,7 @@ $.dialog = (function (self) {
                 onQuiting: function(){},
                 // customButton example:{ caption: 'xxxx', onClick: function(){} }
                 customButton: [],
+                onDialogClosed: function(){},
                 autoClose: true
             };
 
