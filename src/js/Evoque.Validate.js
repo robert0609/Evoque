@@ -20,10 +20,13 @@ $.validate = (function (self)
     var compare = 'compare';
     var compare_target = 'target';
 
-    var errorMsg = "errorMessage"
+    var errorMsg = "errorMessage";
+
+    var container = null;
 
     self.valid = function (containerId)
     {
+        container = $('#' + containerId);
         var selectArray = $('#' + containerId + ' select[' + validAttrName + ']');
         for (var i = 0; i < selectArray.length; ++i)
         {
@@ -132,7 +135,7 @@ $.validate = (function (self)
         var empty = json[require_empty];
         if ($.isStringEmpty(val))
         {
-            $.dialog.alert(json[errorMsg]);
+            container.alert(json[errorMsg]);
             ret = false;
         }
         else
@@ -141,7 +144,7 @@ $.validate = (function (self)
             {
                 if (val == empty)
                 {
-                    $.dialog.alert(json[errorMsg]);
+                    container.alert(json[errorMsg]);
                     ret = false;
                 }
             }
@@ -160,7 +163,7 @@ $.validate = (function (self)
         {
             if (val.length > Number(max))
             {
-                $.dialog.alert(json[errorMsg]);
+                container.alert(json[errorMsg]);
                 ret = false;
             }
         }
@@ -168,7 +171,7 @@ $.validate = (function (self)
         {
             if (val.length < Number(min))
             {
-                $.dialog.alert(json[errorMsg]);
+                container.alert(json[errorMsg]);
                 ret = false;
             }
         }
@@ -185,7 +188,7 @@ $.validate = (function (self)
         {
             if (val > Number(max))
             {
-                $.dialog.alert(json[errorMsg]);
+                container.alert(json[errorMsg]);
                 ret = false;
             }
         }
@@ -193,7 +196,7 @@ $.validate = (function (self)
         {
             if (val < Number(min))
             {
-                $.dialog.alert(json[errorMsg]);
+                container.alert(json[errorMsg]);
                 ret = false;
             }
         }
@@ -211,7 +214,7 @@ $.validate = (function (self)
             var reg = new RegExp(regStr);
             if (!reg.test(val))
             {
-                $.dialog.alert(json[errorMsg]);
+                container.alert(json[errorMsg]);
                 ret = false;
             }
         }
@@ -230,7 +233,7 @@ $.validate = (function (self)
             {
                 if (val != tarVal)
                 {
-                    $.dialog.alert(json[errorMsg]);
+                    container.alert(json[errorMsg]);
                     ret = false;
                 }
             }

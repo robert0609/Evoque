@@ -7,6 +7,15 @@
     margin: 0;
     padding: 0;
 }
+.mdialog-bg-div-white{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #FFF;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+}
 .mdialog-dg-div{
     border: 1px solid #336699;
     position: absolute;

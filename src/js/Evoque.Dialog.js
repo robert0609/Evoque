@@ -36,6 +36,7 @@ $.dialog = (function (self) {
         var sWidth = null;
         var sHeight = null;
         var bgObj = null;
+        var bgObjWhite = null;
         var dialogObj = null;
         var titleObj = null;
         var contentObj = null;
@@ -89,6 +90,9 @@ $.dialog = (function (self) {
         {
             this.showMessageBox({
                 content: loadingMsg,
+                onQuiting: function () {
+                    return false;
+                },
                 autoClose: false
             });
             //TODO:这里有个Bug：在调用完alert方法之后，接着调用showLoading方法，此处的callback回调会立即调用
@@ -183,6 +187,14 @@ $.dialog = (function (self) {
                 reset();
             });
 
+            bgObjWhite = document.createElement('div');
+            bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + dialogGUID);
+            $(bgObjWhite).addClass('mdialog-bg-div-white');
+            bgObjWhite.style.width = sWidth + 'px';
+            bgObjWhite.style.height = getbackgroundHeight() + 'px';
+            bgObjWhite.style.zIndex = zIdx;
+            bgObjWhite.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
+
             dialogObj = document.createElement('div');
             dialogObj.setAttribute('align', 'center');
             dialogObj.style.zIndex = zIdx + 1;
@@ -273,6 +285,10 @@ $.dialog = (function (self) {
             if ($('#m-bgDiv_' + dialogGUID).length > 0)
             {
                 document.body.removeChild(bgObj);
+            }
+            if ($('#m-bgDivWhite_' + dialogGUID).length > 0)
+            {
+                document.body.removeChild(bgObjWhite);
             }
 
             if ($.checkType(onDialogClosed) === type.eFunction)
@@ -368,6 +384,8 @@ $.dialog = (function (self) {
                 var autoClose = option.getValueOfProperty('autoClose', defaultOption);
                 if (autoClose)
                 {
+                    bgObjWhite.style.height = getbackgroundHeight() + 'px';
+                    document.body.appendChild(bgObjWhite);
                     // 等待2秒自动消失
                     window.setTimeout(function () {
                         disappearAnimation(dialogObj);

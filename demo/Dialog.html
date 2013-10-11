@@ -10,8 +10,8 @@
     <script type="text/javascript">
         function click()
         {
-            //$.dialog.alert('alert 1');
-            //$.dialog.alert('dialog');
+            $.dialog.alert('alert 1');
+            $.dialog.alert('dialog');
             $.dialog.showMessageBox({
                 title:'title',
                 icon:'',
@@ -51,6 +51,8 @@
                 },
                 autoClose: false
             });
+            
+            $.dialog.showLoading('loading');
         }
     </script>
 </head>
@@ -58,5 +60,9 @@
     <a href="javascript:click()">click here, show dialogs!</a>
 
     <div id="dialog" style="background-color: green; display: none;"><h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6></div>
+
+    <div id="loading" style="display: none;">
+        <img src="../src/image/Evoque.Dialog/loading.gif">
+    </div>
 </body>
 </html>
