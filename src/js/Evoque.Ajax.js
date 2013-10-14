@@ -10,7 +10,9 @@ $.ajax = (function (self)
         // 'text'(default), 'json'
         returnType : 'text',
         onSuccess : function (returnObj) {},
-        onFail : function () {}
+        onFail : function () {},
+        // seconds
+        timeOut : 30
     };
 
     self.get = function (option)
@@ -31,6 +33,13 @@ $.ajax = (function (self)
         }
         xmlhttp.open('get', urlTemp + spliter + serialize(option.getValueOfProperty('parameter', defaultOption)), true);
         xmlhttp.send();
+        if (!xmlhttp.evoque_sptTimeout)
+        {
+            xmlhttp.timeoutId = setTimeout(function () {
+                xmlhttp.abort();
+                xmlhttp.ontimeout();
+            }, xmlhttp.timeout);
+        }
     };
 
     self.post = function (option)
@@ -42,6 +51,13 @@ $.ajax = (function (self)
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xmlhttp.send(serialize(option.getValueOfProperty('parameter', defaultOption)));
+        if (!xmlhttp.evoque_sptTimeout)
+        {
+            xmlhttp.timeoutId = setTimeout(function () {
+                xmlhttp.abort();
+                xmlhttp.ontimeout();
+            }, xmlhttp.timeout);
+        }
     };
 
     function checkOption(option)
@@ -78,9 +94,21 @@ $.ajax = (function (self)
         var returnType = option.getValueOfProperty('returnType', defaultOption);
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
         var onFail = option.getValueOfProperty('onFail', defaultOption);
+        var timeOut = option.getValueOfProperty('timeOut', defaultOption);
+        // safari不支持timeout属性
+        xmlhttp.evoque_sptTimeout = true;
+        if ($.checkType(xmlhttp.timeout) === type.eUndefined)
+        {
+            xmlhttp.evoque_sptTimeout = false;
+        }
+        xmlhttp.timeout = timeOut * 1000;
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4)
             {
+                if (!xmlhttp.evoque_sptTimeout)
+                {
+                    clearTimeout(xmlhttp.timeoutId);
+                }
                 if (xmlhttp.status == 200)
                 {
                     if (returnType == 'json')
@@ -94,9 +122,22 @@ $.ajax = (function (self)
                 }
                 else
                 {
-                    onFail();
+                    onFail({ type: 'failed' });
                 }
+                xmlhttp = null;
             }
+        };
+        xmlhttp.onerror = function () {
+            if (!xmlhttp.evoque_sptTimeout)
+            {
+                clearTimeout(xmlhttp.timeoutId);
+            }
+            onFail({ type: 'error' });
+            xmlhttp = null;
+        };
+        xmlhttp.ontimeout = function () {
+            onFail({ type: 'timeout' });
+            xmlhttp = null;
         };
     }
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/json2.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        $(function () {
+            $.ajax.post({
+                url: 'http://10.2.3.18:2040/H5/A_AjaxLogin',
+                // json
+                parameter: {
+                    username: '18610567084',
+                    pwd: '123456',
+                    verifycode: '',
+                    userExpiresHours: false
+                },
+                // 'text'(default), 'json'
+                returnType: 'json',
+                onSuccess: function (returnObj)
+                {
+                    if (returnObj.IsSuccess)
+                    {
+                        $.dialog.alert('登录成功!');
+                    }
+                    else
+                    {
+                        $.dialog.alert(returnObj.Message);
+                    }
+                },
+                onFail: function (e)
+                {
+                    if (e.type === 'error')
+                    {
+                        $.dialog.alert('登录发生错误!');
+                    }
+                    else if (e.type === 'timeout')
+                    {
+                        $.dialog.alert('登录超时!');
+                    }
+                    else
+                    {
+                        $.dialog.alert('登录失败!');
+                    }
+                },
+                timeOut: 1
+            });
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

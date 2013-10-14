@@ -52,8 +52,8 @@ Evoque.dockForm = (function (self) {
 
         var docWidth = document.documentElement.clientWidth;
         var docHeight = document.documentElement.clientHeight;
-        var maxWidth = Math.floor(docWidth * 0.8);
-        var maxHeight = Math.floor(docHeight * 0.8);
+        var maxWidth = Math.floor(docWidth * 0.9);
+        var maxHeight = Math.floor(docHeight * 0.9);
 
         var div = document.createElement('div');
         $(div).addClass('dockform-dg-div');
