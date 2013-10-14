@@ -3,10 +3,15 @@ Evoque.loader = (function (self)
 {
     var defaultOption = {
         elementId: '',
-        loadingElementId: ''
+        loadingElementId: '',
+        url:'',
+        // json
+        query: {},
+        onSuccess : function () {},
+        onFail : function () {}
     };
 
-    self.create = function (option, element) {
+    self.load = function (option, element) {
         if ($.isObjectNull(option))
         {
             throw 'Parameter is null!';
@@ -23,7 +28,15 @@ Evoque.loader = (function (self)
         }
         var loading = option.getValueOfProperty('loadingElementId', defaultOption);
 
-        return new loaderClass(element, loading);
+        if ($.isObjectNull(element.__innerLoader) || !element.__innerLoader instanceof loaderClass)
+        {
+            element.__innerLoader = new loaderClass(element, loading);
+        }
+        var url = option.getValueOfProperty('url', defaultOption);
+        var query = option.getValueOfProperty('query', defaultOption);
+        var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
+        var onFail = option.getValueOfProperty('onFail', defaultOption);
+        element.__innerLoader.loadSomething(url, query, onSuccess, onFail);
     };
 
     function loaderClass(element, loadingElementId)
@@ -36,27 +49,48 @@ Evoque.loader = (function (self)
         }
 
         var parent = element.parentElement;
+        element.style.textAlign = 'center';
 
-        this.load = function (url, query)
+        this.loadSomething = function (url, query, onsuccess, onfail)
         {
             element.innerHTML = loadingElement;
+            $(element).show();
             $.ajax.get({
                 url : url,
                 parameter : query,
                 onSuccess : function (returnObj) {
                     recieveDiv.innerHTML = returnObj;
-                    for (var i = 0; i < recieveDiv.childNodes.length; ++i)
+                    var placeEle = element;
+                    var newEle = null;
+                    for (var i = recieveDiv.childNodes.length - 1; i > -1; --i)
                     {
-                        parent.insertBefore(recieveDiv.childNodes[i], element);
+                        newEle = recieveDiv.childNodes[i];
+                        parent.insertBefore(newEle, placeEle);
+                        placeEle = newEle;
                     }
+                    $(element).hide();
                     element.innerHTML = '';
+                    onsuccess.call(window);
                 },
-                onFail : function () {
+                onFail : function (e) {
+                    $(element).hide();
                     element.innerHTML = '';
+                    onfail.call(window, e);
                 }
             });
         };
     }
+
+    //API
+    Evoque.load = function (option)
+    {
+        option = option || {};
+        if (this.length < 1)
+        {
+            return;
+        }
+        self.load(option, this[0]);
+    };
 
     return self;
 }(Evoque.loader || {}));

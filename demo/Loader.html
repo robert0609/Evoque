@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript">
+        function clickHandler() {
+            var div = document.createElement('div');
+            div.innerHTML = 'bbbbb';
+
+            $('#container')[0].insertBefore(div, $('#placer')[0]);
+        }
+    </script>
+</head>
+<body>
+    <a href="javascript:clickHandler();">click</a>
+
+    <div id="container">
+        <div >aaaaa</div>
+        <div id="placer"></div>
+    </div>
+</body>
+</html>
