@@ -7,7 +7,7 @@ $.ajax = (function (self)
         url : '',
         // json
         parameter : {},
-        // 'text'(default), 'json'
+        // 'text'(default), 'json', 'html'
         returnType : 'text',
         onSuccess : function (returnObj) {},
         onFail : function () {},
@@ -91,10 +91,15 @@ $.ajax = (function (self)
 
     function bindEvent(xmlhttp, option)
     {
-        var returnType = option.getValueOfProperty('returnType', defaultOption);
+        var returnType = option.getValueOfProperty('returnType', defaultOption).toLowerCase();
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
         var onFail = option.getValueOfProperty('onFail', defaultOption);
         var timeOut = option.getValueOfProperty('timeOut', defaultOption);
+        // 设置返回值类型
+        if (returnType == 'html')
+        {
+            xmlhttp.responseType = 'document';
+        }
         // safari不支持timeout属性
         xmlhttp.evoque_sptTimeout = true;
         if ($.checkType(xmlhttp.timeout) === type.eUndefined)
@@ -113,11 +118,11 @@ $.ajax = (function (self)
                 {
                     if (returnType == 'json')
                     {
-                        onSuccess(JSON.parse(xmlhttp.responseText));
+                        onSuccess(JSON.parse(xmlhttp.response));
                     }
                     else
                     {
-                        onSuccess(xmlhttp.responseText);
+                        onSuccess(xmlhttp.response);
                     }
                 }
                 else

@@ -41,7 +41,6 @@ Evoque.loader = (function (self)
 
     function loaderClass(element, loadingElementId)
     {
-        var recieveDiv = document.createElement('div');
         var loadingElement = $('#' + loadingElementId).html();
         if (loadingElement === null)
         {
@@ -58,13 +57,14 @@ Evoque.loader = (function (self)
             $.ajax.get({
                 url : url,
                 parameter : query,
+                returnType : 'html',
                 onSuccess : function (returnObj) {
-                    recieveDiv.innerHTML = returnObj;
+                    var childs = returnObj.body.childNodes;
                     var placeEle = element;
                     var newEle = null;
-                    for (var i = recieveDiv.childNodes.length - 1; i > -1; --i)
+                    for (var i = childs.length - 1; i > -1; --i)
                     {
-                        newEle = recieveDiv.childNodes[i];
+                        newEle = childs[i];
                         parent.insertBefore(newEle, placeEle);
                         placeEle = newEle;
                     }
