@@ -31,7 +31,7 @@ $.ajax = (function (self)
         {
             spliter = '?';
         }
-        xmlhttp.open('get', urlTemp + spliter + serialize(option.getValueOfProperty('parameter', defaultOption)), true);
+        xmlhttp.open('get', urlTemp + spliter + serializeQuery(option.getValueOfProperty('parameter', defaultOption)), true);
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
         {
@@ -50,7 +50,7 @@ $.ajax = (function (self)
         bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send(serialize(option.getValueOfProperty('parameter', defaultOption)));
+        xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption)));
         if (!xmlhttp.evoque_sptTimeout)
         {
             xmlhttp.timeoutId = setTimeout(function () {
@@ -72,7 +72,7 @@ $.ajax = (function (self)
         }
     }
 
-    function serialize(parameter)
+    function serializeQuery(parameter)
     {
         var ret = '';
         for (var p in parameter)
@@ -87,6 +87,16 @@ $.ajax = (function (self)
             ret = ret.slice(0, -1);
         }
         return ret;
+    }
+
+    function serializeForm(parameter)
+    {
+        var formData = new FormData();
+        for (var p in parameter)
+        {
+            formData.append(p, parameter[p]);
+        }
+        return formData;
     }
 
     function bindEvent(xmlhttp, option)
