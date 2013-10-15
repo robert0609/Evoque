@@ -49,7 +49,7 @@ $.ajax = (function (self)
         var xmlhttp = new XMLHttpRequest();
         bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        // 使用FormData传递post数据，无须设置Content-Type. xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption)));
         if (!xmlhttp.evoque_sptTimeout)
         {
