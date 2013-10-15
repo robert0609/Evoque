@@ -100,6 +100,7 @@ $.ajax = (function (self)
         {
             xmlhttp.responseType = 'document';
         }
+        // 这里Chrome和Safari都不支持把 responseType 设置成'json'
         // safari不支持timeout属性
         xmlhttp.evoque_sptTimeout = true;
         if ($.checkType(xmlhttp.timeout) === type.eUndefined)
