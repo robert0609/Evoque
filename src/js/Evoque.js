@@ -55,6 +55,14 @@ var Evoque = (function (self)
         }
     }
 
+    function core_addUnloadHandler(fn, useCapture)
+    {
+        //DOM标准
+        if (document.addEventListener && $.checkType(fn) === type.eFunction) {
+            document.addEventListener('unload', fn, useCapture);
+        }
+    }
+
     //Extension
     Date.prototype.toCustomString = function () {
         var y = Number(this.getFullYear());
@@ -387,6 +395,11 @@ var Evoque = (function (self)
     {
         return core_slice.call(obj,0);
     };
+
+    $.unload = function (fn)
+    {
+        core_addUnloadHandler(fn, false);
+    }
     //Global method end
 
     self.getAttr = function (name) {

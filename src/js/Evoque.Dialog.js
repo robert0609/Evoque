@@ -1,9 +1,11 @@
 //Dependency: Evoque.js
 $.dialog = (function (self) {
     var zIndexStack = [];
+    var dialogList = [];
     zIndexStack.push(10000);
     var dialogGUID = 0;
     var gDialog = new dialogClass(dialogGUID, zIndexStack.slice(zIndexStack.length - 1)[0]);
+    dialogList.push(gDialog);
     ++dialogGUID;
 
     self.alert = function (message)
@@ -26,6 +28,13 @@ $.dialog = (function (self) {
 
     self.closeCurrentDialog = function () {
         return gDialog.closeCurrentDialog();
+    };
+
+    self.closeAll = function () {
+        for (var i = 0; i < dialogList.length; ++i)
+        {
+            dialogList[i].closeCurrentDialog();
+        }
     };
 
     function dialogClass(dialogGUID, zIdx)
@@ -524,6 +533,7 @@ $.dialog = (function (self) {
         {
             this.dialog = new dialogClass(dialogGUID, zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
             this.dialog.initialize();
+            dialogList.push(this.dialog);
             ++dialogGUID;
         }
     }
