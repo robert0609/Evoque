@@ -58,8 +58,8 @@ var Evoque = (function (self)
     function core_addUnloadHandler(fn, useCapture)
     {
         //DOM标准
-        if (document.addEventListener && $.checkType(fn) === type.eFunction) {
-            document.addEventListener('unload', fn, useCapture);
+        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+            window.addEventListener('unload', fn, useCapture);
         }
     }
 
