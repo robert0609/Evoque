@@ -101,11 +101,13 @@ Evoque.control = (function (self)
     };
 
     var defaultOption_Button = {
-        inputId: '',
+        elementId: '',
+        classUp: '',
+        classDown: '',
         onclick: function () {}
     };
 
-    self.button = function (option, inputElement)
+    self.button = function (option, element)
     {
         if ($.isObjectNull(option))
         {
@@ -113,21 +115,39 @@ Evoque.control = (function (self)
         }
         option = $(option);
         var btn;
-        if ($.checkType(inputElement) === type.eElement)
+        if ($.checkType(element) === type.eElement)
         {
-            btn = $(inputElement);
+            btn = $(element);
         }
         else
         {
-            var id = option.getValueOfProperty('inputId', defaultOption_Button);
+            var id = option.getValueOfProperty('elementId', defaultOption_Button);
             if ($.isStringEmpty(id))
             {
                 throw 'Parameter is error!';
             }
             btn = $('#' + id);
         }
-        btn[0].onclick = null;
         var handler = option.getValueOfProperty('onclick', defaultOption_Button);
+        element = btn[0];
+        if (element instanceof HTMLAnchorElement)
+        {
+            var href = btn.getAttr('href');
+            btn.setAttr('href', 'javascript:void(0);')
+            if ($.isStringEmpty(href) || /^javascript:.*/.test(href))
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+        else if (element instanceof HTMLInputElement)
+        {}
+
+
+        btn[0].onclick = null;
         btn.addEventHandler('click', function () {
             $.dialog.showLoading('click event!!!!');
             handler.apply(this, arguments);

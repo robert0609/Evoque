@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/json2.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        function uploadFile()
+        {
+            var files = $('#fileSelect')[0].files;
+            var parameter = {};
+            for (var i = 0; i < files.length; ++i)
+            {
+                parameter['file_' + i] = files[i];
+            }
+            $.ajax.post({
+                url : '/Upload/Index',
+                // json
+                parameter : parameter,
+                // 'text'(default), 'json', 'html'
+                returnType : 'json',
+                onSuccess : function (returnObj) {
+                    $.dialog.alert('Upload Success!');
+                },
+                onFail : function () {
+                    $.dialog.alert('Upload failed!');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <p><input id="fileSelect" type="file" accept="image/*" multiple="multiple"></p>
+    <p>
+        <input id="upload" type="button" value="上传" onclick="uploadFile()">
+        <progress id="uploadprogress" min="0" max="100" value="0">0</progress>
+    </p>
+</body>
+</html>
