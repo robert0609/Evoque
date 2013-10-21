@@ -4,25 +4,69 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Control.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Control.css" />
+    <style rel="stylesheet" type="text/css">
+        .pressDown{
+            color:#fff;
+            border:1px solid #f60;
+            background-color: #f60;
+            box-shadow: 1px 1px 5px rgba(0,0,0,.25) inset, 1px 1px rgba(255,255,255,1);
+        }
+        .button{
+            color:#333;
+            border: 1px solid #DADADA;
+            box-shadow:1px -1px 0px rgba(255,255,255,1) inset, -1px 1px 0px rgba(255,255,255,1) inset;
+            box-sizing:border-box;
+            width:30%;
+            height: 30%;
+            float: left;
+            text-decoration: none;
+            outline:none;
+            display: block;
+            line-height: 1.5;
+            font-size: 1.071428em;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            text-overflow:ellipsis;
+            cursor: pointer;
+            overflow: hidden;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+    </style>
     <script type="text/javascript">
         $(function ()
         {
-            $('#btn').createButton({
-                onclick: clickHandler
+            $('.button').createButton({
+                classDown: 'pressDown',
+                onclick: function () {
+                    $.dialog.showMessageBox({
+                        content:'Clicked button ' + this.id,
+                        autoClose: false
+                    })
+                }
             });
-        });
+            /*var evts = [ 'click', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend' ];
+            for (var i = 0; i < evts.length; ++i)
+            {
+                var evtName = evts[i];
+                $('.button').addEventHandler(evtName, function (e) { eDebugger.output('on' + e.type); });
+            }*/
 
-        function clickHandler() { alert('clicked me!'); }
+        });
     </script>
 </head>
 <body>
-<form>
-    <input type="button" id="btn" value="点我试试" onclick="alert('asfadf');" />
-</form>
+    <section><input type="button" id="btn1" value="button 1" class="button" /></section>
+    <br>
+    <br>
+    <section><a id="a1" href="#" class="button">a 2</a></section>
 </body>
 </html>

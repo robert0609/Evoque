@@ -3,6 +3,8 @@ var Evoque = (function (self)
     self.FrameworkName = 'Evoque.js';
     self.FrameworkVersion = '1.0.0';
 
+    var _hasTouchEvent = 'ontouchstart' in window;
+
     window.type = {
         eUndefined: 'undefined',
         eNull: 'null',
@@ -399,6 +401,11 @@ var Evoque = (function (self)
     $.unload = function (fn)
     {
         core_addUnloadHandler(fn, false);
+    }
+
+    $.hasTouchEvent = function ()
+    {
+        return _hasTouchEvent;
     }
     //Global method end
 

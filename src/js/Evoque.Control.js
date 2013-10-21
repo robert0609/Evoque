@@ -102,7 +102,6 @@ Evoque.control = (function (self)
 
     var defaultOption_Button = {
         elementId: '',
-        classUp: '',
         classDown: '',
         onclick: function () {}
     };
@@ -128,31 +127,36 @@ Evoque.control = (function (self)
             }
             btn = $('#' + id);
         }
-        var handler = option.getValueOfProperty('onclick', defaultOption_Button);
-        element = btn[0];
-        if (element instanceof HTMLAnchorElement)
+        var classDown = option.getValueOfProperty('classDown', defaultOption_Button);
+        var clickHandler = option.getValueOfProperty('onclick', defaultOption_Button);
+
+        if ($.hasTouchEvent())
         {
-            var href = btn.getAttr('href');
-            btn.setAttr('href', 'javascript:void(0);')
-            if ($.isStringEmpty(href) || /^javascript:.*/.test(href))
-            {
-
-            }
-            else
-            {
-
-            }
+            btn.addEventHandler('touchstart', function () {
+                $(this).addClass(classDown);
+            });
+            btn.addEventHandler('touchend', function () {
+                $(this).removeClass(classDown);
+            });
         }
-        else if (element instanceof HTMLInputElement)
-        {}
-
-
-        btn[0].onclick = null;
-        btn.addEventHandler('click', function () {
-            $.dialog.showLoading('click event!!!!');
-            handler.apply(this, arguments);
-            location.reload();
+        else
+        {
+            btn.addEventHandler('mousedown', function () {
+                $(this).addClass(classDown);
+            });
+            btn.addEventHandler('mouseup', function () {
+                $(this).removeClass(classDown);
+            });
+        }
+        btn.addEventHandler('mouseout', function (e) {
+            // WebKit提供了event.which来标识是否按下了键以及是哪个键。 为0则表示没有按下键
+            if (e.which == 0)
+            {
+                return;
+            }
+            $(this).removeClass(classDown);
         });
+        btn.addEventHandler('click', clickHandler);
     };
 
     var defaultOption_SliderBar = {
@@ -215,11 +219,9 @@ Evoque.control = (function (self)
     Evoque.createButton = function (option)
     {
         option = option || {};
-        if (this.length < 1)
-        {
-            return null;
-        }
-        self.button(option, this[0]);
+        this.each(function () {
+            self.button(option, this);
+        });
     };
 
     Evoque.createSliderBar = function (option)

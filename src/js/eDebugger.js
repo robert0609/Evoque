@@ -40,6 +40,33 @@ var eDebugger = (function (self)
         }
     };
 
+    self.output = function (msg)
+    {
+        var isConsoleAppend = false;
+        var ele = document.getElementById('divConsole');
+        if (ele != undefined && ele != null)
+        {
+            isConsoleAppend = true;
+        }
+
+        divConsole.innerHTML += '<br>';
+        try
+        {
+            divConsole.innerHTML += msg;
+        }
+        catch (ex)
+        {
+            divConsole.innerHTML = ex;
+        }
+        finally
+        {
+            if (!isConsoleAppend)
+            {
+                document.body.appendChild(divConsole);
+            }
+        }
+    }
+
     function detectVar(name, obj, deep)
     {
         var ty = typeof obj;
