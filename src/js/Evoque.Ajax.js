@@ -7,6 +7,8 @@ $.ajax = (function (self)
         url : '',
         // json
         parameter : {},
+        // Form(Only can be used when [method] == 'post'). Its value can be id or element
+        form: undefined,
         // 'text'(default), 'json', 'html'
         returnType : 'text',
         onSuccess : function (returnObj) {},
@@ -50,7 +52,7 @@ $.ajax = (function (self)
         bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
         // 使用FormData传递post数据，无须设置Content-Type. xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption)));
+        xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption), option[0].form));
         if (!xmlhttp.evoque_sptTimeout)
         {
             xmlhttp.timeoutId = setTimeout(function () {
@@ -89,9 +91,26 @@ $.ajax = (function (self)
         return ret;
     }
 
-    function serializeForm(parameter)
+    function serializeForm(parameter, form)
     {
-        var formData = new FormData();
+        var formData;
+        var typeF = $.checkType(form);
+        if (typeF === type.eElement && form instanceof HTMLFormElement)
+        {
+            formData = new FormData(form);
+        }
+        else if (typeF === type.eString && !$.isStringEmpty(form))
+        {
+            var formEle = $('#' + form);
+            if (formEle.length > 0)
+            {
+                formData = new FormData(formEle[0]);
+            }
+        }
+        if ($.isObjectNull(formData))
+        {
+            formData = new FormData();
+        }
         for (var p in parameter)
         {
             formData.append(p, parameter[p]);
@@ -155,6 +174,31 @@ $.ajax = (function (self)
             onFail({ type: 'timeout' });
             xmlhttp = null;
         };
+    }
+
+    //API
+    Evoque.post = function (option)
+    {
+        option = option || {};
+        if (this.length < 1)
+        {
+            return;
+        }
+        var form = this[0];
+        if (form instanceof HTMLFormElement)
+        {
+            if ($.isStringEmpty(option.url))
+            {
+                option.url = this.getAttr('action');
+            }
+            if ($.isStringEmpty(option.url))
+            {
+                return;
+            }
+            option.method = 'post';
+            option.form = form;
+            return $.ajax.post(option);
+        }
     }
 
     return self;
