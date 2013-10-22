@@ -177,62 +177,6 @@ var Evoque = (function (self)
             }
         };
 
-        this.getVal = function () {
-            var ret = null;
-            if (_innerArray.length > 0)
-            {
-                switch ($.checkType(_innerArray[0]))
-                {
-                    case type.eElement:
-                        if (_innerArray[0] instanceof HTMLInputElement)
-                        {
-                            ret = _innerArray[0].value;
-                            if ($.isStringEmpty(ret))
-                            {
-                                ret = _innerArray[0].getAttribute('value');
-                            }
-                        }
-                        else
-                        {
-                            ret = _innerArray[0].getAttribute('value');
-                        }
-                        break;
-                    case type.eNumber:
-                    case type.eBoolean:
-                        if ($.isObject(_innerArray[0]))
-                        {
-                            ret = _innerArray[0].valueOf();
-                        }
-                        else
-                        {
-                            ret = _innerArray[0];
-                        }
-                        break;
-                    case type.eDate:
-                        ret = _innerArray[0].toCustomString();
-                        break;
-                    default:
-                        ret = _innerArray[0].toString();
-                        break;
-                }
-            }
-            return ret;
-        };
-
-        this.setVal = function (val) {
-            if (_innerArray.length > 0)
-            {
-                for (var i = 0; i < _innerArray.length; ++i)
-                {
-                    if ($.checkType(_innerArray[i]) === type.eElement && _innerArray[i] instanceof HTMLInputElement)
-                    {
-                        _innerArray[0].setAttribute('value', val);
-                        _innerArray[0].value = val;
-                    }
-                }
-            }
-        };
-
         if (this.length === 0)
         {
             for (var fnName in self)
@@ -408,6 +352,56 @@ var Evoque = (function (self)
         return _hasTouchEvent;
     }
     //Global method end
+
+    self.getVal = function () {
+        var ret = null;
+        switch ($.checkType(this[0]))
+        {
+            case type.eElement:
+                if (this[0] instanceof HTMLInputElement)
+                {
+                    ret = this[0].value;
+                    if ($.isStringEmpty(ret))
+                    {
+                        ret = this[0].getAttribute('value');
+                    }
+                }
+                else
+                {
+                    ret = this[0].getAttribute('value');
+                }
+                break;
+            case type.eNumber:
+            case type.eBoolean:
+                if ($.isObject(this[0]))
+                {
+                    ret = this[0].valueOf();
+                }
+                else
+                {
+                    ret = this[0];
+                }
+                break;
+            case type.eDate:
+                ret = this[0].toCustomString();
+                break;
+            default:
+                ret = null;
+                break;
+        }
+        return ret;
+    };
+
+    self.setVal = function (val) {
+        this.each(function ()
+        {
+            if ($.checkType(this) === type.eElement && this instanceof HTMLInputElement)
+            {
+                this.setAttribute('value', val);
+                this.value = val;
+            }
+        });
+    };
 
     self.getAttr = function (name) {
         if ($.checkType(this[0]) === type.eElement)
