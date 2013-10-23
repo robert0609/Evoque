@@ -207,6 +207,116 @@ Evoque.control = (function (self)
         }
     };
 
+    var defaultOption_Rate = {
+        elementId: '',
+        bindField: '',
+        uncheckedClass: '',
+        checkedClass: 'checked',
+        pointLevels: [ 1, 2, 3, 4, 5 ],
+        description: [],
+        readonly: false
+    };
+
+    self.rate = function (option, element)
+    {
+        if ($.isObjectNull(option))
+        {
+            throw 'Parameter is null!';
+        }
+        option = $(option);
+        var ele;
+        if ($.checkType(element) === type.eElement)
+        {
+            ele = $(element);
+        }
+        else
+        {
+            var id = option.getValueOfProperty('elementId', defaultOption_Rate);
+            if ($.isStringEmpty(id))
+            {
+                throw 'Parameter is error!';
+            }
+            ele = $('#' + id);
+        }
+        if (ele.length < 1)
+        {
+            return;
+        }
+        var bindField = option.getValueOfProperty('bindField', defaultOption_Rate);
+        var uncheckedClass = option.getValueOfProperty('uncheckedClass', defaultOption_Rate);
+        var checkedClass = option.getValueOfProperty('checkedClass', defaultOption_Rate);
+        var pointLevels = option.getValueOfProperty('pointLevels', defaultOption_Rate);
+        var description = option.getValueOfProperty('description', defaultOption_Rate);
+        var readonly = option.getValueOfProperty('readonly', defaultOption_Rate);
+
+        var span = document.createElement('span');
+        var $span = $(span);
+        $span.addClass('rate');
+        for (var i = 0; i < pointLevels.length; ++i)
+        {
+            var eleI = document.createElement('i');
+            eleI.innerHTML = pointLevels[i];
+            eleI.setAttribute('idx', i);
+            if (i == 0)
+            {
+                $(eleI).addClass('leftRadius');
+            }
+            else if (i == pointLevels.length - 1)
+            {
+                $(eleI).addClass('rightRadius');
+            }
+            $(eleI).addEventHandler('click', function () {
+                var clickIdx = this.getAttribute('idx');
+                var isFind = false;
+                $span.getChild('i[idx]').each(function () {
+                    var idx = this.getAttribute('idx');
+                    var $this = $(this);
+                    if (isFind)
+                    {
+                        $this.removeClass(checkedClass);
+                        $this.addClass(uncheckedClass);
+                    }
+                    else
+                    {
+                        $this.removeClass(uncheckedClass);
+                        $this.addClass(checkedClass);
+                    }
+                    if (idx === clickIdx)
+                    {
+                        isFind = true;
+                    }
+                });
+                if (!readonly)
+                {
+                    $hid.setVal(this.innerHTML);
+                }
+                $desSpan.html('');
+                if (!$.isStringEmpty(description[clickIdx]))
+                {
+                    $desSpan.html(description[clickIdx]);
+                }
+            });
+            span.appendChild(eleI);
+        }
+        if (!readonly)
+        {
+            var hid = document.createElement('input');
+            var $hid = $(hid);
+            hid.type = 'hidden';
+            if (!$.isStringEmpty(bindField))
+            {
+                hid.id = bindField;
+                $hid.setAttr('name', bindField);
+            }
+            span.appendChild(hid);
+        }
+        var desSpan = document.createElement('span');
+        var $desSpan = $(desSpan);
+        span.appendChild(desSpan);
+
+        ele[0].parentElement.replaceChild(span, ele[0]);
+    };
+
     //API
     Evoque.createRangeSelect = function (option)
     {
@@ -232,6 +342,14 @@ Evoque.control = (function (self)
             return null;
         }
         self.sliderBar(option, this[0]);
+    };
+
+    Evoque.createRate = function (option)
+    {
+        option = option || {};
+        this.each(function () {
+            self.rate(option, this);
+        });
     };
 
     return self;

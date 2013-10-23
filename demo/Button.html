@@ -44,7 +44,7 @@
     <script type="text/javascript">
         $(function ()
         {
-            $('.button').createButton({
+            /*$('.button').createButton({
                 classDown: 'pressDown',
                 onclick: function () {
                     $.dialog.showMessageBox({
@@ -52,14 +52,16 @@
                         autoClose: false
                     })
                 }
-            });
+            });*/
             /*var evts = [ 'click', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend' ];
             for (var i = 0; i < evts.length; ++i)
             {
                 var evtName = evts[i];
                 $('.button').addEventHandler(evtName, function (e) { eDebugger.output('on' + e.type); });
             }*/
-
+            $('.raty').createRate({
+                description: ['很差', '差', '一般', '不错', '很好']
+            });
         });
     </script>
 </head>
@@ -68,5 +70,10 @@
     <br>
     <br>
     <section><a id="a1" href="#" class="button">a 2</a></section>
+
+    <div class="raty"></div>
+    <div class="raty"></div>
+    <div class="raty"></div>
+    <div class="raty"></div>
 </body>
 </html>

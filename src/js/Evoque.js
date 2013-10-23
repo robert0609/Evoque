@@ -553,6 +553,10 @@ var Evoque = (function (self)
     };
 
     self.addClass = function (className) {
+        if ($.isStringEmpty(className))
+        {
+            return;
+        }
         this.each(function ()
         {
             if ($.checkType(this) === type.eElement)
@@ -566,6 +570,10 @@ var Evoque = (function (self)
     };
 
     self.removeClass = function (className) {
+        if ($.isStringEmpty(className))
+        {
+            return;
+        }
         this.each(function ()
         {
             if ($.checkType(this) === type.eElement)
