@@ -213,6 +213,7 @@ Evoque.control = (function (self)
         uncheckedClass: '',
         checkedClass: 'checked',
         pointLevels: [ 1, 2, 3, 4, 5 ],
+        initPoint: 0,
         description: [],
         readonly: false
     };
@@ -246,58 +247,54 @@ Evoque.control = (function (self)
         var uncheckedClass = option.getValueOfProperty('uncheckedClass', defaultOption_Rate);
         var checkedClass = option.getValueOfProperty('checkedClass', defaultOption_Rate);
         var pointLevels = option.getValueOfProperty('pointLevels', defaultOption_Rate);
+        if (pointLevels.length < 1)
+        {
+            pointLevels = defaultOption_Rate.pointLevels;
+        }
+        else if ($.checkType(pointLevels[0]) !== type.eNumber)
+        {
+            pointLevels = defaultOption_Rate.pointLevels;
+        }
+        var initPoint = option.getValueOfProperty('initPoint', defaultOption_Rate);
         var description = option.getValueOfProperty('description', defaultOption_Rate);
         var readonly = option.getValueOfProperty('readonly', defaultOption_Rate);
 
+        var div = document.createElement('div');
+        var $div = $(div);
+        $div.addClass('rate');
         var span = document.createElement('span');
         var $span = $(span);
-        $span.addClass('rate');
+        $span.addClass('rateBtn');
+        var initPointValid = false;
+        var initPointIndex;
         for (var i = 0; i < pointLevels.length; ++i)
         {
             var eleI = document.createElement('i');
             eleI.innerHTML = pointLevels[i];
+            if (pointLevels[i] === initPoint)
+            {
+                initPointValid = true;
+                initPointIndex = i;
+            }
             eleI.setAttribute('idx', i);
+            var $eleI = $(eleI);
             if (i == 0)
             {
-                $(eleI).addClass('leftRadius');
+                $eleI.addClass('leftRadius');
             }
             else if (i == pointLevels.length - 1)
             {
-                $(eleI).addClass('rightRadius');
+                $eleI.addClass('rightRadius');
             }
-            $(eleI).addEventHandler('click', function () {
-                var clickIdx = this.getAttribute('idx');
-                var isFind = false;
-                $span.getChild('i[idx]').each(function () {
-                    var idx = this.getAttribute('idx');
-                    var $this = $(this);
-                    if (isFind)
-                    {
-                        $this.removeClass(checkedClass);
-                        $this.addClass(uncheckedClass);
-                    }
-                    else
-                    {
-                        $this.removeClass(uncheckedClass);
-                        $this.addClass(checkedClass);
-                    }
-                    if (idx === clickIdx)
-                    {
-                        isFind = true;
-                    }
+            if (!readonly)
+            {
+                $eleI.addEventHandler('click', function () {
+                    setPointIndex.call(this);
                 });
-                if (!readonly)
-                {
-                    $hid.setVal(this.innerHTML);
-                }
-                $desSpan.html('');
-                if (!$.isStringEmpty(description[clickIdx]))
-                {
-                    $desSpan.html(description[clickIdx]);
-                }
-            });
+            }
             span.appendChild(eleI);
         }
+        div.appendChild(span);
         if (!readonly)
         {
             var hid = document.createElement('input');
@@ -308,30 +305,110 @@ Evoque.control = (function (self)
                 hid.id = bindField;
                 $hid.setAttr('name', bindField);
             }
-            span.appendChild(hid);
+            div.appendChild(hid);
         }
         var desSpan = document.createElement('span');
         var $desSpan = $(desSpan);
-        span.appendChild(desSpan);
+        $desSpan.addClass('description');
+        div.appendChild(desSpan);
+        resetInitPoint(true);
 
-        ele[0].parentElement.replaceChild(span, ele[0]);
+        ele[0].parentElement.replaceChild(div, ele[0]);
+
+        function resetInitPoint(isInit)
+        {
+            if (initPointValid)
+            {
+                setPointIndex.call($span.getChild('i[idx="' + initPointIndex + '"]')[0]);
+            }
+            else
+            {
+                if (isInit === true)
+                {
+                    return;
+                }
+                $span.getChild('i[idx]').each(function () {
+                    var $this = $(this);
+                    $this.removeClass(checkedClass);
+                    $this.addClass(uncheckedClass);
+                });
+                if (!readonly)
+                {
+                    $hid.setVal('');
+                }
+                $desSpan.html('');
+            }
+        }
+
+        function setPointIndex()
+        {
+            var clickIdx = this.getAttribute('idx');
+            var isFind = false;
+            $span.getChild('i[idx]').each(function () {
+                var idx = this.getAttribute('idx');
+                var $this = $(this);
+                if (isFind)
+                {
+                    $this.removeClass(checkedClass);
+                    $this.addClass(uncheckedClass);
+                }
+                else
+                {
+                    $this.removeClass(uncheckedClass);
+                    $this.addClass(checkedClass);
+                }
+                if (idx === clickIdx)
+                {
+                    isFind = true;
+                }
+            });
+            if (!readonly)
+            {
+                $hid.setVal(this.innerHTML);
+            }
+            $desSpan.html('');
+            if (!$.isStringEmpty(description[clickIdx]))
+            {
+                $desSpan.html(description[clickIdx]);
+            }
+        }
+
+        return {
+            reset: resetInitPoint,
+            setPoint: function (point) {
+                var index = -1;
+                for (var i = 0; i < pointLevels.length; ++i)
+                {
+                    if (pointLevels[i] === point)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                setPointIndex.call($span.getChild('i[idx="' + index + '"]')[0]);
+            }
+        };
     };
 
     //API
     Evoque.createRangeSelect = function (option)
     {
         option = option || {};
-        this.each(function () {
-            self.rangeSelect(option, this);
-        });
+        if (this.length < 1)
+        {
+            return null;
+        }
+        return self.rangeSelect(option, this[0]);
     };
 
     Evoque.createButton = function (option)
     {
         option = option || {};
-        this.each(function () {
-            self.button(option, this);
-        });
+        if (this.length < 1)
+        {
+            return null;
+        }
+        return self.button(option, this[0]);
     };
 
     Evoque.createSliderBar = function (option)
@@ -341,15 +418,17 @@ Evoque.control = (function (self)
         {
             return null;
         }
-        self.sliderBar(option, this[0]);
+        return self.sliderBar(option, this[0]);
     };
 
     Evoque.createRate = function (option)
     {
         option = option || {};
-        this.each(function () {
-            self.rate(option, this);
-        });
+        if (this.length < 1)
+        {
+            return null;
+        }
+        return self.rate(option, this[0]);
     };
 
     return self;

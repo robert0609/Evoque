@@ -47,7 +47,7 @@ Evoque.loader = (function (self)
             loadingElement = '';
         }
 
-        var parent = element.parentElement;
+        var parent = element.previousElementSibling;
         element.style.textAlign = 'center';
 
         this.loadSomething = function (url, query, onsuccess, onfail)
@@ -59,15 +59,7 @@ Evoque.loader = (function (self)
                 parameter : query,
                 returnType : 'html',
                 onSuccess : function (returnObj) {
-                    var childs = returnObj.body.childNodes;
-                    var placeEle = element;
-                    var newEle = null;
-                    for (var i = childs.length - 1; i > -1; --i)
-                    {
-                        newEle = childs[i];
-                        parent.insertBefore(newEle, placeEle);
-                        placeEle = newEle;
-                    }
+                    parent.innerHTML += returnObj.body.innerHTML;
                     $(element).hide();
                     element.innerHTML = '';
                     onsuccess.call(window);

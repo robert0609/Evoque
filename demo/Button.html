@@ -42,6 +42,7 @@
         }
     </style>
     <script type="text/javascript">
+        var rat;
         $(function ()
         {
             /*$('.button').createButton({
@@ -59,21 +60,25 @@
                 var evtName = evts[i];
                 $('.button').addEventHandler(evtName, function (e) { eDebugger.output('on' + e.type); });
             }*/
-            $('.raty').createRate({
+            rat = $('.raty').createRate({
+                initPoint: 2,
                 description: ['很差', '差', '一般', '不错', '很好']
             });
         });
     </script>
 </head>
 <body>
-    <section><input type="button" id="btn1" value="button 1" class="button" /></section>
+<!--    <section><input type="button" id="btn1" value="button 1" class="button" /></section>
     <br>
     <br>
-    <section><a id="a1" href="#" class="button">a 2</a></section>
+    <section><a id="a1" href="#" class="button">a 2</a></section>-->
 
     <div class="raty"></div>
     <div class="raty"></div>
     <div class="raty"></div>
     <div class="raty"></div>
+
+    <button onclick="rat.reset();">reset</button>
+    <button onclick="rat.setPoint(3);">setPoint(3)</button>
 </body>
 </html>

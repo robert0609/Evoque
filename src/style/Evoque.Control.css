@@ -46,7 +46,11 @@
 .form-add-sub>.disabled{
     background-color:#ddd;
 }
+/*rate评分控件*/
 .rate{
+    display: -webkit-box;
+}
+.rate>.rateBtn{
     display: -webkit-box;
     -webkit-box-flex: 1;
     margin: 0 3%;
@@ -59,23 +63,28 @@
     border-radius: 2em;
     box-shadow: 1px 2px 2px rgba(0,0,0,.15) inset;
 }
-.rate>.leftRadius{
+.rate>.rateBtn>.leftRadius{
     border-radius: 2em 0 0 2em;
 }
-.rate>.rightRadius{
+.rate>.rateBtn>.rightRadius{
     border-radius: 0 2em 2em 0;
     border-right: none;
 }
-.rate>i{
+.rate>.rateBtn>i{
     display: block;
     -webkit-box-flex: 1;
     box-sizing: border-box;
     border-right: 1px solid #ccc;
 }
-.rate>.checked {
+.rate>.rateBtn>.checked {
     color: #fff;
     text-shadow: 1px 1px rgba(0,0,0,0.5);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fcaa0a), color-stop(1, #e47701));
     border-right: 1px solid #c56e17;
     box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+.rate>.description{
+    display: block;
+    width: 2em;
+    padding-left: .2em;
 }
