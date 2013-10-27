@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/json2.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        var video_element;
+
+        $(function () {
+            eDebugger.output('Width: ' + document.documentElement.clientWidth + '; Height: ' + document.documentElement.clientHeight);
+            video_element = $('#video')[0]
+            if (navigator.webkitGetUserMedia) { // opera should use opera.getUserMedia now, chrome use webkitGetUserMedia
+                //navigator.webkitGetUserMedia('video', success, error);
+                alert('webkitGetUserMedia');
+            }
+            if (navigator.getUserMedia) { // opera should use opera.getUserMedia now, chrome use webkitGetUserMedia
+                //navigator.webkitGetUserMedia('video', success, error);
+                alert('getUserMedia');
+            }
+//            var $camera = $('#camera');
+//            $camera.setStyle('width', '300px');
+//            $camera.setStyle('height', '400px');
+        });
+
+        function success(stream) {
+            video_element.src =stream;
+        }
+    </script>
+</head>
+<body>
+<video id="video" autoplay="" style="width: 300px; height: 400px;"></video>
+<!--<canvas id="camera"></canvas>-->
+<!--<img id="photo">-->
+</body>
+</html>

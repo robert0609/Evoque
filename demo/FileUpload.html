@@ -11,27 +11,95 @@
     <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
     <script type="text/javascript">
+        var maxWidth = 800;
+        var maxHeight = 600;
+
         function uploadFile()
         {
-            var files = $('#fileSelect')[0].files;
-            var parameter = {};
-            for (var i = 0; i < files.length; ++i)
-            {
-                parameter['file_' + i] = files[i];
-            }
-            $.ajax.post({
-                url : '/Upload/Index',
-                // json
-                parameter : parameter,
-                // 'text'(default), 'json', 'html'
-                returnType : 'json',
-                onSuccess : function (returnObj) {
-                    $.dialog.alert('Upload Success!');
-                },
-                onFail : function () {
-                    $.dialog.alert('Upload failed!');
-                }
-            });
+//            var files = $('#fileSelect')[0].files;
+//            var parameter = {};
+//            for (var i = 0; i < files.length; ++i)
+//            {
+//                parameter['file_' + i] = files[i];
+//            }
+//            $.ajax.post({
+//                url : '/Upload/Index',
+//                // json
+//                parameter : parameter,
+//                // 'text'(default), 'json', 'html'
+//                returnType : 'json',
+//                onSuccess : function (returnObj) {
+//                    $.dialog.alert('Upload Success!');
+//                },
+//                onFail : function () {
+//                    $.dialog.alert('Upload failed!');
+//                }
+//            });
+            var file = $('#fileSelect')[0].files[0];
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = new Image();
+                img.onload = function (e) {
+                    var w = e.target.width;
+                    var h = e.target.height;
+                    var ww = w, hh = h;
+                    if (w > maxWidth)
+                    {
+                        ww = maxWidth;
+                        hh = ww * h / w;
+                        if (hh > maxHeight)
+                        {
+                            hh = maxHeight;
+                            ww = hh * w / h;
+                        }
+                    }
+                    else
+                    {
+                        if (h > maxHeight)
+                        {
+                            hh = maxHeight;
+                            ww = hh * w / h;
+                        }
+                        else
+                        {
+                            ww = w;
+                            hh = h;
+                        }
+                    }
+                    e.target.style.width = ww + 'px';
+                    e.target.style.height = hh + 'px';
+
+                    var cvs = $('#imgUp')[0];
+                    cvs.width = maxWidth;
+                    cvs.height = maxHeight;
+                    var ctx = cvs.getContext("2d");
+                    // canvas清屏
+                    ctx.clearRect(0, 0, cvs.width, cvs.height);
+                    var x = 0, y = 0;
+                    if (ww < maxWidth)
+                    {
+                        x = (maxWidth - ww) / 2;
+                    }
+                    if (hh < maxHeight)
+                    {
+                        y = (maxHeight - hh) / 2;
+                    }
+                    ctx.strokeStyle = 'red';
+                    ctx.strokeRect(0, 0, maxWidth, maxHeight);
+                    ctx.scale(ww / w, hh / h);
+                    ctx.drawImage(e.target, 0, 0, e.target.width, e.target.height, x, y, e.target.width, e.target.height);
+
+                    var imgData =cvs.toDataURL("image/png");
+                    $('#ret').setStyle('width', '300px');
+                    $('#ret').setStyle('height', '400px');
+                    $('#ret')[0].src = imgData;
+
+                };
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
         }
     </script>
 </head>
@@ -41,5 +109,9 @@
         <input id="upload" type="button" value="上传" onclick="uploadFile()">
         <progress id="uploadprogress" min="0" max="100" value="0">0</progress>
     </p>
+    <p>
+        <canvas id="imgUp"></canvas>
+    </p>
+    <img id="ret">
 </body>
 </html>
