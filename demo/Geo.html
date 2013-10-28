@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Geo.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        function getLocation()
+        {
+            $.geo.getCurrentLocation({
+                onSuccess: function (obj) {
+                    var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=bdCityMapCallback&location=' + obj.lat + ',' + obj.lng + '&output=json';
+                    var callbackScript = document.createElement('script');
+                    callbackScript.type = 'text/javascript';
+                    callbackScript.src = reqUrl;
+                    document.body.appendChild(callbackScript);
+                },
+                onFail: function (obj) {
+                    var er = obj.error;
+                    $.dialog.alert(obj.message);
+                }
+            });
+        }
+
+        function bdCityMapCallback(response)
+        {
+            if (response.status == 0 )
+            {
+                $.dialog.showMessageBox({
+                    content: response.result.addressComponent.city,
+                    autoClose: false
+                });
+            }
+            else
+            {
+                $.dialog.alert('匹配城市失败!');
+            }
+        }
+    </script>
+</head>
+<body>
+    <button onclick="getLocation();">定位</button>
+</body>
+</html>

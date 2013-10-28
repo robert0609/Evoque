@@ -1,21 +1,6 @@
-//Dependency: Evoque.js, Evoque.Ajax.js, json2.js
+//Dependency: Evoque.js
 $.geo = (function (self)
 {
-    var defaultOption_getCity = {
-        lat: 0,
-        lng: 0
-    };
-
-    self.getCity = function (option) {
-        if ($.isObjectNull(option))
-        {
-            throw 'Parameter is null!';
-        }
-        option = $(option);
-        var lat = option.getValueOfProperty('lat', defaultOption_getCity);
-        var lng = option.getValueOfProperty('lng', defaultOption_getCity);
-    };
-
     var defaultOption_getCurrentLocation = {
         onSuccess: function () {},
         onFail: function () {}
@@ -34,10 +19,14 @@ $.geo = (function (self)
         {
             navigator.geolocation.getCurrentPosition(function (position) {
                 onSuccess.call(window, {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
                 });
-                position.coords.latitude
             }, function (positionError) {
-
+                onFail.call(window, {
+                    error: positionError,
+                    message: '定位失败!'
+                });
             }, {
                 enableHighAccuracy: true,
                 timeout: 30000
@@ -45,10 +34,9 @@ $.geo = (function (self)
         }
         else
         {
-            return {
-                isSuccess: false,
+            onFail.call(window, {
                 message: '您的浏览器不支持地理定位!'
-            };
+            });
         }
     };
 
