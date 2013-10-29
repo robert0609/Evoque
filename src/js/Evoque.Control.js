@@ -386,6 +386,14 @@ Evoque.control = (function (self)
                     }
                 }
                 setPointIndex.call($span.getChild('i[idx="' + index + '"]')[0]);
+            },
+            getPoint: function () {
+                var $checked = $span.getChild('.rateBtn>.checked');
+                if ($checked.length < 1)
+                {
+                    return null;
+                }
+                return $checked[$checked.length - 1].innerHTML;
             }
         };
     };

@@ -65,6 +65,14 @@
                 description: ['很差', '差', '一般', '不错', '很好']
             });
         });
+
+        function getP()
+        {
+            $.dialog.showMessageBox({
+                content: rat.getPoint(),
+                autoClose: false
+            });
+        }
     </script>
 </head>
 <body>
@@ -80,5 +88,6 @@
 
     <button onclick="rat.reset();">reset</button>
     <button onclick="rat.setPoint(3);">setPoint(3)</button>
+    <button onclick="getP();">getPoint()</button>
 </body>
 </html>
