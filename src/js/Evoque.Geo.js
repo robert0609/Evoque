@@ -23,10 +23,24 @@ $.geo = (function (self)
                     lng: position.coords.longitude
                 });
             }, function (positionError) {
-                onFail.call(window, {
-                    error: positionError,
-                    message: '定位失败!'
-                });
+                if (positionError == 1)
+                {
+                    onFail.call(window, {
+                        message: '您的设备禁止了地理定位服务!'
+                    });
+                }
+                else if (positionError == 3)
+                {
+                    onFail.call(window, {
+                        message: '地理定位响应超时!'
+                    });
+                }
+                else
+                {
+                    onFail.call(window, {
+                        message: '定位失败!'
+                    });
+                }
             }, {
                 enableHighAccuracy: true,
                 timeout: 30000
