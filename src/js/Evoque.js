@@ -90,6 +90,10 @@ var Evoque = (function (self)
         return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
     };
 
+    String.prototype.getBytesLength = function() {
+        return this.replace(/[^\x00-\xff]/gi, "--").length;
+    }
+
     window.$ = function (parameter)
     {
         var list = [];
