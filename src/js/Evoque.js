@@ -358,7 +358,7 @@ var Evoque = (function (self)
         switch ($.checkType(this[0]))
         {
             case type.eElement:
-                if (this[0] instanceof HTMLInputElement)
+                if (this[0] instanceof HTMLInputElement || this[0] instanceof HTMLTextAreaElement)
                 {
                     ret = this[0].value;
                     if ($.isStringEmpty(ret))
