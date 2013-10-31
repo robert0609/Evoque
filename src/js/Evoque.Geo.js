@@ -23,13 +23,13 @@ $.geo = (function (self)
                     lng: position.coords.longitude
                 });
             }, function (positionError) {
-                if (positionError == 1)
+                if (positionError.code == 1)
                 {
                     onFail.call(window, {
                         message: '您的设备禁止了地理定位服务!'
                     });
                 }
-                else if (positionError == 3)
+                else if (positionError.code == 3)
                 {
                     onFail.call(window, {
                         message: '地理定位响应超时!'
