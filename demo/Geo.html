@@ -41,9 +41,39 @@
                 $.dialog.alert('匹配城市失败!');
             }
         }
+
+        function search(latlng)
+        {
+            var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=searchCallback&location=' + latlng + '&output=json';
+            var callbackScript = document.createElement('script');
+            callbackScript.type = 'text/javascript';
+            callbackScript.src = reqUrl;
+            document.body.appendChild(callbackScript);
+        }
+
+        function searchCallback(res)
+        {
+            if (res.status == 0 )
+            {
+                $.dialog.showMessageBox({
+                    content: res.result.formatted_address,
+                    autoClose: false
+                });
+            }
+            else
+            {
+                $.dialog.alert('查询经纬度失败!');
+            }
+        }
     </script>
 </head>
 <body>
-    <button onclick="getLocation();">定位</button>
+    <div>
+        <button onclick="getLocation();">定位</button>
+    </div>
+    <div>
+        <input type="text" id="loc" />
+        <button onclick="search($('#loc').getVal());">查询经纬度</button>
+    </div>
 </body>
 </html>

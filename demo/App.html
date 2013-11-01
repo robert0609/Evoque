@@ -10,11 +10,17 @@
         $(function () {
             //alert(history.length);
         });
+
+        function clear()
+        {
+            history.go(0);
+        }
     </script>
 </head>
 <body>
     <a href="javascript:location.replace('Calendar.html');">location.replace()</a>
     <button onclick="history.replaceState(null, null, 'http://www.baidu.com');">history replace</button>
     <a rel="next" href="http://www.baidu.com">a Next</a>
+    <a href="javascript:clear();">clear</a>
 </body>
 </html>
