@@ -26,19 +26,22 @@ $.geo = (function (self)
                 if (positionError.code == 1)
                 {
                     onFail.call(window, {
-                        message: '您的设备禁止了地理定位服务!'
+                        code: positionError.code,
+                        message: '很抱歉系统禁用了定位功能'
                     });
                 }
                 else if (positionError.code == 3)
                 {
                     onFail.call(window, {
-                        message: '地理定位响应超时!'
+                        code: positionError.code,
+                        message: '地理定位响应超时'
                     });
                 }
                 else
                 {
                     onFail.call(window, {
-                        message: '定位失败!'
+                        code: positionError.code,
+                        message: '定位失败'
                     });
                 }
             }, {
@@ -49,7 +52,8 @@ $.geo = (function (self)
         else
         {
             onFail.call(window, {
-                message: '您的浏览器不支持地理定位!'
+                code: 4,
+                message: '很抱歉您的浏览器不支持地理定位'
             });
         }
     };
