@@ -5,18 +5,49 @@ $.history = (function (self)
     var SEQ_FLAG = 1;
     var END_FLAG = 9;
 
-    var mainFlowId = 'mainFlow';
+    var mainFlowId = '$$$$';
+    var currentFlowId = null;
 
     function getCacheList() {
         if (!!window.sessionStorage)
         {
+            var cache = [];
             var cacheStr = sessionStorage.getItem('sessionhistory');
-            if (!cacheStr)
+            if (!$.isStringEmpty(cacheStr))
             {
-                cacheStr = [];
-                sessionStorage.setItem('sessionhistory', cacheStr);
+                cache = JSON.parse(cacheStr);
             }
-            return cacheStr;
+            return {
+                push: function (obj) {
+                    if (cache.length > 0 && cache.slice(-1)[0].url === obj.url)
+                    {
+                        //refresh
+                        return;
+                    }
+                    cache.push(obj);
+                    sessionStorage.setItem('sessionhistory', JSON.stringify(cache));
+                },
+                pop: function (n) {
+                    if (!n || n < 1)
+                    {
+                        n = 1;
+                    }
+                    if (n > cache.length)
+                    {
+                        n = cache.length;
+                    }
+                    var ret;
+                    for (var i = 0; i < n; ++i)
+                    {
+                        ret = cache.pop();
+                    }
+                    sessionStorage.setItem('sessionhistory', JSON.stringify(cache));
+                    return ret;
+                },
+                length: function () {
+                    return cache.length;
+                }
+            };
         }
         else
         {
@@ -25,10 +56,17 @@ $.history = (function (self)
         }
     }
 
-    self.add = function (flowId, url, flag) {
+    self.add = function (url, flowId, flag) {
         if ($.isStringEmpty(flowId))
         {
-            flowId = mainFlowId;
+            if ($.isStringEmpty(currentFlowId))
+            {
+                flowId = mainFlowId;
+            }
+            else
+            {
+                flowId = currentFlowId;
+            }
         }
         if ($.isStringEmpty(url))
         {
@@ -43,6 +81,7 @@ $.history = (function (self)
             flag = $(flag).getVal();
         }
 
+        currentFlowId = flowId;
         getCacheList().push({
             flowId: flowId,
             flag: flag,
@@ -52,9 +91,9 @@ $.history = (function (self)
 
     self.back2LastUrl = function () {
         var _cacheList = getCacheList();
-        if (_cacheList.length > 0)
+        if (_cacheList.length() > 1)
         {
-            return _cacheList.pop().url;
+            return _cacheList.pop(2).url;
         }
         else
         {
@@ -66,12 +105,11 @@ $.history = (function (self)
 
     self.back2LastFlow = function () {
         var _cacheList = getCacheList();
-        if (_cacheList.length < 2)
+        if (_cacheList.length() < 2)
         {
             return null;
         }
-        var currentFlowId = _cacheList.pop().flowId;
-        while (_cacheList.length > 0)
+        while (_cacheList.length() > 0)
         {
             var pop = _cacheList.pop();
             if (pop.flowId == currentFlowId)
@@ -85,8 +123,18 @@ $.history = (function (self)
 
     self.length = function () {
         var _cacheList = getCacheList();
-        return _cacheList.length;
+        return _cacheList.length();
     };
 
     return self;
 }($.history || {}));
+
+function back2Last()
+{
+    $.loadPage($.history.back2LastUrl());
+}
+
+function back2LastFlow()
+{
+    $.loadPage($.history.back2LastFlow());
+}
