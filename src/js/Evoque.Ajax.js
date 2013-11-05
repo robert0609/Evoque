@@ -124,7 +124,7 @@ $.ajax = (function (self)
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
         var onFail = option.getValueOfProperty('onFail', defaultOption);
         var timeOut = option.getValueOfProperty('timeOut', defaultOption);
-        // 设置返回值类型
+        // 设置返回值类型(android平台目前不支持returnType == 'html')
         if (returnType == 'html')
         {
             xmlhttp.responseType = 'document';

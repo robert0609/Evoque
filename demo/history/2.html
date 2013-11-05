@@ -10,8 +10,13 @@
     <script type="text/javascript" src="../../src/js/Evoque.History.js"></script>
     <script type="text/javascript">
         $(function () {
-            $.history.add(location.href);
+            $.history.add();
         });
+
+        function back2Last()
+        {
+            $.loadPage($.history.back());
+        }
     </script>
 </head>
 <body>

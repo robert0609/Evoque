@@ -10,11 +10,16 @@
     <script type="text/javascript" src="../../src/js/Evoque.History.js"></script>
     <script type="text/javascript">
         $(function () {
-            $.history.add(location.href, 'sub');
+            $.history.add({ flag: $.history.CLEARCURFLOW });
         });
+
+        function back2Last()
+        {
+            $.loadPage($.history.back());
+        }
     </script>
 </head>
 <body>
-<a href="javascript:back2LastFlow();">back</a>
+<a href="javascript:back2Last();">back</a>
 </body>
 </html>

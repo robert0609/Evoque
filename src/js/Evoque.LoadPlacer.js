@@ -57,14 +57,16 @@ Evoque.loader = (function (self)
             $.ajax.get({
                 url : url,
                 parameter : query,
-                returnType : 'html',
-                onSuccess : function (returnObj) {
-                    parent.innerHTML += returnObj.body.innerHTML;
+                //returnType : 'html',
+                onSuccess: function (returnObj)
+                {
+                    parent.innerHTML += returnObj;
                     $(element).hide();
                     element.innerHTML = '';
                     onsuccess.call(window);
                 },
-                onFail : function (e) {
+                onFail: function (e)
+                {
                     $(element).hide();
                     element.innerHTML = '';
                     onfail.call(window, e);

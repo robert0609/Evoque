@@ -28,6 +28,14 @@ Evoque.webApp = (function (self)
 
     var noHistory = 'nohistory';
 
+    $.loadPageWithoutHistory = function (url, hisFlag) {
+        if ($.history)
+        {
+            $.history.setSession('historyflag', hisFlag);
+        }
+        location.replace(url);
+    };
+
     function enableNoHistoryHref()
     {
         var $nohishref = $('a[' + noHistory + '][href]');
@@ -40,14 +48,10 @@ Evoque.webApp = (function (self)
             }
             $this.setAttr('href', 'javascript:void(0);');
             $this.addEventHandler('click', function () {
-                location.replace(desUrl);
+                $.loadPageWithoutHistory(desUrl, 4);
             });
         })
     }
-
-    $.loadPageWithoutHistory = function (url) {
-        location.replace(url);
-    };
 
     $(function () {
         enableNoHistoryHref.call();
