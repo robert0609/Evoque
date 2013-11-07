@@ -170,6 +170,28 @@ $.history = (function (self)
         return null;
     };
 
+    self.back2LasrFlow = function () {
+        var _cacheList = getCacheList();
+        var currentFlowId = mainFlowId;
+        if (_cacheList.length() > 0)
+        {
+            currentFlowId = _cacheList.peek().flowId;
+        }
+        while (_cacheList.length() > 0)
+        {
+            var pop = _cacheList.pop();
+            if (pop.flowId == currentFlowId)
+            {
+                continue;
+            }
+            else
+            {
+                return pop.url;
+            }
+        }
+        return null;
+    };
+
     self.length = function () {
         var _cacheList = getCacheList();
         return _cacheList.length();
