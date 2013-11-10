@@ -1,211 +1,230 @@
-//Dependency: Evoque.js, json2.js
+//Dependency: Evoque.js
 $.history = (function (self)
 {
-    self.NORMAL = 1;
-    self.CLEARCURFLOW = 2;
-    self.CLEAR = 3;
-    self.REPLACE = 4;
-    self.REPLACECURFLOW = 5;
-    var FLAG_NORMAL = 1;
-    var FLAG_CLEARCURFLOW = 2;
-    var FLAG_CLEAR = 3;
-    var FLAG_REPLACE = 4;
-    var FLAG_REPLACECURFLOW = 5;
+    self.CMD_NORMAL = 1;
+    self.CMD_NOHISTORY = 2;
+    self.CMD_BEGINTRAN = 3;
+    self.CMD_ENDTRAN = 4;
+    self.command = self.CMD_NORMAL;
 
-    var mainFlowId = '$$$$';
+    //var defaultRecord = { pageId: '', pageUrl: '', transaction:0 };
+    var historyKey = 'historyList';
+    var historyList = [];
 
-    function getCacheList() {
-        if (self.supportWebStorage())
+    function syncHistoryList()
+    {
+        if ($.session.containsKey(historyKey))
         {
-            var cache = [];
-            var cacheStr = sessionStorage.getItem('sessionhistory');
-            if (!$.isStringEmpty(cacheStr))
-            {
-                cache = JSON.parse(cacheStr);
-            }
-            return {
-                push: function (obj) {
-                    if (cache.length > 0 && cache.slice(-1)[0].url === obj.url)
-                    {
-                        //refresh
-                        return;
-                    }
-                    cache.push(obj);
-                    sessionStorage.setItem('sessionhistory', JSON.stringify(cache));
-                },
-                pop: function (n) {
-                    if (!n || n < 1)
-                    {
-                        n = 1;
-                    }
-                    if (n > cache.length)
-                    {
-                        n = cache.length;
-                    }
-                    var ret;
-                    for (var i = 0; i < n; ++i)
-                    {
-                        ret = cache.pop();
-                    }
-                    sessionStorage.setItem('sessionhistory', JSON.stringify(cache));
-                    return ret;
-                },
-                peek: function () {
-                    if (cache.length < 1)
-                    {
-                        return null;
-                    }
-                    return cache.slice(-1)[0];
-                },
-                clear: function () {
-                    cache.splice(0, cache.length);
-                    sessionStorage.setItem('sessionhistory', JSON.stringify(cache));
-                },
-                length: function () {
-                    return cache.length;
-                }
-            };
+            historyList = $.session.getJson(historyKey);
         }
         else
         {
-            // 浏览器不支持WebStorage的情况
-            throw '浏览器不支持WebStorage';
+            $.session.setJson(historyKey, historyList);
         }
     }
 
-    self.supportWebStorage = function () {
-        return !!window.sessionStorage;
-    };
+    function push(record)
+    {
+        syncHistoryList();
+        while (historyList.length > 0)
+        {
+            var peek = historyList.slice(-1)[0];
+            if (peek.pageId === record.pageId)
+            {
+                historyList.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+        historyList.push(record);
+        $.session.setJson(historyKey, historyList);
+    }
 
-    self.add = function (record) {
-        var url = location.href;
-        record = record || {};
-        var flowId = record.flowId;
-        var flag = record.flag;
-        if ($.checkType(flag) !== type.eNumber)
+    function pop(currentPageId)
+    {
+        syncHistoryList();
+        var ret = null;
+        while (historyList.length > 0)
         {
-            flag = FLAG_NORMAL;
-        }
-        else
-        {
-            flag = $(flag).getVal();
-        }
-        var _cacheList = getCacheList();
-        if (flag == FLAG_CLEAR)
-        {
-            _cacheList.clear();
-        }
-        else if (flag == FLAG_REPLACE)
-        {
-            while (_cacheList.length() > 0)
+            var po = historyList.pop();
+            if (po.pageId === currentPageId)
             {
-                var pop = _cacheList.pop();
-                if (pop.url == url)
-                {
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
+                continue;
+            }
+            else
+            {
+                ret = po;
+                break;
             }
         }
-        var currentFlowId = mainFlowId;
-        if (_cacheList.length() > 0)
-        {
-            currentFlowId = _cacheList.peek().flowId;
-        }
+        $.session.setJson(historyKey, historyList);
+        return ret;
+    }
 
-        if ($.isStringEmpty(flowId))
+    function peek(currentPageId)
+    {
+        syncHistoryList();
+        var ret = null;
+        while (historyList.length > 0)
         {
-            flowId = currentFlowId;
-        }
-        if (flag == FLAG_CLEARCURFLOW || flag == FLAG_REPLACECURFLOW)
-        {
-            while (_cacheList.length() > 0)
+            var pe = historyList.slice(-1)[0];
+            if (pe.pageId === currentPageId)
             {
-                var peek = _cacheList.peek();
-                if (peek.flowId == currentFlowId)
-                {
-                    _cacheList.pop();
-                }
-                else
-                {
-                    break;
-                }
+                historyList.pop();
+                continue;
             }
-            if (flag == FLAG_REPLACECURFLOW)
+            else
             {
-                _cacheList.push({
-                    flowId: flowId,
-                    flag: flag,
-                    url: url
-                });
+                ret = pe;
+                break;
             }
         }
-        else
+        $.session.setJson(historyKey, historyList);
+        return ret;
+    }
+
+    function endCurrentTransaction()
+    {
+        syncHistoryList();
+        if (historyList.length == 0)
         {
-            _cacheList.push({
-                flowId: flowId,
-                flag: flag,
-                url: url
-            });
+            return;
+        }
+        var po = historyList.pop();
+        while (historyList.length > 0)
+        {
+            var pe = historyList.slice(-1)[0];
+            if (po.transaction === pe.transaction)
+            {
+                historyList.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+        $.session.setJson(historyKey, historyList);
+    }
+
+    function clear()
+    {
+        syncHistoryList();
+        historyList.splice(0, historyList.length);
+        $.session.setJson(historyKey, historyList);
+    }
+
+    function generateTransaction()
+    {
+        return (new Date()).getTime();
+    }
+
+    self.show = function () {
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        syncHistoryList();
+        for (var i = 0; i < historyList.length; ++i)
+        {
+            var hPop = historyList[i];
+            var str = '<div>PageId:<em>' + hPop.pageId + '</em>; PageUrl:<em>' + hPop.pageUrl + '</em>; Transaction:<em>' + hPop.transaction + '</em></div>';
+            div.innerHTML += str;
         }
     };
 
     self.back = function () {
-        var _cacheList = getCacheList();
-        while (_cacheList.length() > 0)
+        var pageId = $('meta[name="pageid"]').getAttr('content');
+        if ($.isStringEmpty(pageId))
         {
-            var pop = _cacheList.pop();
-            if (pop.url == location.href)
-            {
-                continue;
-            }
-            else
-            {
-                return pop.url;
-            }
+            return;
         }
-        return null;
+        var p = pop(pageId);
+        if ($.isObjectNull(p))
+        {
+            return;
+        }
+        this.command = this.CMD_NOHISTORY;
+        $.loadPage(p.pageUrl);
     };
 
-    self.back2LasrFlow = function () {
-        var _cacheList = getCacheList();
-        var currentFlowId = mainFlowId;
-        if (_cacheList.length() > 0)
+    self.backLastTran = function () {
+        var pageId = $('meta[name="pageid"]').getAttr('content');
+        if ($.isStringEmpty(pageId))
         {
-            currentFlowId = _cacheList.peek().flowId;
+            return;
         }
-        while (_cacheList.length() > 0)
-        {
-            var pop = _cacheList.pop();
-            if (pop.flowId == currentFlowId)
-            {
-                continue;
-            }
-            else
-            {
-                return pop.url;
-            }
-        }
-        return null;
+        endCurrentTransaction();
+        this.back();
     };
 
-    self.length = function () {
-        var _cacheList = getCacheList();
-        return _cacheList.length();
-    };
+    var begintransaction = 'begintransaction';
+    var endtransaction = 'endtransaction';
+    function enableCustomAttribute(attribute)
+    {
+        var $href = $('a[' + attribute + '][href]');
+        $href.each(function (i) {
+            var $this = $(this);
+            var desUrl = $this.getAttr('href');
+            if ($.isStringEmpty(desUrl) || desUrl.toLowerCase().indexOf('javascript:') > -1)
+            {
+                return;
+            }
+            $this.setAttr('href', 'javascript:void(0);');
+            $this.addEventHandler('click', function () {
+                if (attribute === begintransaction)
+                {
+                    $.history.command = $.history.CMD_BEGINTRAN;
+                }
+                else if (attribute === endtransaction)
+                {
+                    $.history.command = $.history.CMD_ENDTRAN;
+                }
+                $.loadPage(desUrl);
+            });
+        });
+    }
 
-    self.setSession = function (key, val) {
-        sessionStorage.setItem(key, val);
-    };
-    self.getSession = function (key) {
-        return sessionStorage.getItem(key);
-    };
-    self.delSession = function (key) {
-        sessionStorage.removeItem(key);
-    };
+    $(function () {
+        enableCustomAttribute(begintransaction);
+        enableCustomAttribute(endtransaction);
+
+        $.unload(function () {
+            var pageId = $('meta[name="pageid"]').getAttr('content');
+            if ($.isStringEmpty(pageId))
+            {
+                return;
+            }
+            var url = location.href;
+            switch ($.history.command)
+            {
+                case $.history.CMD_NOHISTORY:
+                    break;
+                case $.history.CMD_BEGINTRAN:
+                    push({
+                        pageId: pageId,
+                        pageUrl: url,
+                        transaction: generateTransaction()
+                    });
+                    break;
+                case $.history.CMD_ENDTRAN:
+                    endCurrentTransaction();
+                    break;
+                default:
+                    var pe = peek(pageId);
+                    var curTran = 0;
+                    if (!$.isObjectNull(pe))
+                    {
+                        curTran = pe.transaction;
+                    }
+                    push({
+                        pageId: pageId,
+                        pageUrl: url,
+                        transaction: curTran
+                    });
+                    break;
+            }
+        });
+    });
 
     return self;
 }($.history || {}));

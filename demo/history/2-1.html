@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="pageid" content="2-1.html">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <script type="text/javascript" src="../../src/js/eDebugger.js"></script>
     <script type="text/javascript" src="../../src/js/json2.js"></script>
     <script type="text/javascript" src="../../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../../src/js/Evoque.Session.js"></script>
     <script type="text/javascript" src="../../src/js/Evoque.History.js"></script>
     <script type="text/javascript">
         $(function () {
-            $.history.add({ flowId: 'sub' });
+            $.history.show();
         });
-
-        function back2Last()
-        {
-            $.loadPage($.history.back());
-        }
     </script>
 </head>
 <body>
-<a href="javascript:back2Last();">back</a>
-<a href="2-2.html">2-2.html</a>
+<a href="javascript:$.history.back();">back</a>
+<a begintransaction href="2-2.html">2-2.html</a>
 </body>
 </html>

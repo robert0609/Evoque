@@ -51,17 +51,29 @@ var Evoque = (function (self)
 
     function core_addLoadedHandler(fn, useCapture)
     {
+        var evtName = 'load';
+        var agent = navigator.userAgent.toLowerCase();
+        if (agent.indexOf('safari') > -1 && agent.indexOf('iphone') > -1)
+        {
+            evtName = 'pageshow';
+        }
         //DOM标准
         if (window.addEventListener && $.checkType(fn) === type.eFunction) {
-            window.addEventListener('load', fn, useCapture);
+            window.addEventListener(evtName, fn, useCapture);
         }
     }
 
     function core_addUnloadHandler(fn, useCapture)
     {
+        var evtName = 'unload';
+        var agent = navigator.userAgent.toLowerCase();
+        if (agent.indexOf('safari') > -1 && agent.indexOf('iphone') > -1)
+        {
+            evtName = 'pagehide';
+        }
         //DOM标准
         if (window.addEventListener && $.checkType(fn) === type.eFunction) {
-            window.addEventListener('unload', fn, useCapture);
+            window.addEventListener(evtName, fn, useCapture);
         }
     }
 
