@@ -1,24 +1,26 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">-->
     <title></title>
     <script type="text/javascript" src="../src/js/eDebugger.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Geo.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
     <script type="text/javascript">
+        var curLat = 0;
+        var curLng = 0;
+
         function getLocation()
         {
             $.geo.getCurrentLocation({
                 onSuccess: function (obj) {
-                    var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=bdCityMapCallback&location=' + obj.lat + ',' + obj.lng + '&output=json';
-                    var callbackScript = document.createElement('script');
-                    callbackScript.type = 'text/javascript';
-                    callbackScript.src = reqUrl;
-                    document.body.appendChild(callbackScript);
+                    curLat = obj.lat;
+                    curLng = obj.lng;
+                    findGPSAddr(curLat, curLng);
                 },
                 onFail: function (obj) {
                     var er = obj.error;
@@ -27,14 +29,34 @@
             });
         }
 
+        function findGPSAddr(lat, lng)
+        {
+            var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=bdCityMapCallback&location=' + lat + ',' + lng + '&output=json&coordtype=wgs84ll';
+            var callbackScript = document.createElement('script');
+            callbackScript.type = 'text/javascript';
+            callbackScript.src = reqUrl;
+            document.body.appendChild(callbackScript);
+        }
+
         function bdCityMapCallback(response)
         {
             if (response.status == 0 )
             {
-                $.dialog.showMessageBox({
-                    content: response.result.addressComponent.city,
-                    autoClose: false
-                });
+//                $.dialog.showMessageBox({
+//                    content: response.result.addressComponent.city,
+//                    autoClose: false
+//                });
+
+                $('#tbody')[0].innerHTML += generateRow(response.result.location.lat, response.result.location.lng, response.result.formatted_address);
+
+                var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=show&output=json&address=' + response.result.formatted_address + '&city=' + response.result.addressComponent.city;
+                var callbackScript = document.createElement('script');
+                callbackScript.type = 'text/javascript';
+                callbackScript.src = reqUrl;
+                document.body.appendChild(callbackScript);
+
+
+
             }
             else
             {
@@ -42,9 +64,68 @@
             }
         }
 
+        function show(res)
+        {
+            if (res.status == 0 )
+            {
+                var lat = res.result.location.lat;
+                var lng = res.result.location.lng;
+
+                var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=bdCityMapCallback2&location=' + lat + ',' + lng + '&output=json';
+                var callbackScript = document.createElement('script');
+                callbackScript.type = 'text/javascript';
+                callbackScript.src = reqUrl;
+                document.body.appendChild(callbackScript);
+            }
+            else
+            {
+                $.dialog.alert('查找城市经纬度失败!');
+            }
+        }
+
+        function bdCityMapCallback2(response)
+        {
+            if (response.status == 0 )
+            {
+                var lat = response.result.location.lat;
+                var lng = response.result.location.lng;
+
+                var $tbody = $('#tbody');
+                var $trs = $tbody.getChild('tr');
+                var tr = $trs[$trs.length - 1];
+                var $tds = $(tr).getChild('td');
+                $($tds[3]).html(lat);
+                $($tds[4]).html(lng);
+                $($tds[5]).html(response.result.formatted_address);
+
+                findOther();
+            }
+            else
+            {
+                $.dialog.alert('匹配城市失败!');
+            }
+        }
+
+        function generateRow()
+        {
+            var r = '<tr>';
+            var arglen = arguments.length;
+            for (var i = 0; i < 6; ++i)
+            {
+                r += '<td>';
+                if (i < arglen)
+                {
+                    r += arguments[i];
+                }
+                r += '</td>';
+            }
+            r += '</tr>';
+            return r;
+        }
+
         function search(latlng)
         {
-            var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=searchCallback&location=' + latlng + '&output=json';
+            var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=searchCallback&location=' + latlng + '&output=json&coordtype=wgs84ll';
             var callbackScript = document.createElement('script');
             callbackScript.type = 'text/javascript';
             callbackScript.src = reqUrl;
@@ -65,15 +146,72 @@
                 $.dialog.alert('查询经纬度失败!');
             }
         }
+
+        var count = 100;
+        function findOther()
+        {
+            --count;
+            if (count > 0)
+            {
+                //curLat += 0.0008;
+                //curLng += 0.0008;
+                findGPSAddr(curLat, curLng);
+            }
+        }
+
+        function upload()
+        {
+            var ret = [];
+            $('#tbody tr').each(function () {
+                var obj = {};
+                var $tds = $(this).getChild('td');
+                obj.gpsLat = Number($tds[0].innerHTML);
+                obj.gpsLng = Number($tds[1].innerHTML);
+                obj.gpsAddr = $tds[2].innerHTML;
+                obj.bdLat = Number($tds[3].innerHTML);
+                obj.bdLng = Number($tds[4].innerHTML);
+                obj.bdAddr = $tds[5].innerHTML;
+                ret.push(obj);
+            });
+
+            $.ajax.post({
+                url : '/geo/UploadGeoResult',
+                // json
+                parameter : { resultList: JSON.stringify(ret) },
+                // 'text'(default), 'json', 'html'
+                returnType : 'json',
+                onSuccess : function (returnObj) {
+                    $.dialog.alert('Upload Success!');
+                },
+                onFail : function () {
+                    $.dialog.alert('Upload failed!');
+                }
+            });
+        }
     </script>
 </head>
 <body>
     <div>
         <button onclick="getLocation();">定位</button>
+        <button onclick="upload();">上传结果</button>
     </div>
     <div>
         <input type="text" id="loc" />
         <button onclick="search($('#loc').getVal());">查询经纬度</button>
     </div>
+<table>
+    <thead>
+        <tr>
+            <th>GPS-lat</th>
+            <th>GPS-lng</th>
+            <th>GPS-address</th>
+            <th>baidu-lat</th>
+            <th>baidu-lng</th>
+            <th>baidu-address</th>
+        </tr>
+    </thead>
+    <tbody id="tbody">
+    </tbody>
+</table>
 </body>
 </html>
