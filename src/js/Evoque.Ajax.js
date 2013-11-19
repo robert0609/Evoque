@@ -123,6 +123,7 @@ $.ajax = (function (self)
         var returnType = option.getValueOfProperty('returnType', defaultOption).toLowerCase();
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
         var onFail = option.getValueOfProperty('onFail', defaultOption);
+        var isFailed = false;
         var timeOut = option.getValueOfProperty('timeOut', defaultOption);
         // 设置返回值类型(android平台目前不支持returnType == 'html')
         if (returnType == 'html')
@@ -157,7 +158,11 @@ $.ajax = (function (self)
                 }
                 else
                 {
-                    onFail({ type: 'failed' });
+                    if (!isFailed)
+                    {
+                        isFailed = true;
+                        onFail({ type: 'failed' });
+                    }
                 }
                 xmlhttp = null;
             }
@@ -167,11 +172,19 @@ $.ajax = (function (self)
             {
                 clearTimeout(xmlhttp.timeoutId);
             }
-            onFail({ type: 'error' });
+            if (!isFailed)
+            {
+                isFailed = true;
+                onFail({ type: 'error' });
+            }
             xmlhttp = null;
         };
         xmlhttp.ontimeout = function () {
-            onFail({ type: 'timeout' });
+            if (!isFailed)
+            {
+                isFailed = true;
+                onFail({ type: 'timeout' });
+            }
             xmlhttp = null;
         };
     }
