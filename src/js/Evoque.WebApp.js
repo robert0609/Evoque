@@ -28,11 +28,7 @@ Evoque.webApp = (function (self)
 
     var noHistory = 'nohistory';
 
-    $.loadPageWithoutHistory = function (url, hisFlag) {
-        if ($.history)
-        {
-            $.history.setSession('historyflag', hisFlag);
-        }
+    $.loadPageWithoutHistory = function (url) {
         location.replace(url);
     };
 
@@ -48,7 +44,7 @@ Evoque.webApp = (function (self)
             }
             $this.setAttr('href', 'javascript:void(0);');
             $this.addEventHandler('click', function () {
-                $.loadPageWithoutHistory(desUrl, 4);
+                $.loadPageWithoutHistory(desUrl);
             });
         })
     }

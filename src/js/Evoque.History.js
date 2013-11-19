@@ -10,16 +10,21 @@ $.history = (function (self)
     //var defaultRecord = { pageId: '', pageUrl: '', transaction:0 };
     var historyKey = 'historyList';
     var historyList = [];
+    var isSync = false;
 
     function syncHistoryList()
     {
-        if ($.session.containsKey(historyKey))
+        if (!isSync)
         {
-            historyList = $.session.getJson(historyKey);
-        }
-        else
-        {
-            $.session.setJson(historyKey, historyList);
+            if ($.session.containsKey(historyKey))
+            {
+                historyList = $.session.getJson(historyKey);
+            }
+            else
+            {
+                $.session.setJson(historyKey, historyList);
+            }
+            isSync = true;
         }
     }
 
@@ -92,20 +97,24 @@ $.history = (function (self)
         {
             return;
         }
-        var po = historyList.pop();
-        while (historyList.length > 0)
+        var curTran = historyList.slice(-1)[0].transaction;
+        if (curTran > 0)
         {
-            var pe = historyList.slice(-1)[0];
-            if (po.transaction === pe.transaction)
+            var po = historyList.pop();
+            while (historyList.length > 0)
             {
-                historyList.pop();
+                var pe = historyList.slice(-1)[0];
+                if (po.transaction === pe.transaction)
+                {
+                    historyList.pop();
+                }
+                else
+                {
+                    break;
+                }
             }
-            else
-            {
-                break;
-            }
+            $.session.setJson(historyKey, historyList);
         }
-        $.session.setJson(historyKey, historyList);
     }
 
     function clear()
@@ -157,6 +166,7 @@ $.history = (function (self)
         this.back();
     };
 
+    var nohistory = 'nohistory';
     var begintransaction = 'begintransaction';
     var endtransaction = 'endtransaction';
     function enableCustomAttribute(attribute)
@@ -179,12 +189,17 @@ $.history = (function (self)
                 {
                     $.history.command = $.history.CMD_ENDTRAN;
                 }
+                else if (attribute === nohistory)
+                {
+                    $.history.command = $.history.CMD_NOHISTORY;
+                }
                 $.loadPage(desUrl);
             });
         });
     }
 
     $(function () {
+        enableCustomAttribute(nohistory);
         enableCustomAttribute(begintransaction);
         enableCustomAttribute(endtransaction);
 

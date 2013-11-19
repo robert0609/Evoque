@@ -10,6 +10,8 @@
     <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+    <script type="text/javascript" src="../src/js/convertor.js"></script>
     <script type="text/javascript">
         var curLat = 0;
         var curLng = 0;
@@ -47,7 +49,7 @@
 //                    autoClose: false
 //                });
 
-                $('#tbody')[0].innerHTML += generateRow(response.result.location.lat, response.result.location.lng, response.result.formatted_address);
+                $('#tbody')[0].innerHTML += generateRow(response.result.location.lat + '|' + curLat, response.result.location.lng + '|' + curLng, response.result.formatted_address);
 
                 var reqUrl = 'http://api.map.baidu.com/geocoder/v2/?ak=5afccc1093728579fb4867cc404c540c&callback=show&output=json&address=' + response.result.formatted_address + '&city=' + response.result.addressComponent.city;
                 var callbackScript = document.createElement('script');
@@ -147,15 +149,17 @@
             }
         }
 
-        var count = 100;
+        var count = 1;
         function findOther()
         {
             --count;
             if (count > 0)
             {
-                //curLat += 0.0008;
-                //curLng += 0.0008;
-                findGPSAddr(curLat, curLng);
+//                curLat += 0.08;
+//                curLng += 0.08;
+                setTimeout(function () {
+                    findGPSAddr(curLat, curLng);
+                }, 3000);
             }
         }
 
@@ -189,6 +193,17 @@
             });
         }
     </script>
+    <script type="text/javascript">
+        function transform()
+        {
+            BMap.Convertor.translate(new BMap.Point(116.50035197727, 39.982483300797), 2, translateCallback);
+        }
+
+        function translateCallback(point)
+        {
+            $.dialog.showMessageBox({ content: "转化为百度坐标为："+point.lat + "," + point.lng, autoClose: false });
+        }
+    </script>
 </head>
 <body>
     <div>
@@ -213,5 +228,9 @@
     <tbody id="tbody">
     </tbody>
 </table>
+
+<div>
+    <button onclick="transform();">GPS=>Baidu</button>
+</div>
 </body>
 </html>
