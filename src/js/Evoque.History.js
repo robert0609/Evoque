@@ -130,15 +130,15 @@ $.history = (function (self)
     }
 
     self.show = function () {
-        var div = document.createElement('div');
-        document.body.appendChild(div);
+        var ret = '';
         syncHistoryList();
         for (var i = 0; i < historyList.length; ++i)
         {
             var hPop = historyList[i];
             var str = '<div>PageId:<em>' + hPop.pageId + '</em>; PageUrl:<em>' + hPop.pageUrl + '</em>; Transaction:<em>' + hPop.transaction + '</em></div>';
-            div.innerHTML += str;
+            ret += str;
         }
+        return ret;
     };
 
     self.back = function () {
