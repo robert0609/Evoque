@@ -51,8 +51,27 @@ $.ajax = (function (self)
         var xmlhttp = new XMLHttpRequest();
         bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
-        // 使用FormData传递post数据，无须设置Content-Type. xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption), option[0].form));
+        //判断浏览器是否支持FormData类
+        if(window.FormData)
+        {
+            // 使用FormData传递post数据，无须设置Content-Type. xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption), option[0].form));
+        }
+        else
+        {
+            xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            var pain = option.getValueOfProperty('parameter', defaultOption);
+            var frm = option[0].form;
+            for (var i = 0; i < frm.length; ++i)
+            {
+                if ($.isStringEmpty(frm[i].name))
+                {
+                    continue;
+                }
+                pain[frm[i].name] = frm[i].value;
+            }
+            xmlhttp.send(serializeQuery(pain));
+        }
         if (!xmlhttp.evoque_sptTimeout)
         {
             xmlhttp.timeoutId = setTimeout(function () {
@@ -147,13 +166,22 @@ $.ajax = (function (self)
                 }
                 if (xmlhttp.status == 200)
                 {
-                    if (returnType == 'json')
+                    var resp = null;
+                    if ($.checkType(xmlhttp.response) === type.eUndefined)
                     {
-                        onSuccess(JSON.parse(xmlhttp.response));
+                        resp = xmlhttp.responseText;
                     }
                     else
                     {
-                        onSuccess(xmlhttp.response);
+                        resp = xmlhttp.response;
+                    }
+                    if (returnType == 'json')
+                    {
+                        onSuccess(JSON.parse(resp));
+                    }
+                    else
+                    {
+                        onSuccess(resp);
                     }
                 }
                 else
