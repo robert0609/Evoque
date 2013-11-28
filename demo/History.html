@@ -12,11 +12,17 @@
     <script type="text/javascript" src="../src/js/Evoque.History.js"></script>
     <script type="text/javascript">
         $(function () {
-            $.history.show();
+            $('#divHis').html($.history.show());
         });
+
+        function btnClick()
+        {
+            //$.loadPage('history/1.html');
+        }
     </script>
 </head>
 <body>
-    <a href="history/1.html">1.html</a>
+<a href="history/1.html">1.html</a>
+<div id="divHis"></div>
 </body>
 </html>

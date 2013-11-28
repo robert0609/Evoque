@@ -12,12 +12,13 @@
     <script type="text/javascript" src="../../src/js/Evoque.History.js"></script>
     <script type="text/javascript">
         $(function () {
-            $.history.show();
+            $('#divHis').html($.history.show());
         });
     </script>
 </head>
 <body>
 <a href="javascript:$.history.back();">back</a>
 <a begintransaction href="2-2.html">2-2.html</a>
+<div id="divHis"></div>
 </body>
 </html>
