@@ -51,6 +51,7 @@ $.ajax = (function (self)
         var xmlhttp = new XMLHttpRequest();
         bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
+        xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
         //判断浏览器是否支持FormData类
         if(window.FormData)
         {
