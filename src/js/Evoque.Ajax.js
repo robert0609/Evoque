@@ -22,7 +22,6 @@ $.ajax = (function (self)
         checkOption(option);
         option = $(option);
         var xmlhttp = new XMLHttpRequest();
-        bindEvent(xmlhttp, option);
         var urlTemp = option.getValueOfProperty('url', defaultOption);
         var spliter = '';
         if (urlTemp.indexOf('?') > -1)
@@ -34,6 +33,7 @@ $.ajax = (function (self)
             spliter = '?';
         }
         xmlhttp.open('get', urlTemp + spliter + serializeQuery(option.getValueOfProperty('parameter', defaultOption)), true);
+        bindEvent(xmlhttp, option);
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
         {
@@ -49,8 +49,8 @@ $.ajax = (function (self)
         checkOption(option);
         option = $(option);
         var xmlhttp = new XMLHttpRequest();
-        bindEvent(xmlhttp, option);
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
+        bindEvent(xmlhttp, option);
         xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
         //判断浏览器是否支持FormData类
         if(window.FormData)
