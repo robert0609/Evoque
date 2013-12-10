@@ -7,7 +7,7 @@ $.history = (function (self)
     self.CMD_ENDTRAN = 4;
     self.command = self.CMD_NORMAL;
 
-    //var defaultRecord = { pageId: '', pageUrl: '', transaction:0 };
+    //var defaultRecord = { pageId: '', pageUrl: '', transaction:0, top: 0 };
     var historyKey = 'historyList';
     var historyList = [];
     var isSync = false;
@@ -135,7 +135,7 @@ $.history = (function (self)
         for (var i = 0; i < historyList.length; ++i)
         {
             var hPop = historyList[i];
-            var str = '<div>PageId:<em>' + hPop.pageId + '</em>; PageUrl:<em>' + hPop.pageUrl + '</em>; Transaction:<em>' + hPop.transaction + '</em></div>';
+            var str = '<div>PageId:<em>' + hPop.pageId + '</em>; PageUrl:<em>' + hPop.pageUrl + '</em>; Transaction:<em>' + hPop.transaction + '</em>; Top:<em>' + hPop.top + '</em></div>';
             ret += str;
         }
         return ret;
@@ -153,7 +153,7 @@ $.history = (function (self)
             return;
         }
         this.command = this.CMD_NOHISTORY;
-        $.loadPage(p.pageUrl);
+        $.loadPage(p.pageUrl + '#' + p.top);
     };
 
     self.backLastTran = function () {
@@ -210,6 +210,12 @@ $.history = (function (self)
                 return;
             }
             var url = location.href;
+            var idx = url.indexOf('#');
+            if (idx > -1)
+            {
+                url = url.substr(0, idx);
+            }
+            var scrollTop = document.body.scrollTop;
             switch ($.history.command)
             {
                 case $.history.CMD_NOHISTORY:
@@ -218,7 +224,8 @@ $.history = (function (self)
                     push({
                         pageId: pageId,
                         pageUrl: url,
-                        transaction: generateTransaction()
+                        transaction: generateTransaction(),
+                        top: scrollTop
                     });
                     break;
                 case $.history.CMD_ENDTRAN:
@@ -234,7 +241,8 @@ $.history = (function (self)
                     push({
                         pageId: pageId,
                         pageUrl: url,
-                        transaction: curTran
+                        transaction: curTran,
+                        top: scrollTop
                     });
                     break;
             }

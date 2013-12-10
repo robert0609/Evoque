@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Session.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#btnShow').addEventHandler('click', function () {
+//                alert($('#txt')[0].value);
+//                alert($('#area')[0].innerHTML);
+                $('#txt').hide();
+            });
+            $('#btnSetIdl').addEventHandler('click', function () {
+//                $('#txt')[0].value = 'txt';
+//                $('#area')[0].value = 'area';
+                $('#txt').show();
+            });
+            $('#btnSetIdl1').addEventHandler('click', function () {
+                $('#txt')[0].value = 'txt1111';
+                $('#area')[0].value = 'area1111';
+            });
+            $('#btnSetContent').addEventHandler('click', function () {
+                $('#txt')[0].setAttribute('value', 'txsete');
+                $('#area')[0].innerHTML = 'areadsafs';
+            });
+            $('#btnSetContent1').addEventHandler('click', function () {
+                $('#txt')[0].setAttribute('value', 'txse123te');
+                $('#area')[0].innerHTML = 'ar12312eadsafs';
+            });
+
+            $('#btnDebug').addEventHandler('click', function () {
+                eDebugger.outputVar('ttt', $('#txt').getClassList());
+            });
+            alert($.supportSessionStorage());
+        });
+    </script>
+</head>
+<body>
+<button id="btnShow">显示值</button>
+<button id="btnSetIdl">设置值Idl</button>
+<button id="btnSetIdl1">设置值Idl</button>
+<button id="btnSetContent">设置值Content</button>
+<button id="btnSetContent1">设置值Content</button>
+
+
+<button id="btnDebug">Debugger</button>
+<div id="d1"></div>
+<div id="d2"></div>
+<div id="d3"></div>
+<form id="frm">
+    <input id="txt" type="text" value="dadsadsadas">
+    <textarea id="area">asdasdsadas</textarea>
+</form>
+</body>
+</html>
