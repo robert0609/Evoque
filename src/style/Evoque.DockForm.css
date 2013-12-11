@@ -21,8 +21,8 @@
     100% {-webkit-transform: translateY(0);}
 }
 @keyframes bottomTop {
-    0% {-webkit-transform: translateY(100%);}
-    100% {-webkit-transform: translateY(0);}
+    0% {transform: translateY(100%);}
+    100% {transform: translateY(0);}
 }
 .bottomTop{
     -webkit-animation:bottomTop .2s ease both .1s;
