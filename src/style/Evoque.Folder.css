@@ -1,4 +1,12 @@
-.folder-title-init{
+.folder-title-fold{
+    background-color: #808080;
 }
-.folder-content-init{
+.folder-title-unfold{
+    background-color: #5f9ea0;
+}
+.folder-content-fold{
+    display: none;
+}
+.folder-content-unfold{
+    display: block;
 }

@@ -6,16 +6,18 @@
     <title></title>
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Folder.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Control.css" />
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Folder.css" />
     <script type="text/javascript">
         $(function ()
         {
+            $('#folder').createFolder();
         });
     </script>
 </head>
 <body>
-<div id="f1">A</div>
-<div id="f1_content">
+<div id="folder">
+<div class="folder-title">A</div>
+<div class="folder-content">
     <ul>
         <li>aaaa</li>
         <li>bbbb</li>
@@ -23,6 +25,7 @@
         <li>dddd</li>
         <li>eeee</li>
     </ul>
+</div>
 </div>
 </body>
 </html>
