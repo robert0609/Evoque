@@ -414,7 +414,7 @@ $.dialog = (function (self) {
             dialogObj.style.width = w + 'px';
             var h = dialogObj.clientHeight;
             dialogObj.style.marginLeft = (0 - w) / 2 +'px';
-            dialogObj.style.marginTop = (0 - h) / 2 + document.body.scrollTop + 'px';
+            dialogObj.style.marginTop = (0 - h) / 2 + 'px';
 
         }
 
