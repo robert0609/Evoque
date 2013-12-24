@@ -4,7 +4,10 @@ Evoque.control = (function (self)
     var defaultOption_RangeSelect = {
         inputId: '',
         minVal: 0,
-        maxVal: 0
+        maxVal: 0,
+        //flag: 1: up; -1: down; 0: no click
+        beforeValueChange: function (flag) {},
+        valueChanged: function (flag) {}
     };
 
     self.rangeSelect = function (option, inputElement)
@@ -30,16 +33,23 @@ Evoque.control = (function (self)
         }
         var min = option.getValueOfProperty('minVal', defaultOption_RangeSelect);
         var max = option.getValueOfProperty('maxVal', defaultOption_RangeSelect);
+        var beforeValChange = option.getValueOfProperty('beforeValueChange', defaultOption_RangeSelect);
+        var valChanged = option.getValueOfProperty('valueChanged', defaultOption_RangeSelect);
         if (min > max)
         {
             throw 'Error:[min] > [max]';
         }
+
+        var ret = [];
         input.each(function () {
+            var re = null;
             if ($(this).getAttr('type') == 'text')
             {
-                generateRange(this);
+                re = generateRange(this);
             }
+            ret.push(re);
         });
+        return ret;
 
         function generateRange(input)
         {
@@ -56,7 +66,12 @@ Evoque.control = (function (self)
                 if (val > min)
                 {
                     val -= 1;
+                    if (beforeValChange.call(input, -1) === false)
+                    {
+                        return;
+                    }
                     setValue(val);
+                    valChanged.call(input, -1);
                 }
             }, false);
             var aUp = $(document.createElement('a'));
@@ -67,7 +82,12 @@ Evoque.control = (function (self)
                 if (val < max)
                 {
                     val += 1;
+                    if (beforeValChange.call(input, 1) === false)
+                    {
+                        return;
+                    }
                     setValue(val);
+                    valChanged.call(input, 1);
                 }
             }, false);
             input.parentElement.replaceChild(div[0], input);
@@ -97,6 +117,30 @@ Evoque.control = (function (self)
                     aUp.addClass('disabled');
                 }
             }
+
+            return {
+                setVal: function (v) {
+                    if (v < min)
+                    {
+                        v = min;
+                    }
+                    if (v > max)
+                    {
+                        v = max;
+                    }
+                    var flg = v == input1.getVal();
+                    if (flg)
+                    {
+                        return;
+                    }
+                    if (beforeValChange.call(input, 0) === false)
+                    {
+                        return;
+                    }
+                    setValue(v);
+                    valChanged.call(input, 0);
+                }
+            };
         }
     };
 
@@ -406,7 +450,7 @@ Evoque.control = (function (self)
         {
             return null;
         }
-        return self.rangeSelect(option, this[0]);
+        return self.rangeSelect(option, this[0])[0];
     };
 
     Evoque.createButton = function (option)

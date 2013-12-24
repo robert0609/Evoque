@@ -89,6 +89,7 @@ Evoque.folder = (function (self) {
             $title.addClass('folder-title-unfold');
             $content.removeClass('folder-content-fold');
             $content.addClass('folder-content-unfold');
+            window.scrollTo(0, $title[0].offsetTop);
             onUnfolded.apply({ title: $title[0], content: $content[0]});
         }
     }

@@ -7,7 +7,10 @@ Evoque.calendar = (function (self) {
         startDate: (new Date()).getYMD(),
         calendarData: null,
         originalDate: (new Date()).getYMD(),
-        callBack: function () {}
+        callBack: function () {},
+        //displayMonth: Date Type
+        displayMonth: undefined,
+        enablePrevNext: true
     };
 
     self.create = function (option, tableElement) {
@@ -35,13 +38,16 @@ Evoque.calendar = (function (self) {
         var checkInData = option.getValueOfProperty('calendarData', defaultOption);
         defaultOption.startDate = (new Date()).getYMD();
         var startDate = option.getValueOfProperty('startDate', defaultOption);
-        cache[tableId] = new calendarClass(tableId, startDate, activeDate, checkInData, fCallBack);
+        var displayMonth = option.getValueOfProperty('displayMonth');
+        var enablePrevNext = option.getValueOfProperty('enablePrevNext', defaultOption);
+        cache[tableId] = new calendarClass(tableId, startDate, activeDate, checkInData, displayMonth, enablePrevNext, fCallBack);
         cache[tableId].init();
         return cache[tableId];
     };
 
-    function calendarClass(tableElement, startDate, activeDate, checkInData, fCallBack)
+    function calendarClass(tableElement, startDate, activeDate, checkInData, displayMonth, enablePrevNext, fCallBack)
     {
+        var hidePrevNext = !enablePrevNext;
         var now = startDate;
         var currentYear = Number(now.getFullYear());
         var currentMonth = Number(now.getMonth());
@@ -49,6 +55,10 @@ Evoque.calendar = (function (self) {
         var currentWeek = Number(now.getDay());
 
         var max = new Date(currentYear, currentMonth + 11, currentDay);
+        if (hidePrevNext)
+        {
+            max = now;
+        }
         var maxYear = Number(max.getFullYear());
         var maxMonth = Number(max.getMonth());
         var maxDay = Number(max.getDate());
@@ -58,10 +68,18 @@ Evoque.calendar = (function (self) {
         {
             activeDate = now;
         }
+
         var startYear = Number(activeDate.getFullYear());
         var startMonth = Number(activeDate.getMonth());
         var startDay = Number(activeDate.getDate());
         var startWeek = Number(activeDate.getDay());
+        if ($.checkType(displayMonth) === type.eDate)
+        {
+            startYear = Number(displayMonth.getFullYear());
+            startMonth = Number(displayMonth.getMonth());
+            startDay = Number(displayMonth.getDate());
+            startWeek = Number(displayMonth.getDay());
+        }
 
         var tableObj = null;
         if ($.checkType(tableElement) === type.eElement)
@@ -82,40 +100,53 @@ Evoque.calendar = (function (self) {
             tableObj.addClass('table-wrap');
             tableObj.addClass('table-calendar');
 
-            var strHtml = '<thead><tr><th id="thPrev" class="prev disable">←</th><th id="thTitle" colspan="5" class="switch"></th><th id="thNext" class="next">→</th></tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody id="tbodyMonth"></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot>';
-            tableObj.html(strHtml);
-            //绑定上下个月事件
-            tableObj.getChild('#thPrev').addEventHandler('click', function ()
+            var prevHtml = '<th id="thPrev" class="prev disable">←</th>';
+            var nextHtml = '<th id="thNext" class="next">→</th>';
+            if (hidePrevNext)
             {
-                var title = tableObj.getChild('#thTitle');
-                var curY = Number(title.getAttr('curY'));
-                var curM = Number(title.getAttr('curM'));
-                if (curY == currentYear && curM == currentMonth) {
-                    return;
-                }
-                tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM - 1, 1)));
-                //绑定日期的选择事件
-                tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
-                setPrevNext();
-            });
-            tableObj.getChild('#thNext').addEventHandler('click', function ()
-            {
-                var title = tableObj.getChild('#thTitle');
-                var curY = Number(title.getAttr('curY'));
-                var curM = Number(title.getAttr('curM'));
-                if (curY == maxYear && curM == maxMonth) {
-                    return;
-                }
-                tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM + 1, 1)));
-                //绑定日期的选择事件
-                tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
-                setPrevNext();
-            });
+                prevHtml = '<th></th>';
+                nextHtml = '<th></th>';
+            }
 
+            var strHtml = '<thead><tr>' + prevHtml + '<th id="thTitle" colspan="5" class="switch"></th>' + nextHtml + '</tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody id="tbodyMonth"></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot>';
+            tableObj.html(strHtml);
+            if (!hidePrevNext)
+            {
+                //绑定上下个月事件
+                tableObj.getChild('#thPrev').addEventHandler('click', function ()
+                {
+                    var title = tableObj.getChild('#thTitle');
+                    var curY = Number(title.getAttr('curY'));
+                    var curM = Number(title.getAttr('curM'));
+                    if (curY == currentYear && curM == currentMonth) {
+                        return;
+                    }
+                    tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM - 1, 1)));
+                    //绑定日期的选择事件
+                    tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
+                    setPrevNext();
+                });
+                tableObj.getChild('#thNext').addEventHandler('click', function ()
+                {
+                    var title = tableObj.getChild('#thTitle');
+                    var curY = Number(title.getAttr('curY'));
+                    var curM = Number(title.getAttr('curM'));
+                    if (curY == maxYear && curM == maxMonth) {
+                        return;
+                    }
+                    tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM + 1, 1)));
+                    //绑定日期的选择事件
+                    tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
+                    setPrevNext();
+                });
+            }
             tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(startYear, startMonth, 1)));
             //绑定日期的选择事件
             tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
-            setPrevNext();
+            if (!hidePrevNext)
+            {
+                setPrevNext();
+            }
         };
 
         function onClickDay(event) {
@@ -148,10 +179,10 @@ Evoque.calendar = (function (self) {
             }
         }
 
-        function loadMonth(dateDiplay) {
+        function loadMonth(dateDisplay) {
             // 当前要显示的年和月
-            var year = Number(dateDiplay.getFullYear());
-            var month = Number(dateDiplay.getMonth());
+            var year = Number(dateDisplay.getFullYear());
+            var month = Number(dateDisplay.getMonth());
 
             var monthStr = month + 1;
             var title = tableObj.getChild('#thTitle');
