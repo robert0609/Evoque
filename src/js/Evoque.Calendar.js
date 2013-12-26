@@ -217,7 +217,7 @@ Evoque.calendar = (function (self) {
             }
 
             function genDayTd(date) {
-                var tdClass = 'day disable';
+                var tdClass = 'disable';
                 var cb = '';
                 var price = '';
                 if (date - now >= 0) {
@@ -242,15 +242,15 @@ Evoque.calendar = (function (self) {
                         }
                     }
                     else {
-                        return '<td class="day disable"></td>';
+                        return '<td class="old"></td>';
                     }
                 }
                 else {
-                    return '<td class="day disable"></td>';
+                    return '<td class="old"></td>';
                 }
 
                 if (date - activeDate == 0) {
-                    tdClass = 'day active';
+                    tdClass = 'active';
                 }
                 var td = '<td curD="' + date.getDate() + '"' + cb + ' class="' + tdClass + '">' + date.getDate() + price + '</td>'
                 return td;
