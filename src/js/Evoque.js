@@ -622,6 +622,17 @@ var Evoque = (function (self)
         });
     };
 
+    self.isHide = function () {
+        if ($.checkType(this[0]) === type.eElement)
+        {
+            return this[0].style.display == 'none';
+        }
+        else
+        {
+            return false;
+        }
+    };
+
     self.enable = function () {
         this.each(function ()
         {
