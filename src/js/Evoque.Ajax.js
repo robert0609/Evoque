@@ -32,7 +32,10 @@ $.ajax = (function (self)
         {
             spliter = '?';
         }
-        xmlhttp.open('get', urlTemp + spliter + serializeQuery(option.getValueOfProperty('parameter', defaultOption)), true);
+        var parameterGet = option.getValueOfProperty('parameter', defaultOption);
+        //针对IE对ajax请求结果的缓存机制，增加时间戳参数
+        parameterGet.timestamp = (new Date()).getTime();
+        xmlhttp.open('get', urlTemp + spliter + serializeQuery(parameterGet), true);
         bindEvent(xmlhttp, option);
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
