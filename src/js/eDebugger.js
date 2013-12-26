@@ -140,12 +140,23 @@ var eDebugger = (function (self)
         str += template;
         str = str.replace(new RegExp('\\{0\\}'), typ);
         str = str.replace(new RegExp('\\{1\\}'), name);
-        str = str.replace(new RegExp('\\{2\\}'), val);
+        try
+        {
+            str = str.replace(new RegExp('\\{2\\}'), val);
+        }
+        catch (ex)
+        {
+
+        }
         return str;
     }
 
     function isArrayLike(obj)
     {
+        if ('window' in obj)
+        {
+            return false;
+        }
         // Real arrays are array-like
         if (obj instanceof Array)
         {
