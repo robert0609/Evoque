@@ -1,5 +1,5 @@
 .mdialog-bg-div{
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     background: #777;
@@ -8,7 +8,7 @@
     padding: 0;
 }
 .mdialog-bg-div-white{
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     background: #FFF;
@@ -18,7 +18,7 @@
 }
 .mdialog-dg-div{
     border: 1px solid #336699;
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     background-color: rgba(0, 0, 0, 0.75);
@@ -31,7 +31,7 @@
     padding: 0;
 }
 .mdialog-dg-div-raw{
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     margin: 0;
@@ -45,7 +45,7 @@
     padding: 0;
 }
 .mdialog-content-div{
-    margin-top: 6px;
+    margin-top: 10px;
     margin-bottom: 10px;
     padding: 0;
 }
@@ -54,12 +54,34 @@
     padding: 0;
 }
 .mdialog-button-div{
-    margin-bottom: 10px;
-    padding: 0;
+    text-align: center;
+    padding:0;
 }
-.mdialog-button-input{
-    width: 5em;
-    height: 3em;
-    margin-left: 1em;
-    margin-right: 1em;
+.mdialog-button-div .mdialog-button-input{
+    display: inline-block;
+    font-size:15px;
+    width: 20%;
+    padding:.6em;
+    margin:0 4% 10px;
+    border: 1px solid #ccc;
+    border-color:#ccc #b2b2b2 #888;
+    text-shadow:0 1px 0 rgba(255,255,255,.6);
+    background-color: #f2f2f2;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #e5e5e5), color-stop(.82, #c7c6c6), color-stop(1, #d1d1d1));
+    box-shadow: 1px 1px 0px rgba(255,255,255,.3) inset, -1px -1px 0px rgba(255,255,255,.5) inset;
+}
+.mdialog-button-input:hover{
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #fdfdfd), color-stop(.82, #ececec), color-stop(1, #e8e8e8));
+}
+.mdialog-button-div .mdialog-button-input:last-child{
+    border:1px solid #f0a16c;
+    color: rgba(255,255,255,.98);
+  border-color:#f0a16c #ce7438 #b3500e;
+  text-shadow:0 -1px 1px rgba(0,0,0,.3);
+  background: #ef7901;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ff9c00), color-stop(.91, #e35b01), color-stop(1, #fb6400));
+  box-shadow: 1px 1px 0px rgba(255,233,0,.6) inset, -1px -1px 0px rgba(255,233,0,.4) inset;
+}
+.mdialog-button-div .mdialog-button-input:last-child:hover{
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ff9c00), color-stop(.91, #e35b01), color-stop(1, #fb6400));
 }
