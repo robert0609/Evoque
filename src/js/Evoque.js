@@ -4,6 +4,38 @@ var Evoque = (function (self)
     self.FrameworkVersion = '1.0.0';
 
     var _hasTouchEvent = 'ontouchstart' in window;
+    //根据UserAgent判断访问网站的平台
+    var _agent = navigator.userAgent.toLowerCase();
+    window.mAgent = {
+        other: 0,
+        ios: 1,
+        android: 2,
+        windows: 3
+    };
+    window.mApp = {
+        none: 0,
+        tujia: 1,
+        weixin: 2,
+        gaode: 3
+    };
+    var _mAgent = mAgent.other;
+    if (_agent.indexOf('android') > -1)
+    {
+        _mAgent = mAgent.android;
+    }
+    else if (_agent.indexOf('iphone') > -1 || _agent.indexOf('ipod') > -1 || _agent.indexOf('ipad') > -1)
+    {
+        _mAgent = mAgent.ios;
+    }
+    else if (_agent.indexOf('windows phone') > -1)
+    {
+        _mAgent = mAgent.windows;
+    }
+    var _mApp = mApp.none;
+    if (_agent.indexOf('micromessenger') > -1)
+    {
+        _mApp = mApp.weixin;
+    }
 
     window.type = {
         eUndefined: 'undefined',
@@ -52,8 +84,7 @@ var Evoque = (function (self)
     function core_addLoadedHandler(fn, useCapture)
     {
         var evtName = 'load';
-        var agent = navigator.userAgent.toLowerCase();
-        if (agent.indexOf('safari') > -1 && agent.indexOf('iphone') > -1)
+        if (_mAgent === mAgent.ios)
         {
             evtName = 'pageshow';
         }
@@ -66,8 +97,7 @@ var Evoque = (function (self)
     function core_addUnloadHandler(fn, useCapture)
     {
         var evtName = 'unload';
-        var agent = navigator.userAgent.toLowerCase();
-        if (agent.indexOf('safari') > -1 && agent.indexOf('iphone') > -1)
+        if (_mAgent === mAgent.ios)
         {
             evtName = 'pagehide';
         }
