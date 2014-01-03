@@ -16,7 +16,9 @@ var Evoque = (function (self)
         none: 0,
         tujia: 1,
         weixin: 2,
-        gaode: 3
+        gaode: 3,
+        qqbrowser: 4,
+        ucbrowser: 5
     };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
@@ -35,6 +37,14 @@ var Evoque = (function (self)
     if (_agent.indexOf('micromessenger') > -1)
     {
         _mApp = mApp.weixin;
+    }
+    else if (_agent.indexOf('mqqbrowser') > -1)
+    {
+        _mApp = mApp.qqbrowser;
+    }
+    else if (_agent.indexOf('ucbrowser') > -1)
+    {
+        _mApp = mApp.ucbrowser;
     }
 
     window.type = {
@@ -84,7 +94,7 @@ var Evoque = (function (self)
     function core_addLoadedHandler(fn, useCapture)
     {
         var evtName = 'load';
-        if (_mAgent === mAgent.ios)
+        if ((_mAgent === mAgent.ios) || (_mAgent === mAgent.android && (_mApp === mApp.qqbrowser || _mApp === mApp.ucbrowser)))
         {
             evtName = 'pageshow';
         }
@@ -97,7 +107,7 @@ var Evoque = (function (self)
     function core_addUnloadHandler(fn, useCapture)
     {
         var evtName = 'unload';
-        if (_mAgent === mAgent.ios)
+        if ((_mAgent === mAgent.ios) || (_mAgent === mAgent.android && (_mApp === mApp.qqbrowser || _mApp === mApp.ucbrowser)))
         {
             evtName = 'pagehide';
         }
