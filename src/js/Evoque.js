@@ -407,6 +407,10 @@ var Evoque = (function (self)
     {
         return _hasTouchEvent;
     }
+
+    $.supportSessionStorage = function () {
+        return !!window.sessionStorage;
+    };
     //Global method end
 
     self.getVal = function () {

@@ -1,6 +1,9 @@
 //Dependency: Evoque.js
 $.history = (function (self)
 {
+    //history enable switcher
+    var _enable = genEnable(true);
+
     self.CMD_NORMAL = 1;
     self.CMD_NOHISTORY = 2;
     self.CMD_BEGINTRAN = 3;
@@ -11,6 +14,11 @@ $.history = (function (self)
     var historyKey = 'historyList';
     var historyList = [];
     var isSync = false;
+
+    function genEnable(val)
+    {
+        return val && $.supportSessionStorage();
+    }
 
     function syncHistoryList()
     {
@@ -129,7 +137,22 @@ $.history = (function (self)
         return (new Date()).getTime();
     }
 
+    self.enable = function (val) {
+        if ($.checkType(val) === type.eBoolean)
+        {
+            _enable = genEnable(val);
+        }
+        else
+        {
+            return _enable;
+        }
+    };
+
     self.show = function () {
+        if (!_enable)
+        {
+            return null;
+        }
         var ret = '';
         syncHistoryList();
         for (var i = 0; i < historyList.length; ++i)
@@ -142,6 +165,11 @@ $.history = (function (self)
     };
 
     self.back = function () {
+        if (!_enable)
+        {
+            history.go(-1);
+            return;
+        }
         var pageId = $('meta[name="pageid"]').getAttr('content');
         if ($.isStringEmpty(pageId))
         {
@@ -157,6 +185,11 @@ $.history = (function (self)
     };
 
     self.backLastTran = function () {
+        if (!_enable)
+        {
+            history.go(-1);
+            return;
+        }
         var pageId = $('meta[name="pageid"]').getAttr('content');
         if ($.isStringEmpty(pageId))
         {
@@ -199,6 +232,10 @@ $.history = (function (self)
     }
 
     $(function () {
+        if (!_enable)
+        {
+            return;
+        }
         enableCustomAttribute(nohistory);
         enableCustomAttribute(begintransaction);
         enableCustomAttribute(endtransaction);

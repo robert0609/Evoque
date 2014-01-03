@@ -1,10 +1,6 @@
 //Dependency: Evoque.js, json2.js
 $.session = (function (self)
 {
-    $.supportSessionStorage = function () {
-        return !!window.sessionStorage;
-    };
-
     function createFunction(fn)
     {
         return function () {
