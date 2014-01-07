@@ -674,7 +674,19 @@ var Evoque = (function (self)
     self.isHide = function () {
         if ($.checkType(this[0]) === type.eElement)
         {
-            return this[0].style.display == 'none';
+            var ret = false;
+            var ele = this[0];
+            var parent = ele.parentElement;
+            while (ele.style.display != 'none' && !$.isObjectNull(parent))
+            {
+                ele = parent;
+                parent = ele.parentElement;
+            }
+            if (ele.style.display == 'none')
+            {
+                ret = true;
+            }
+            return ret;
         }
         else
         {
