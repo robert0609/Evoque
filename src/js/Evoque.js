@@ -144,7 +144,7 @@ var Evoque = (function (self)
 
     String.prototype.getBytesLength = function() {
         return this.replace(/[^\x00-\xff]/gi, "--").length;
-    }
+    };
 
     window.$ = function (parameter)
     {
@@ -401,12 +401,17 @@ var Evoque = (function (self)
     $.unload = function (fn)
     {
         core_addUnloadHandler(fn, false);
-    }
+    };
+
+    $.load = function (fn)
+    {
+        core_addLoadedHandler(fn, false);
+    };
 
     $.hasTouchEvent = function ()
     {
         return _hasTouchEvent;
-    }
+    };
 
     $.supportSessionStorage = function () {
         return !!window.sessionStorage;
