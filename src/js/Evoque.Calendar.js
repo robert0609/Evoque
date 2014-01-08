@@ -1,6 +1,6 @@
 ﻿//Dependency: Evoque.js
 Evoque.calendar = (function (self) {
-    var cache = {};
+    var _index = 0;
 
     var defaultOption = {
         tableElementid: '',
@@ -40,9 +40,9 @@ Evoque.calendar = (function (self) {
         var startDate = option.getValueOfProperty('startDate', defaultOption);
         var displayMonth = option.getValueOfProperty('displayMonth');
         var enablePrevNext = option.getValueOfProperty('enablePrevNext', defaultOption);
-        cache[tableId] = new calendarClass(tableId, startDate, activeDate, checkInData, displayMonth, enablePrevNext, fCallBack);
-        cache[tableId].init();
-        return cache[tableId];
+        var calendarObj = new calendarClass(tableId, startDate, activeDate, checkInData, displayMonth, enablePrevNext, fCallBack);
+        calendarObj.init();
+        return calendarObj;
     };
 
     function calendarClass(tableElement, startDate, activeDate, checkInData, displayMonth, enablePrevNext, fCallBack)
@@ -95,52 +95,58 @@ Evoque.calendar = (function (self) {
             throw 'Invalid parameter!';
         }
 
+        ++_index;
+        var thPrevId = 'thPrev' + _index;
+        var thNextId = 'thNext' + _index;
+        var thTitleId = 'thTitle' + _index;
+        var tbodyMonthId = 'tbodyMonth' + _index;
+
         this.init = function ()
         {
             tableObj.addClass('table-wrap');
             tableObj.addClass('table-calendar');
 
-            var prevHtml = '<th id="thPrev" class="prev disable">←</th>';
-            var nextHtml = '<th id="thNext" class="next">→</th>';
+            var prevHtml = '<th id="' + thPrevId + '" class="prev disable">←</th>';
+            var nextHtml = '<th id="' + thNextId + '" class="next">→</th>';
             if (hidePrevNext)
             {
                 prevHtml = '<th></th>';
                 nextHtml = '<th></th>';
             }
 
-            var strHtml = '<thead><tr>' + prevHtml + '<th id="thTitle" colspan="5" class="switch"></th>' + nextHtml + '</tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody id="tbodyMonth"></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot>';
+            var strHtml = '<thead><tr>' + prevHtml + '<th id="' + thTitleId + '" colspan="5" class="switch"></th>' + nextHtml + '</tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody id="' + tbodyMonthId + '"></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr></tfoot>';
             tableObj.html(strHtml);
             if (!hidePrevNext)
             {
                 //绑定上下个月事件
-                tableObj.getChild('#thPrev').addEventHandler('click', function ()
+                tableObj.getChild('#' + thPrevId).addEventHandler('click', function ()
                 {
-                    var title = tableObj.getChild('#thTitle');
+                    var title = tableObj.getChild('#' + thTitleId);
                     var curY = Number(title.getAttr('curY'));
                     var curM = Number(title.getAttr('curM'));
                     if (curY == currentYear && curM == currentMonth) {
                         return;
                     }
-                    tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM - 1, 1)));
+                    tableObj.getChild('#' + tbodyMonthId).html(loadMonth(new Date(curY, curM - 1, 1)));
                     //绑定日期的选择事件
                     tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
                     setPrevNext();
                 });
-                tableObj.getChild('#thNext').addEventHandler('click', function ()
+                tableObj.getChild('#' + thNextId).addEventHandler('click', function ()
                 {
-                    var title = tableObj.getChild('#thTitle');
+                    var title = tableObj.getChild('#' + thTitleId);
                     var curY = Number(title.getAttr('curY'));
                     var curM = Number(title.getAttr('curM'));
                     if (curY == maxYear && curM == maxMonth) {
                         return;
                     }
-                    tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(curY, curM + 1, 1)));
+                    tableObj.getChild('#' + tbodyMonthId).html(loadMonth(new Date(curY, curM + 1, 1)));
                     //绑定日期的选择事件
                     tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
                     setPrevNext();
                 });
             }
-            tableObj.getChild('#tbodyMonth').html(loadMonth(new Date(startYear, startMonth, 1)));
+            tableObj.getChild('#' + tbodyMonthId).html(loadMonth(new Date(startYear, startMonth, 1)));
             //绑定日期的选择事件
             tableObj.getChild('td[enablePick]').addEventHandler('click', onClickDay);
             if (!hidePrevNext)
@@ -150,7 +156,7 @@ Evoque.calendar = (function (self) {
         };
 
         function onClickDay(event) {
-            var title = tableObj.getChild('#thTitle');
+            var title = tableObj.getChild('#' + thTitleId);
             var curY = Number(title.getAttr('curY'));
             var curM = Number(title.getAttr('curM'));
             curM += 1;
@@ -162,20 +168,20 @@ Evoque.calendar = (function (self) {
         }
 
         function setPrevNext() {
-            var title = tableObj.getChild('#thTitle');
+            var title = tableObj.getChild('#' + thTitleId);
             var curY = Number(title.getAttr('curY'));
             var curM = Number(title.getAttr('curM'));
             if (curY == currentYear && curM == currentMonth) {
-                tableObj.getChild('#thPrev').addClass('disable');
+                tableObj.getChild('#' + thPrevId).addClass('disable');
             }
             else {
-                tableObj.getChild('#thPrev').removeClass('disable');
+                tableObj.getChild('#' + thPrevId).removeClass('disable');
             }
             if (curY == maxYear && curM == maxMonth) {
-                tableObj.getChild('#thNext').addClass('disable');
+                tableObj.getChild('#' + thNextId).addClass('disable');
             }
             else {
-                tableObj.getChild('#thNext').removeClass('disable');
+                tableObj.getChild('#' + thNextId).removeClass('disable');
             }
         }
 
@@ -185,7 +191,7 @@ Evoque.calendar = (function (self) {
             var month = Number(dateDisplay.getMonth());
 
             var monthStr = month + 1;
-            var title = tableObj.getChild('#thTitle');
+            var title = tableObj.getChild('#' + thTitleId);
             title.html(year + '年' + monthStr + '月');
             title.setAttr('curY', year);
             title.setAttr('curM', month);
