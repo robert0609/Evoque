@@ -117,7 +117,7 @@ $.dialog = (function (self) {
                     return false;
                 },
                 autoClose: false,
-                timeout: 30,
+                timeout: 60,
                 onTimeout: function () {
                     that.alert('抱歉，你的网络不太好，请稍后重新刷新页面!')
                 }
