@@ -62,14 +62,22 @@ $.history = (function (self)
         while (historyList.length > 0)
         {
             var po = historyList.pop();
-            if (po.pageId === currentPageId)
-            {
-                continue;
-            }
-            else
+            if ($.isStringEmpty(currentPageId))
             {
                 ret = po;
                 break;
+            }
+            else
+            {
+                if (po.pageId === currentPageId)
+                {
+                    continue;
+                }
+                else
+                {
+                    ret = po;
+                    break;
+                }
             }
         }
         $.session.setJson(historyKey, historyList);
@@ -171,13 +179,10 @@ $.history = (function (self)
             return;
         }
         var pageId = $('meta[name="pageid"]').getAttr('content');
-        if ($.isStringEmpty(pageId))
-        {
-            return;
-        }
         var p = pop(pageId);
         if ($.isObjectNull(p))
         {
+            history.go(-1);
             return;
         }
         this.command = this.CMD_NOHISTORY;
@@ -188,11 +193,6 @@ $.history = (function (self)
         if (!_enable)
         {
             history.go(-1);
-            return;
-        }
-        var pageId = $('meta[name="pageid"]').getAttr('content');
-        if ($.isStringEmpty(pageId))
-        {
             return;
         }
         endCurrentTransaction();

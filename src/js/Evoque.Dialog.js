@@ -63,6 +63,10 @@ $.dialog = (function (self) {
         var onClickClose = null;
         var onQuiting = null;
         var onDialogClosed = null;
+        var onTimeout = null;
+
+        var timeoutTimeoutId;
+        var enableTimeout = false;
 
         var contentParentCache = null;
 
@@ -70,10 +74,11 @@ $.dialog = (function (self) {
         var cmdSeq = [];
         var cmdExecuting = false;
 
-        function cmdClass(mtd, opn)
+        function cmdClass(mtd, opn, aftCbk)
         {
             this.methodName = mtd;
             this.option = opn;
+            this.afterShow = aftCbk;
         }
 
         function exeCmd()
@@ -86,6 +91,14 @@ $.dialog = (function (self) {
                 return;
             }
             show(cmd.option);
+            if ($.checkType(cmd.afterShow) === type.eFunction)
+            {
+                var waiting100 = window.setTimeout(function ()
+                {
+                    window.clearTimeout(waiting100);
+                    cmd.afterShow.call();
+                }, 100);
+            }
         }
 
         this.alert = function (message)
@@ -97,31 +110,27 @@ $.dialog = (function (self) {
 
         this.showLoading = function (loadingMsg, callback)
         {
+            var that = this;
             this.showMessageBox({
                 content: loadingMsg,
                 onQuiting: function () {
                     return false;
                 },
-                autoClose: false
-            });
-            //TODO:这里有个Bug：在调用完alert方法之后，接着调用showLoading方法，此处的callback回调会立即调用
-            if ($.checkType(callback) === type.eFunction)
-            {
-                var waiting100 = window.setTimeout(function ()
-                {
-                    window.clearTimeout(waiting100);
-                    callback.call();
-                }, 100);
-            }
+                autoClose: false,
+                timeout: 30,
+                onTimeout: function () {
+                    that.alert('抱歉，你的网络不太好，请稍后重新刷新页面!')
+                }
+            }, callback);
         };
 
-        this.showMessageBox = function (option) {
+        this.showMessageBox = function (option, afterShowCallBack) {
             if ($.isObjectNull(option))
             {
                 throw 'Parameter is null!';
             }
             option = $(option);
-            cmdSeq.push(new cmdClass('show', option));
+            cmdSeq.push(new cmdClass('show', option, afterShowCallBack));
             if (cmdExecuting)
             {
                 return;
@@ -261,12 +270,26 @@ $.dialog = (function (self) {
             inited = true;
         }
 
-        function reset()
+        function reset(isTimeout)
         {
             if (cmdExecuting == false)
             {
                 return;
             }
+            if (isTimeout)
+            {
+                enableTimeout = false;
+            }
+            else
+            {
+                if (enableTimeout)
+                {
+                    //阻止超时的处理
+                    window.clearTimeout(timeoutTimeoutId);
+                    enableTimeout = false;
+                }
+            }
+
             titleObj.innerHTML = '';
             if ($.checkType(contentParentCache) === type.eElement)
             {
@@ -300,9 +323,19 @@ $.dialog = (function (self) {
                 document.body.removeChild(bgObjWhite);
             }
 
-            if ($.checkType(onDialogClosed) === type.eFunction)
+            if (isTimeout)
             {
-                onDialogClosed.call(window);
+                if ($.checkType(onTimeout) === type.eFunction)
+                {
+                    onTimeout.call(window);
+                }
+            }
+            else
+            {
+                if ($.checkType(onDialogClosed) === type.eFunction)
+                {
+                    onDialogClosed.call(window);
+                }
             }
             //弹出消息序列中下一个消息框
             exeCmd();
@@ -404,6 +437,16 @@ $.dialog = (function (self) {
                 {
                     bgObj.style.height = getbackgroundHeight() + 'px';
                     document.body.appendChild(bgObj);
+                    // 当dialog没有任何按钮并且不自动关闭的时候，增加超时处理
+                    var timeout = option.getValueOfProperty('timeout', defaultOption);
+                    onTimeout = option.getValueOfProperty('onTimeout', defaultOption);
+                    if (timeout > 0)
+                    {
+                        enableTimeout = true;
+                        timeoutTimeoutId = window.setTimeout(function () {
+                            reset(true);
+                        }, timeout * 1000);
+                    }
                 }
             }
             onQuiting = option.getValueOfProperty('onQuiting', defaultOption);
@@ -484,7 +527,9 @@ $.dialog = (function (self) {
                 // customButton example:{ caption: 'xxxx', onClick: function(){} }
                 customButton: [],
                 onDialogClosed: function(){},
-                autoClose: true
+                autoClose: true,
+                timeout: 0,
+                onTimeout: function () {}
             };
 
             return option;
