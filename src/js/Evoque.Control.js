@@ -5,9 +5,14 @@ Evoque.control = (function (self)
         inputId: '',
         minVal: 0,
         maxVal: 0,
+        enableManualInput: false,
         //flag: 1: up; -1: down; 0: no click
         beforeValueChange: function (flag) {},
-        valueChanged: function (flag) {}
+        valueChanged: function (flag) {},
+        //Event handle before modification by manual. arg: { originalValue: XXX }
+        beforeValueManualChanged: function (arg) {},
+        //Event handle after modification by manual.
+        valueManualChanged: function () {}
     };
 
     self.rangeSelect = function (option, inputElement)
@@ -33,8 +38,11 @@ Evoque.control = (function (self)
         }
         var min = option.getValueOfProperty('minVal', defaultOption_RangeSelect);
         var max = option.getValueOfProperty('maxVal', defaultOption_RangeSelect);
+        var enableManualInput = option.getValueOfProperty('enableManualInput', defaultOption_RangeSelect);
         var beforeValChange = option.getValueOfProperty('beforeValueChange', defaultOption_RangeSelect);
         var valChanged = option.getValueOfProperty('valueChanged', defaultOption_RangeSelect);
+        var beforeValueManualChanged = option.getValueOfProperty('beforeValueManualChanged', defaultOption_RangeSelect);
+        var valueManualChanged = option.getValueOfProperty('valueManualChanged', defaultOption_RangeSelect);
         if (min > max)
         {
             throw 'Error:[min] > [max]';
@@ -57,7 +65,35 @@ Evoque.control = (function (self)
             div.addClass('form-add-sub');
             var input1 = $(input);
             input1.addClass('num');
-            input1.setAttr('readonly', 'readonly');
+            if (enableManualInput)
+            {
+                input1.addEventHandler('input', function (e) {
+                    var inVal = input1.getVal();
+                    var reg = new RegExp('\\d+');
+                    if (!reg.test(inVal)) {
+                        input1.setVal(input1.originalValue);
+                        return;
+                    }
+                    var nInVal = Number(inVal);
+                    if (nInVal < min || nInVal > max)
+                    {
+                        input1.setVal(input1.originalValue);
+                        return;
+                    }
+                    if (beforeValueManualChanged.call(input, { originalValue: input1.originalValue }) === false)
+                    {
+                        input1.setVal(input1.originalValue);
+                        return;
+                    }
+                    input1.originalValue = inVal;
+                    setUpDownStatus();
+                    valueManualChanged.call(input);
+                });
+            }
+            else
+            {
+                input1.setAttr('readonly', 'readonly');
+            }
             var aDown = $(document.createElement('a'));
             aDown.addClass('sub');
             aDown.setAttr('href', 'javascript:void(0);');
@@ -100,6 +136,13 @@ Evoque.control = (function (self)
             function setValue(val)
             {
                 input1.setVal(val);
+                input1.originalValue = val;
+                setUpDownStatus();
+            }
+
+            function setUpDownStatus()
+            {
+                var val = Number(input1.getVal());
                 if (val > min)
                 {
                     aDown.removeClass('disabled');
@@ -115,6 +158,11 @@ Evoque.control = (function (self)
                 else
                 {
                     aUp.addClass('disabled');
+                }
+                if (min == max)
+                {
+                    aDown.hide();
+                    aUp.hide();
                 }
             }
 
