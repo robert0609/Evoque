@@ -450,7 +450,15 @@ Evoque.control = (function (self)
         {
             return null;
         }
-        return self.rangeSelect(option, this[0])[0];
+        var ret = null;
+        this.each(function (i) {
+            this.rangeSelectObject = self.rangeSelect(option, this)[0];
+            if (i === 0)
+            {
+                ret = this.rangeSelectObject;
+            }
+        });
+        return ret;
     };
 
     Evoque.createButton = function (option)
