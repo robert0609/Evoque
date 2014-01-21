@@ -408,6 +408,45 @@ var Evoque = (function (self)
         core_addLoadedHandler(fn, false);
     };
 
+    /**
+     *
+     * @param fn
+     * @param checkHandle: 由于fn有可能会发出异步的ajax调用，故需要调用房提供一个验证能否继续触发滚动事件的回调函数，checkHandle就是这个回调函数的指针
+     * @param distance2Bottom
+     */
+    $.scroll2Bottom = function (fn, checkHandle)
+    {
+        //DOM标准
+        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+            window.addEventListener('scroll', function (e) {
+                var bodyH = document.body.scrollHeight;
+                var winH = document.documentElement.clientHeight;
+                if (bodyH <= winH)
+                {
+                    return;
+                }
+                var h = bodyH - winH;
+                var bo = h / 4;
+                if ($.checkType(checkHandle) === type.eFunction)
+                {
+                    if (checkHandle.call(window) === false)
+                    {
+                        return;
+                    }
+                }
+                var t = document.documentElement.scrollTop;
+                if (t == 0)
+                {
+                    t = document.body.scrollTop;
+                }
+                if (h - t <= bo)
+                {
+                    fn.call(window, { currentScrollTop: t });
+                }
+            });
+        }
+    };
+
     $.hasTouchEvent = function ()
     {
         return _hasTouchEvent;
@@ -748,6 +787,14 @@ var Evoque = (function (self)
         {
             return defObj[propertyName];
         }
+    };
+
+    self.dispatchClick = function () {
+        var evt = document.createEvent('MouseEvents');
+        evt.initMouseEvent('click', true, true);
+        this.each(function () {
+            this.dispatchEvent(evt);
+        });
     };
 
     return self;
