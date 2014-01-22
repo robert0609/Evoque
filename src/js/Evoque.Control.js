@@ -39,6 +39,10 @@ Evoque.control = (function (self)
         var min = option.getValueOfProperty('minVal', defaultOption_RangeSelect);
         var max = option.getValueOfProperty('maxVal', defaultOption_RangeSelect);
         var enableManualInput = option.getValueOfProperty('enableManualInput', defaultOption_RangeSelect);
+        if (min == max)
+        {
+            enableManualInput = false;
+        }
         var beforeValChange = option.getValueOfProperty('beforeValueChange', defaultOption_RangeSelect);
         var valChanged = option.getValueOfProperty('valueChanged', defaultOption_RangeSelect);
         var beforeValueManualChanged = option.getValueOfProperty('beforeValueManualChanged', defaultOption_RangeSelect);
