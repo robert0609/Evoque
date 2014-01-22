@@ -261,6 +261,10 @@ var Evoque = (function (self)
     }
 
     //Global method begin
+    $.agent = function () {
+        return _mAgent;
+    };
+
     $.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
@@ -791,7 +795,7 @@ var Evoque = (function (self)
 
     self.dispatchClick = function () {
         var evt = document.createEvent('MouseEvents');
-        evt.initMouseEvent('click', true, true);
+        evt.initEvent('click', true, true);
         this.each(function () {
             this.dispatchEvent(evt);
         });

@@ -175,6 +175,7 @@ $.history = (function (self)
     self.back = function () {
         if (!_enable)
         {
+            window.removeEventListener('popstate', winPopStateHandle);
             history.go(-1);
             return;
         }
@@ -182,6 +183,7 @@ $.history = (function (self)
         var p = pop(pageId);
         if ($.isObjectNull(p))
         {
+            window.removeEventListener('popstate', winPopStateHandle);
             history.go(-1);
             return;
         }
@@ -192,12 +194,41 @@ $.history = (function (self)
     self.backLastTran = function () {
         if (!_enable)
         {
+            window.removeEventListener('popstate', winPopStateHandle);
             history.go(-1);
             return;
         }
         endCurrentTransaction();
         this.back();
     };
+
+    /**
+     * 点击浏览器后退按钮所调用的回调
+     */
+    self.backHandleByBrowser = function () {};
+
+    var _currentUrl = null;
+    var _currentTitle = null;
+    function winPopStateHandle(e)
+    {
+        try
+        {
+            if (!_enable)
+            {
+                return;
+            }
+            if ($.isObjectNull(e.state))
+            {
+                return;
+            }
+            self.backHandleByBrowser();
+        }
+        finally
+        {
+            history.replaceState({ backIsClicked: true }, _currentTitle, _currentUrl);
+            history.pushState({ backIsClicked: true }, _currentTitle, _currentUrl);
+        }
+    }
 
     var nohistory = 'nohistory';
     var begintransaction = 'begintransaction';
@@ -284,6 +315,15 @@ $.history = (function (self)
                     break;
             }
         });
+        //浏览器后退按钮控制机制
+        _currentUrl = location.href;
+        _currentTitle = document.title;
+        window.addEventListener('popstate', winPopStateHandle);
+        if ($.agent() === mAgent.windows)
+        {
+            history.replaceState({ backIsClicked: true }, _currentTitle, _currentUrl);
+            history.pushState({ backIsClicked: true }, _currentTitle, _currentUrl);
+        }
     });
 
     return self;
