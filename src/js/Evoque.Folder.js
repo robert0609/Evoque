@@ -5,6 +5,8 @@ Evoque.folder = (function (self) {
 
     var defaultOption = {
         folderId: '',
+        // 'normal' | 'once' | 'disable'
+        mode: 'normal',
         // 'fold' | 'unfold'
         status: 'fold',
         onFolded: function () {},
@@ -36,17 +38,24 @@ Evoque.folder = (function (self) {
             }
             folder = $folder[0];
         }
+        var mode = option.getValueOfProperty('mode', defaultOption).toLowerCase();
         var status = option.getValueOfProperty('status', defaultOption).toLowerCase();
         var onFolded = option.getValueOfProperty('onFolded', defaultOption);
         var onUnfolded = option.getValueOfProperty('onUnfolded', defaultOption);
-        return new folderClass(folder, status, onFolded, onUnfolded);
+        return new folderClass(folder, mode, status, onFolded, onUnfolded);
     };
 
-    function folderClass(folder, status, onFolded, onUnfolded)
+    function folderClass(folder, mode, status, onFolded, onUnfolded)
     {
         var $folder = $(folder);
         var $title = $folder.getChild('.' + titleClass);
         var $content = $folder.getChild('.' + contentClass);
+
+        if (mode !== 'normal')
+        {
+            status = 'fold';
+        }
+
         var _isFolded = true;
         if (status === 'unfold')
         {
@@ -63,7 +72,17 @@ Evoque.folder = (function (self) {
             $content.addClass('folder-content-unfold');
         }
 
-        $title.addEventHandler('click', function () {
+        if (mode === 'normal')
+        {
+            $title.addEventHandler('click', titleClick);
+        }
+        else if (mode === 'once')
+        {
+            $title.addEventHandler('click', titleClickOnce);
+        }
+
+        function titleClick()
+        {
             if (_isFolded)
             {
                 unfold();
@@ -74,7 +93,22 @@ Evoque.folder = (function (self) {
                 fold();
                 _isFolded = true;
             }
-        });
+        }
+
+        function titleClickOnce()
+        {
+            if (_isFolded)
+            {
+                unfold();
+                _isFolded = false;
+            }
+            else
+            {
+                fold();
+                _isFolded = true;
+            }
+            $title.removeEventHandler('click', titleClickOnce);
+        }
 
         function fold() {
             $title.removeClass('folder-title-unfold');
