@@ -9,6 +9,7 @@ Evoque.folder = (function (self) {
         mode: 'normal',
         // 'fold' | 'unfold'
         status: 'fold',
+        autoTop: true,
         onFolded: function () {},
         onUnfolded: function () {}
     };
@@ -40,12 +41,17 @@ Evoque.folder = (function (self) {
         }
         var mode = option.getValueOfProperty('mode', defaultOption).toLowerCase();
         var status = option.getValueOfProperty('status', defaultOption).toLowerCase();
+        var autoTop = option.getValueOfProperty('autoTop', defaultOption);
+        if (mode !== 'normal')
+        {
+            autoTop = false;
+        }
         var onFolded = option.getValueOfProperty('onFolded', defaultOption);
         var onUnfolded = option.getValueOfProperty('onUnfolded', defaultOption);
-        return new folderClass(folder, mode, status, onFolded, onUnfolded);
+        return new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
     };
 
-    function folderClass(folder, mode, status, onFolded, onUnfolded)
+    function folderClass(folder, mode, status, autoTop, onFolded, onUnfolded)
     {
         var $folder = $(folder);
         var $title = $folder.getChild('.' + titleClass);
@@ -123,7 +129,10 @@ Evoque.folder = (function (self) {
             $title.addClass('folder-title-unfold');
             $content.removeClass('folder-content-fold');
             $content.addClass('folder-content-unfold');
-            window.scrollTo(0, $title[0].offsetTop);
+            if (autoTop)
+            {
+                window.scrollTo(0, $title[0].offsetTop);
+            }
             onUnfolded.apply({ title: $title[0], content: $content[0]});
         }
     }
