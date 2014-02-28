@@ -12,17 +12,43 @@
     <script type="text/javascript">
         $(function ()
         {
-            $('#tableCalender').createCalendar({
-                startDate: new Date(2013, 7, 13),
-                originalDate: new Date(2013, 7, 25),
-                callBack: function (e, arg) {
-                    $.dialog.alert(arg.selectDate);
-                }
-            });
+            try
+            {
+                $('#tableCalender').createCalendar({
+                    startDate: new Date(2013, 7, 13),
+                    originalDate: new Date(2013, 8, 25),
+                    displayMonth: new Date(2013, 7, 1),
+                    enablePrevNext: false,
+                    callBack: function (e, arg) {
+                        $.dialog.alert(arg.selectDate);
+                    }
+                });
+                $('#tableCalender1').createCalendar({
+                    startDate: new Date(2013, 7, 13),
+                    originalDate: new Date(2013, 8, 25),
+                    displayMonth: new Date(2013, 8, 1),
+                    enablePrevNext: false,
+                    callBack: function (e, arg) {
+                        $.dialog.alert(arg.selectDate);
+                    }
+                });
+                $('#tableCalender2').createCalendar({
+                    originalDate: new Date(2014, 1, 25),
+                    callBack: function (e, arg) {
+                        $.dialog.alert(arg.selectDate);
+                    }
+                });
+            }
+            catch (ex)
+            {
+                alert(ex);
+            }
         });
     </script>
 </head>
 <body>
     <table id="tableCalender"></table>
+    <table id="tableCalender1"></table>
+    <table id="tableCalender2"></table>
 </body>
 </html>

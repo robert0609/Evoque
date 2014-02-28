@@ -11,8 +11,19 @@
         $(function ()
         {
             $('.range').createRangeSelect({
-                minVal: 0,
-                maxVal: 5
+                minVal: 1,
+                maxVal: 1,
+                enableManualInput: true,
+                beforeValueManualChanged: function (arg) {
+                    if (this.value == 4)
+                    {
+                        alert('Not Set Value [' + this.value + ']');
+                        return false;
+                    }
+                },
+                valueManualChanged: function () {
+                    alert('Set Value [' + this.value + ']');
+                }
             });
         });
     </script>

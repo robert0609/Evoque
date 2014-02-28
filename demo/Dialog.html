@@ -10,13 +10,16 @@
     <script type="text/javascript">
         function click()
         {
+            //$.dialog.showLoading('loading');
+//            window.setTimeout(function () {
+//                $.dialog.closeCurrentDialog();
+//            }, 2000);
             $.dialog.alert('alert 1');
             $.dialog.alert('dialog');
             $.dialog.showMessageBox({
                 title:'title',
                 icon:'',
                 content:'message text',
-                width:800,
                 button:'yes|no',
                 onClickYes: function(){
                     alert('click yes');
@@ -51,8 +54,7 @@
                 },
                 autoClose: false
             });
-            
-            $.dialog.showLoading('loading');
+
         }
     </script>
 </head>

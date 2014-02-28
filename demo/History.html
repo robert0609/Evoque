@@ -10,19 +10,61 @@
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Session.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.History.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
     <script type="text/javascript">
+        var i = 1;
         $(function () {
             $('#divHis').html($.history.show());
+
+            $.history.backHandleByBrowser = function () {
+                $.dialog.alert('Clicked back button!');
+            };
+
+//            window.addEventListener('popstate', function (e) {
+//                ++i;
+//                var url = 'http://10.2.10.18:4001/' + i + '/';
+//                history.replaceState({ url: url }, i, url);
+//                ++i;
+//                var url = 'http://10.2.10.18:4001/' + i + '/';
+//                history.pushState({ url: url }, i, url);
+//                var obj = history.state;
+//                $('#test').html('e.state:' + JSON.stringify(e.state) + '; history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
+//            });
+
+            //$('#test').html(history.pushState);
         });
 
         function btnClick()
         {
-            //$.loadPage('history/1.html');
+            try
+            {
+                $('#test1').html('***history.length:' + history.length);
+                ++i;
+                var url = 'http://10.2.10.18:4001/' + i + '/';
+                history.pushState({url: url}, i, url);
+                var obj = history.state;
+                $('#test').html('history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
+            }
+            catch (ex)
+            {
+                alert(ex);
+            }
         }
+
+        /**
+         * 在pushState和popState的过程中,history.length数值不准,经测试，在Chrome浏览器下只有在调用pushState方法时候才会刷新history.length数值,在popstate事件回调的时候不会刷新history.length数值
+         */
     </script>
 </head>
 <body>
+<a href="javascript:btnClick();">pushState</a>
+<a href="javascript:history.go(-1);">back</a>
+
 <a href="history/1.html">1.html</a>
 <div id="divHis"></div>
+<div id="test1"></div>
+<div id="test"></div>
+
 </body>
 </html>

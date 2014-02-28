@@ -11,12 +11,18 @@
         $(function ()
         {
             $('#folder').createFolder();
+            $('#folder1').createFolder({
+                mode: 'once'
+            });
+            $('#folder2').createFolder({
+                mode: 'disable'
+            });
         });
     </script>
 </head>
 <body>
 <div id="folder">
-<div class="folder-title">A</div>
+<div class="folder-title">normal</div>
 <div class="folder-content">
     <ul>
         <li>aaaa</li>
@@ -26,6 +32,32 @@
         <li>eeee</li>
     </ul>
 </div>
+</div>
+
+<div id="folder1">
+    <div class="folder-title">once</div>
+    <div class="folder-content">
+        <ul>
+            <li>aaaa</li>
+            <li>bbbb</li>
+            <li>cccc</li>
+            <li>dddd</li>
+            <li>eeee</li>
+        </ul>
+    </div>
+</div>
+
+<div id="folder2">
+    <div class="folder-title">disable</div>
+    <div class="folder-content">
+        <ul>
+            <li>aaaa</li>
+            <li>bbbb</li>
+            <li>cccc</li>
+            <li>dddd</li>
+            <li>eeee</li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>

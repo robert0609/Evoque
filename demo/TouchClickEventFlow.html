@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            if ($.hasTouchEvent())
+            {
+                $('#container').html('Touch me!');
+                $('#container').addEventHandler('touchstart', function () { eDebugger.output('touch start'); });
+                $('#container').addEventHandler('touchmove', function () { eDebugger.output('touch move'); });
+                $('#container').addEventHandler('touchend', function () { eDebugger.output('touch end'); });
+            }
+            else
+            {
+                $('#container').html('Click me!');
+            }
+
+            $('#container').addEventHandler('mousedown', function () { eDebugger.output('mouse down'); });
+            $('#container').addEventHandler('mouseup', function () { eDebugger.output('mouse up'); });
+            $('#container').addEventHandler('mouseout', function () { eDebugger.output('mouse out'); });
+            $('#container').addEventHandler('mouseover', function () { eDebugger.output('mouse over'); });
+            $('#container').addEventHandler('mousemove', function () { eDebugger.output('mouse move'); });
+            $('#container').addEventHandler('click', function () { eDebugger.output('click'); });
+        });
+    </script>
+</head>
+<body>
+<div id="container" style="border-color: green; border-width: 2px; border-style: solid; width: 100px;height: 100px;">
+</div>
+</body>
+</html>
