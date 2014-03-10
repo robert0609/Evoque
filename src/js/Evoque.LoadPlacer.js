@@ -8,7 +8,8 @@ Evoque.loader = (function (self)
         // json
         query: {},
         onSuccess : function () {},
-        onFail : function () {}
+        onFail : function () {},
+        timeOut : 30
     };
 
     self.load = function (option, element) {
@@ -36,7 +37,8 @@ Evoque.loader = (function (self)
         var query = option.getValueOfProperty('query', defaultOption);
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
         var onFail = option.getValueOfProperty('onFail', defaultOption);
-        element.__innerLoader.loadSomething(url, query, onSuccess, onFail);
+        var timeout = option.getValueOfProperty('timeOut', defaultOption);
+        element.__innerLoader.loadSomething(url, query, onSuccess, onFail, timeout);
     };
 
     function loaderClass(element, loadingElementId)
@@ -50,7 +52,7 @@ Evoque.loader = (function (self)
         var parent = element.previousElementSibling;
         element.style.textAlign = 'center';
 
-        this.loadSomething = function (url, query, onsuccess, onfail)
+        this.loadSomething = function (url, query, onsuccess, onfail, timeout)
         {
             element.innerHTML = loadingElement;
             $(element).show();
@@ -70,7 +72,8 @@ Evoque.loader = (function (self)
                     $(element).hide();
                     element.innerHTML = '';
                     onfail.call(window, e);
-                }
+                },
+                timeOut: timeout
             });
         };
     }
