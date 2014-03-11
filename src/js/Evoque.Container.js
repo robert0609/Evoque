@@ -102,6 +102,7 @@ $.container = (function (self)
             //调用dialog控件显示
             $.dialog.showModalDialog({
                 content:divId,
+                width:document.documentElement.clientWidth * 0.9,
                 onDialogShowed: function(){
                     var select = toShowDiv.getChild('select');
                     select.enable();
@@ -111,6 +112,9 @@ $.container = (function (self)
                     {
                         onShow.call(toShowDiv[0]);
                     }
+                },
+                onQuiting: function () {
+                    return false;
                 },
                 autoClose: false
             });

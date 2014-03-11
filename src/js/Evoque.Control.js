@@ -357,7 +357,7 @@ Evoque.control = (function (self)
 
     var defaultOption_RangeSelectDate = {
         inputId: '',
-        format: '{0}',
+        format: '{Y}年{M}月{D}日',
         //flag: 1: up; -1: down; 0: no click
         beforeDateChange: function (flag) {},
         dateChanged: function (flag) {}
@@ -448,7 +448,7 @@ Evoque.control = (function (self)
             {
                 input1.setVal(val.toCustomString());
                 input1.originalValue = val;
-                displayDiv.html(format.replace('{0}', val.toCustomString()));
+                displayDiv.html(format.replace('{Y}', val.getFullYear()).replace('{M}', val.getMonth() + 1).replace('{D}', val.getDate()));
                 setUpDownStatus();
             }
 
