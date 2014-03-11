@@ -25,6 +25,6 @@
     100% {transform: translateY(0);}
 }
 .bottomTop{
-    -webkit-animation:bottomTop .2s ease both .1s;
-    animation:bottomTop .2s ease both .1s;
+    -webkit-animation:bottomTop .15s ease both .01s;
+    animation:bottomTop .15s ease both .01s;
 }

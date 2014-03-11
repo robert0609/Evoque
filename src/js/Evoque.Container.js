@@ -84,6 +84,67 @@ $.container = (function (self)
             }
         };
 
+        this.showDialog = function(divId)
+        {
+            var toShowDiv = null;
+            for (var i = 0; i < ids.length; ++i)
+            {
+                if (ids[i] == divId)
+                {
+                    toShowDiv = divList[i];
+                    break;
+                }
+            }
+            if (toShowDiv == null)
+            {
+                return;
+            }
+            //调用dialog控件显示
+            $.dialog.showModalDialog({
+                content:divId,
+                onDialogShowed: function(){
+                    var select = toShowDiv.getChild('select');
+                    select.enable();
+                    var input = toShowDiv.getChild('input');
+                    input.enable();
+                    if (toShowDiv.length > 0 && onShowIsFn)
+                    {
+                        onShow.call(toShowDiv[0]);
+                    }
+                },
+                autoClose: false
+            });
+        }
+
+        this.closeDialog = function (divId, remainHideDivInput)
+        {
+            var toHideDiv = null;
+            for (var i = 0; i < ids.length; ++i)
+            {
+                if (ids[i] == divId)
+                {
+                    toHideDiv = divList[i];
+                    break;
+                }
+            }
+            if (toHideDiv == null)
+            {
+                return;
+            }
+            $.dialog.closeCurrentDialog();
+            if (!remainHideDivInput)
+            {
+                var select = toHideDiv.getChild('select');
+                select.disable();
+                var input = toHideDiv.getChild('input');
+                input.disable();
+            }
+            if (toHideDiv.length > 0 && onHideIsFn)
+            {
+                onHide.call(toHideDiv[0], { remainHideDivInput: remainHideDivInput });
+            }
+        }
+
         function createOption()
         {
             return {

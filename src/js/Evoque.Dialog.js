@@ -62,6 +62,7 @@ $.dialog = (function (self) {
         var onClickNo = null;
         var onClickClose = null;
         var onQuiting = null;
+        var onDialogShowed = null;
         var onDialogClosed = null;
         var onTimeout = null;
 
@@ -91,6 +92,10 @@ $.dialog = (function (self) {
                 return;
             }
             show(cmd.option);
+            if ($.checkType(onDialogShowed) === type.eFunction)
+            {
+                onDialogShowed.call(window);
+            }
             if ($.checkType(cmd.afterShow) === type.eFunction)
             {
                 var waiting100 = window.setTimeout(function ()
@@ -450,6 +455,7 @@ $.dialog = (function (self) {
                 }
             }
             onQuiting = option.getValueOfProperty('onQuiting', defaultOption);
+            onDialogShowed = option.getValueOfProperty('onDialogShowed', defaultOption);
             onDialogClosed = option.getValueOfProperty('onDialogClosed', defaultOption);
 
             document.body.appendChild(dialogObj);
@@ -526,6 +532,7 @@ $.dialog = (function (self) {
                 onQuiting: function(){},
                 // customButton example:{ caption: 'xxxx', onClick: function(){} }
                 customButton: [],
+                onDialogShowed: function(){},
                 onDialogClosed: function(){},
                 autoClose: true,
                 timeout: 0,

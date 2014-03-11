@@ -129,10 +129,18 @@ var Evoque = (function (self)
         return new Date(this.getFullYear(), this.getMonth(), this.getDate());
     };
 
+    Date.prototype.addDay = function (n) {
+        this.setDate(this.getDate() + Number(n));
+        return this;
+    };
+
     String.prototype.trim = function () {
         return this.replace(/\s/g, '');
     };
 
+    /*
+     *形如"yyyy-MM-dd"的字符床转换成日期
+     */
     String.prototype.toDate = function () {
         if (!/^\d{1,4}-\d{1,2}-\d{1,2}$/.test(this))
         {

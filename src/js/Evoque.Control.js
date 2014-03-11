@@ -196,6 +196,297 @@ Evoque.control = (function (self)
         }
     };
 
+    var defaultOption_RangeSelect2 = {
+        inputId: '',
+        minVal: 0,
+        maxVal: 0,
+        format: '{0}',
+        //flag: 1: up; -1: down; 0: no click
+        beforeValueChange: function (flag) {},
+        valueChanged: function (flag) {}
+    };
+
+    self.rangeSelect2 = function (option, inputElement)
+    {
+        if ($.isObjectNull(option))
+        {
+            throw 'Parameter is null!';
+        }
+        option = $(option);
+        var input;
+        if ($.checkType(inputElement) === type.eElement)
+        {
+            input = $(inputElement);
+        }
+        else
+        {
+            var id = option.getValueOfProperty('inputId', defaultOption_RangeSelect2);
+            if ($.isStringEmpty(id))
+            {
+                throw 'Parameter is error!';
+            }
+            input = $('input[id="' + id + '"]');
+        }
+        var min = option.getValueOfProperty('minVal', defaultOption_RangeSelect2);
+        var max = option.getValueOfProperty('maxVal', defaultOption_RangeSelect2);
+        var format = option.getValueOfProperty('format', defaultOption_RangeSelect2);
+        var beforeValChange = option.getValueOfProperty('beforeValueChange', defaultOption_RangeSelect2);
+        var valChanged = option.getValueOfProperty('valueChanged', defaultOption_RangeSelect2);
+        if (min > max)
+        {
+            throw 'Error:[min] > [max]';
+        }
+
+        var ret = [];
+        input.each(function () {
+            var re = null;
+            if ($(this).getAttr('type') == 'hidden')
+            {
+                re = generateRange(this);
+            }
+            ret.push(re);
+        });
+        return ret;
+
+        function generateRange(input)
+        {
+            var div = $(document.createElement('div'));
+            div.addClass('form-add-sub');
+            var input1 = $(input);
+            var aDown = $(document.createElement('a'));
+            aDown.addClass('sub');
+            aDown.setAttr('href', 'javascript:void(0);');
+            aDown.addEventHandler('click', function () {
+                var val = Number(input1.getVal());
+                if (val > min)
+                {
+                    val -= 1;
+                    if (beforeValChange.call(input, -1) === false)
+                    {
+                        return;
+                    }
+                    setValue(val);
+                    valChanged.call(input, -1);
+                }
+            }, false);
+            var aUp = $(document.createElement('a'));
+            aUp.addClass('add');
+            aUp.setAttr('href', 'javascript:void(0);');
+            aUp.addEventHandler('click', function () {
+                var val = Number(input1.getVal());
+                if (val < max)
+                {
+                    val += 1;
+                    if (beforeValChange.call(input, 1) === false)
+                    {
+                        return;
+                    }
+                    setValue(val);
+                    valChanged.call(input, 1);
+                }
+            }, false);
+            var displayDiv = $(document.createElement('div'));
+            displayDiv.addClass('displaytext');
+            input.parentElement.replaceChild(div[0], input);
+            div[0].appendChild(aDown[0]);
+            div[0].appendChild(input1[0]);
+            div[0].appendChild(displayDiv[0]);
+            div[0].appendChild(aUp[0]);
+
+            setValue(min);
+
+            function setValue(val)
+            {
+                input1.setVal(val);
+                input1.originalValue = val;
+                displayDiv.html(format.replace('{0}', val));
+                setUpDownStatus();
+            }
+
+            function setUpDownStatus()
+            {
+                var val = Number(input1.getVal());
+                if (val > min)
+                {
+                    aDown.removeClass('disabled');
+                }
+                else
+                {
+                    aDown.addClass('disabled');
+                }
+                if (val < max)
+                {
+                    aUp.removeClass('disabled');
+                }
+                else
+                {
+                    aUp.addClass('disabled');
+                }
+                if (min == max)
+                {
+                    aDown.hide();
+                    aUp.hide();
+                }
+            }
+
+            return {
+                setVal: function (v) {
+                    if (v < min)
+                    {
+                        v = min;
+                    }
+                    if (v > max)
+                    {
+                        v = max;
+                    }
+                    var flg = v == input1.getVal();
+                    if (flg)
+                    {
+                        return;
+                    }
+                    if (beforeValChange.call(input, 0) === false)
+                    {
+                        return;
+                    }
+                    setValue(v);
+                    valChanged.call(input, 0);
+                }
+            };
+        }
+    };
+
+    var defaultOption_RangeSelectDate = {
+        inputId: '',
+        format: '{0}',
+        //flag: 1: up; -1: down; 0: no click
+        beforeDateChange: function (flag) {},
+        dateChanged: function (flag) {}
+    };
+
+    self.rangeSelectDate = function (option, inputElement)
+    {
+        if ($.isObjectNull(option))
+        {
+            throw 'Parameter is null!';
+        }
+        option = $(option);
+        var input;
+        if ($.checkType(inputElement) === type.eElement)
+        {
+            input = $(inputElement);
+        }
+        else
+        {
+            var id = option.getValueOfProperty('inputId', defaultOption_RangeSelectDate);
+            if ($.isStringEmpty(id))
+            {
+                throw 'Parameter is error!';
+            }
+            input = $('input[id="' + id + '"]');
+        }
+        var format = option.getValueOfProperty('format', defaultOption_RangeSelectDate);
+        var beforeValChange = option.getValueOfProperty('beforeDateChange', defaultOption_RangeSelectDate);
+        var valChanged = option.getValueOfProperty('dateChanged', defaultOption_RangeSelectDate);
+
+        var ret = [];
+        input.each(function () {
+            var re = null;
+            if ($(this).getAttr('type') == 'hidden')
+            {
+                re = generateRange(this);
+            }
+            ret.push(re);
+        });
+        return ret;
+
+        function generateRange(input)
+        {
+            var today = (new Date()).getYMD();
+            var div = $(document.createElement('div'));
+            div.addClass('form-add-sub');
+            var input1 = $(input);
+            var aDown = $(document.createElement('a'));
+            aDown.addClass('sub');
+            aDown.setAttr('href', 'javascript:void(0);');
+            aDown.addEventHandler('click', function () {
+                var val = input1.getVal().toDate();
+                if (val > today)
+                {
+                    val.addDay(-1);
+                    if (beforeValChange.call(input, -1) === false)
+                    {
+                        return;
+                    }
+                    setValue(val);
+                    valChanged.call(input, -1);
+                }
+            }, false);
+            var aUp = $(document.createElement('a'));
+            aUp.addClass('add');
+            aUp.setAttr('href', 'javascript:void(0);');
+            aUp.addEventHandler('click', function () {
+                var val = input1.getVal().toDate();
+                val.addDay(1);
+                if (beforeValChange.call(input, 1) === false)
+                {
+                    return;
+                }
+                setValue(val);
+                valChanged.call(input, 1);
+            }, false);
+            var displayDiv = $(document.createElement('div'));
+            displayDiv.addClass('displaytext');
+            input.parentElement.replaceChild(div[0], input);
+            div[0].appendChild(aDown[0]);
+            div[0].appendChild(input1[0]);
+            div[0].appendChild(displayDiv[0]);
+            div[0].appendChild(aUp[0]);
+
+            setValue(today);
+
+            function setValue(val)
+            {
+                input1.setVal(val.toCustomString());
+                input1.originalValue = val;
+                displayDiv.html(format.replace('{0}', val.toCustomString()));
+                setUpDownStatus();
+            }
+
+            function setUpDownStatus()
+            {
+                var val = input1.getVal().toDate();
+                if (val > today)
+                {
+                    aDown.removeClass('disabled');
+                }
+                else
+                {
+                    aDown.addClass('disabled');
+                }
+            }
+
+            return {
+                setDate: function (v) {
+                    if (v < today)
+                    {
+                        v = today;
+                    }
+                    var flg = v == input1.getVal().toDate();
+                    if (flg)
+                    {
+                        return;
+                    }
+                    if (beforeValChange.call(input, 0) === false)
+                    {
+                        return;
+                    }
+                    setValue(v);
+                    valChanged.call(input, 0);
+                }
+            };
+        }
+    };
+
     var defaultOption_Button = {
         elementId: '',
         classDown: '',
@@ -495,6 +786,11 @@ Evoque.control = (function (self)
     };
 
     //API
+    /**
+     * 使用于type='text'的input
+     * @param option
+     * @return {null}
+     */
     Evoque.createRangeSelect = function (option)
     {
         option = option || {};
@@ -508,6 +804,52 @@ Evoque.control = (function (self)
             if (i === 0)
             {
                 ret = this.rangeSelectObject;
+            }
+        });
+        return ret;
+    };
+
+    /**
+     * 使用于type='hidden'的input
+     * @param option
+     * @return {null}
+     */
+    Evoque.createRangeSelectFormat = function (option)
+    {
+        option = option || {};
+        if (this.length < 1)
+        {
+            return null;
+        }
+        var ret = null;
+        this.each(function (i) {
+            this.rangeSelectFormat = self.rangeSelect2(option, this)[0];
+            if (i === 0)
+            {
+                ret = this.rangeSelectFormat;
+            }
+        });
+        return ret;
+    };
+
+    /**
+     * 使用于type='hidden'的input
+     * @param option
+     * @return {null}
+     */
+    Evoque.createRangeSelectDate = function (option)
+    {
+        option = option || {};
+        if (this.length < 1)
+        {
+            return null;
+        }
+        var ret = null;
+        this.each(function (i) {
+            this.rangeSelectDate = self.rangeSelectDate(option, this)[0];
+            if (i === 0)
+            {
+                ret = this.rangeSelectDate;
             }
         });
         return ret;
