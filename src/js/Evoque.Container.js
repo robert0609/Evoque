@@ -1,4 +1,4 @@
-//Dependency: Evoque.js
+//Dependency: Evoque.js, Evoque.Dialog.js
 $.container = (function (self)
 {
     var defaultOption = {
