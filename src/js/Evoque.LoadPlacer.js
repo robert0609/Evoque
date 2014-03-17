@@ -9,7 +9,9 @@ Evoque.loader = (function (self)
         query: {},
         onSuccess : function () {},
         onFail : function () {},
-        timeOut : 30
+        timeOut : 30,
+        // 'append', 'replace'
+        loadMode: 'append'
     };
 
     self.load = function (option, element) {
@@ -38,7 +40,8 @@ Evoque.loader = (function (self)
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
         var onFail = option.getValueOfProperty('onFail', defaultOption);
         var timeout = option.getValueOfProperty('timeOut', defaultOption);
-        element.__innerLoader.loadSomething(url, query, onSuccess, onFail, timeout);
+        var loadMode = option.getValueOfProperty('loadMode', defaultOption).toLowerCase();
+        element.__innerLoader.loadSomething(url, query, onSuccess, onFail, timeout, loadMode);
     };
 
     function loaderClass(element, loadingElementId)
@@ -52,7 +55,7 @@ Evoque.loader = (function (self)
         var parent = element.previousElementSibling;
         element.style.textAlign = 'center';
 
-        this.loadSomething = function (url, query, onsuccess, onfail, timeout)
+        this.loadSomething = function (url, query, onsuccess, onfail, timeout, loadMode)
         {
             element.innerHTML = loadingElement;
             $(element).show();
@@ -62,7 +65,14 @@ Evoque.loader = (function (self)
                 //returnType : 'html',
                 onSuccess: function (returnObj)
                 {
-                    parent.innerHTML += returnObj;
+                    if (loadMode === 'replace')
+                    {
+                        parent.innerHTML = returnObj;
+                    }
+                    else
+                    {
+                        parent.innerHTML += returnObj;
+                    }
                     $(element).hide();
                     element.innerHTML = '';
                     onsuccess.call(window);
