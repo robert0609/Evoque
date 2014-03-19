@@ -12,7 +12,7 @@
         {
             $('.range').createRangeSelect({
                 minVal: 1,
-                maxVal: 1,
+                maxVal: 10,
                 enableManualInput: true,
                 beforeValueManualChanged: function (arg) {
                     if (this.value == 4)
@@ -25,6 +25,23 @@
                     alert('Set Value [' + this.value + ']');
                 }
             });
+
+            $('.range').createRangeSelectFormat({
+                minVal: 0,
+                maxVal: 5,
+                format: '{0}位住客',
+                //flag: 1: up; -1: down; 0: no click
+                beforeValueChange: function (flag) {},
+                valueChanged: function (flag) {}
+            });
+            $('#in8')[0].rangeSelectFormat.setVal(3);
+
+            $('.date').createRangeSelectDate({
+                //flag: 1: up; -1: down; 0: no click
+                beforeDateChange: function (flag) {},
+                dateChanged: function (flag) {}
+            });
+            $('#d1')[0].rangeSelectDate.setDate('2015-1-6'.toDate());
         });
     </script>
 </head>
@@ -34,6 +51,13 @@
         <input type="text" class="range"/>
         <input type="text" class="range"/>
         <input type="text" class="range"/>
+        <input type="hidden" class="range"/>
+        <input type="hidden" class="range"/>
+        <input type="hidden" id="in8" class="range"/>
+
+
+        <input type="hidden" class="date"/>
+        <input type="hidden" id="d1" class="date"/>
     </form>
 </body>
 </html>

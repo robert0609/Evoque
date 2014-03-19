@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <!--<script type="text/javascript" src="src/js/Evoque.js"></script>-->
     <script type="text/javascript" src="src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="test.js"></script>
     <script type="text/javascript">
         window.addEventListener('load', function () {
             /*if (window.devicePixelRatio)
@@ -21,13 +22,24 @@
             }*/
             document.getElementById('ua').innerHTML = window.navigator.userAgent;
             //eDebugger.outputVar('navigator', navigator);
+
         }, false);
+
+        function redirect()
+        {
+            location.href = './demo/ApplicationCache.html';
+        }
     </script>
     <title>H5Demo</title>
 </head>
 <body>
     <div id="ua"></div>
     <ul>
+        <input type="datetime">
+        <li><a href="javascript:void(0);" onclick="redirect();">ApplicationCache</a></li>
+        <li><a href="./demo/TouchClickEventFlow.html">TouchClickEventFlow</a></li>
+        <li><a href="./demo/TestUnload.html">TestUnload</a></li>
+        <li><a href="./demo/QuerySelector.html">QuerySelector</a></li>
         <li><a href="./demo/IETest.html">IETest</a></li>
         <li><a href="./demo/App.html">App</a></li>
         <li><a href="./demo/Ajax.html">Ajax</a></li>
@@ -48,10 +60,11 @@
         <li><a href="./demo/JSONTest.html">JSONTest</a></li>
         <li><a href="./demo/Location.html">Location</a></li>
         <li><a href="./demo/Scroll.html">Scroll</a></li>
-        <li><a href="http://go.tujia.com/4001/?unittypeid=1&unittype=虚拟房型1&start=2014-1-4&end=2014-1-5">gaode</a></li>
-        <li><a href="http://10.2.3.18:2040/u/100#dateinputDiv">dateinputDiv</a></li>
-        <li><a href="http://www.test.tujia.com/sanya_gongyu/dadonghai_362.htm?code=mobileclientshare&mref=share&id=362">test</a></li>
+        <li><a href="http://m.tujia.com/o?code=GaoDe&unittypeid=3077&start=2014-2-14&end=2014-2-15">gaode</a></li>
+        <li><a href="http://10.2.10.18:2040/sanya_gongyu/shotel/">shotel</a></li>
+        <li><a href="http://10.2.10.18:2040/findaround/">findaround</a></li>
         <li><a href="./demo/Folder.html">Folder</a></li>
+        <li><a href="http://m.tujia.com/sanya_gongyu/sanyawan_6398.htm?mref=share">share</a></li>
     </ul>
 </body>
 </html>
