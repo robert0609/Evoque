@@ -774,8 +774,7 @@ var Evoque = (function (self)
     self.click = function (callback) {
         if (_hasTouchEvent)
         {
-            this.addEventHandler('click', callback);
-            //this.tap(callback);
+            this.tap(callback);
         }
         else
         {
@@ -876,6 +875,10 @@ var Evoque = (function (self)
             innerDeclareCustomEvent(evt);
             evtListName = _customEvents[evt];
         }
+        if (_hasTouchEvent && touchEventType.hasOwnProperty(evt))
+        {
+            innerBindTouchEvent(ele);
+        }
         if ($.checkType(ele) === type.eElement && $.checkType(callback) === type.eFunction)
         {
             if ($.checkType(ele[evtListName]) !== type.eArray)
@@ -917,19 +920,171 @@ var Evoque = (function (self)
 
     if (_hasTouchEvent)
     {
+        var touchEventType = {
+            tap: 'tap',
+            swipeUp: 'swipeup',
+            swipeDown: 'swipedown',
+            swipeLeft: 'swipeleft',
+            swipeRight: 'swiperight'
+        };
+        innerDeclareCustomEvent(touchEventType.tap);
+        innerDeclareCustomEvent(touchEventType.swipeUp);
+        innerDeclareCustomEvent(touchEventType.swipeDown);
+        innerDeclareCustomEvent(touchEventType.swipeLeft);
+        innerDeclareCustomEvent(touchEventType.swipeRight);
+
         //触屏事件
         self.tap = function (callback) {
-            this.each(function ()
-            {
-                innerBindCustomEvent(this, 'tap', callback);
-            });
+            this.addEventHandler(touchEventType.tap, callback);
         };
-        self.swipe = function (callback) {
-            this.each(function ()
-            {
-                innerBindCustomEvent(this, 'swipe', callback);
-            });
+        self.swipeUp = function (callback) {
+            this.addEventHandler(touchEventType.swipeUp, callback);
         };
+        self.swipeDown = function (callback) {
+            this.addEventHandler(touchEventType.swipeDown, callback);
+        };
+        self.swipeLeft = function (callback) {
+            this.addEventHandler(touchEventType.swipeLeft, callback);
+        };
+        self.swipeRight = function (callback) {
+            this.addEventHandler(touchEventType.swipeRight, callback);
+        };
+
+        function innerBindTouchEvent(ele)
+        {
+            if (ele.__isBindTouchEvent)
+            {
+                return;
+            }
+            var $ele = $(ele);
+            var touchStateDictionary = {};
+
+            $ele.addEventHandler('touchstart', function (e) {
+                if (e.touches.length !== 1)
+                {
+                    return;
+                }
+                var touchState = new TouchStateClass(e.touches[0].identifier);
+                touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
+                touchStateDictionary[e.touches[0].identifier] = touchState;
+            });
+            $ele.addEventHandler('touchmove', function (e) {
+                if (e.touches.length !== 1)
+                {
+                    return;
+                }
+                var touchState = touchStateDictionary[e.touches[0].identifier];
+                touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
+            });
+            $ele.addEventHandler('touchend', function (e) {
+                if (e.changedTouches.length !== 1 || e.touches.length !== 0)
+                {
+                    return;
+                }
+                var touchState = touchStateDictionary[e.changedTouches[0].identifier];
+                touchState.addTouchPoint(new PointClass(e.changedTouches[0].clientX, e.changedTouches[0].clientY));
+                touchState.touchEndTime = new Date();
+                var evtTyp = touchState.touchType();
+                var that = this;
+                $(evtTyp).each(function () {
+                    innerDispatchCustomEvent(that, this);
+                });
+            });
+
+            ele.__isBindTouchEvent = true;
+
+            function TouchStateClass(identifier)
+            {
+                var identifier = identifier;
+                this.touchStartTime = new Date();
+                this.touchEndTime = null;
+                this.touchPointList = [];
+                this.directionX = 0;
+                this.directionY = 0;
+                this.isSameDirection = true;
+                this.rangeX = 0;
+                this.rangeY = 0;
+
+                this.addTouchPoint = function (point) {
+                    if (this.touchPointList.length > 0)
+                    {
+                        var sp = this.touchPointList[0];
+                        var rx = Math.abs(point.x - sp.x);
+                        var ry = Math.abs(point.y - sp.y);
+                        this.rangeX = Math.max(this.rangeX, rx);
+                        this.rangeY = Math.max(this.rangeY, ry);
+
+                        var lp = this.touchPointList[this.touchPointList.length - 1];
+                        var dx = point.x - lp.x == 0 ? 0 : (point.x - lp.x > 0 ? 1 : -1);
+                        var dy = point.y - lp.y == 0 ? 0 : (point.y - lp.y > 0 ? 1 : -1);
+                        if (this.touchPointList.length >= 2)
+                        {
+                            var sameX = this.directionX == 0 || dx == 0 ? true : (this.directionX == dx);
+                            var sameY = this.directionY == 0 || dy == 0 ? true : (this.directionY == dy);
+                            this.isSameDirection = sameX && sameY;
+                        }
+                        if (dx != 0)
+                        {
+                            this.directionX = dx;
+                        }
+                        if (dy != 0)
+                        {
+                            this.directionY = dy;
+                        }
+                    }
+                    this.touchPointList.push(point);
+                };
+
+                this.touchType = function () {
+                    var types = [];
+                    if ($.checkType(this.touchEndTime) !== type.eDate)
+                    {
+                        return types;
+                    }
+                    var sp = this.touchPointList[0];
+                    var touchSpan = this.touchEndTime - this.touchStartTime;
+                    //tap
+                    if (touchSpan < 750 && this.rangeX < 4 && this.rangeY < 4)
+                    {
+                        types.push(touchEventType.tap);
+                        return types;
+                    }
+                    //swipe
+                    if (this.isSameDirection)
+                    {
+                        if (this.rangeX > 30)
+                        {
+                            if (this.directionX > 0)
+                            {
+                                types.push(touchEventType.swipeRight);
+                            }
+                            else if (this.directionX < 0)
+                            {
+                                types.push(touchEventType.swipeLeft);
+                            }
+                        }
+                        if (this.rangeY > 30)
+                        {
+                            if (this.directionY > 0)
+                            {
+                                types.push(touchEventType.swipeDown);
+                            }
+                            else if (this.directionY < 0)
+                            {
+                                types.push(touchEventType.swipeUp);
+                            }
+                        }
+                    }
+                    return types;
+                };
+            }
+
+            function PointClass(x, y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+        }
     }
 
     return self;
