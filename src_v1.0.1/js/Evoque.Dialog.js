@@ -8,6 +8,11 @@ $.dialog = (function (self) {
     dialogList.push(gDialog);
     ++dialogGUID;
 
+    /**
+     * 弹出2秒后自动消失的文本框，关联在全局dialog对象上
+     * @param message
+     * @return {*}
+     */
     self.alert = function (message)
     {
         return gDialog.alert(message);
@@ -18,18 +23,35 @@ $.dialog = (function (self) {
         return gDialog.showLoading(loadingMsg, callback);
     };
 
+    /**
+     * 弹出根据option参数的自定义设置来显示的文本框，关联在全局dialog对象上
+     * @param option
+     * @return {*}
+     */
     self.showMessageBox = function (option) {
         return gDialog.showMessageBox(option);
     };
 
+    /**
+     * 弹出根据option参数的自定义设置来显示的模态窗体，关联在全局dialog对象上
+     * @param option
+     * @return {*}
+     */
     self.showModalDialog = function (option) {
         return gDialog.showModalDialog(option);
     };
 
+    /**
+     * 关闭当前显示的文本框，关联在全局dialog对象上
+     * @return {*}
+     */
     self.closeCurrentDialog = function () {
         return gDialog.closeCurrentDialog();
     };
 
+    /**
+     * 关闭所有文本框，关联在全局dialog对象上
+     */
     self.closeAll = function () {
         for (var i = 0; i < dialogList.length; ++i)
         {
@@ -547,6 +569,11 @@ $.dialog = (function (self) {
     }
 
     //API
+    /**
+     * 弹出2秒后自动消失的文本框，关联在当前Evoque对象上
+     * @param message
+     * @return {*}
+     */
     Evoque.alert = function (message)
     {
         genDialog.apply(this);
@@ -561,6 +588,11 @@ $.dialog = (function (self) {
         return this.dialog.showLoading(loadingMsg, callback);
     };
 
+    /**
+     * 弹出根据option参数的自定义设置来显示的文本框，关联在当前Evoque对象上
+     * @param option
+     * @return {*}
+     */
     Evoque.showMessageBox = function (option)
     {
         genDialog.apply(this);
@@ -568,6 +600,11 @@ $.dialog = (function (self) {
         return this.dialog.showMessageBox(option);
     };
 
+    /**
+     * 弹出根据option参数的自定义设置来显示的模态窗体，关联在当前Evoque对象上
+     * @param option
+     * @return {*}
+     */
     Evoque.showModalDialog = function (option)
     {
         genDialog.apply(this);
@@ -575,6 +612,10 @@ $.dialog = (function (self) {
         return this.dialog.showModalDialog(option);
     };
 
+    /**
+     * 关闭当前显示的文本框，关联在当前Evoque对象上
+     * @return {*}
+     */
     Evoque.closeCurrentDialog = function ()
     {
         genDialog.apply(this);

@@ -6,12 +6,20 @@ var Evoque = (function (self)
     var _hasTouchEvent = 'ontouchstart' in window;
     //根据UserAgent判断访问网站的平台
     var _agent = navigator.userAgent.toLowerCase();
+    /**
+     * 标识当前UserAgent的字典变量
+     * @type {Object}
+     */
     window.mAgent = {
         other: 0,
         ios: 1,
         android: 2,
         windows: 3
     };
+    /**
+     * 标识承载当前页面的UserAgent的APP种别
+     * @type {Object}
+     */
     window.mApp = {
         none: 0,
         tujia: 1,
@@ -47,6 +55,10 @@ var Evoque = (function (self)
         _mApp = mApp.ucbrowser;
     }
 
+    /**
+     * 数据类型字典变量
+     * @type {Object}
+     */
     window.type = {
         eUndefined: 'undefined',
         eNull: 'null',
@@ -118,6 +130,10 @@ var Evoque = (function (self)
     }
 
     //Extension
+    /**
+     * 日期类型转换成字符串：Date --> 'yyyy-MM-dd'
+     * @return {String}
+     */
     Date.prototype.toCustomString = function () {
         var y = Number(this.getFullYear());
         var m = Number(this.getMonth()) + 1;
@@ -125,21 +141,35 @@ var Evoque = (function (self)
         return y + '-' + m + '-' + d;
     };
 
+    /**
+     * 获取日期的日期部分
+     * @return {Date}
+     */
     Date.prototype.getYMD = function () {
         return new Date(this.getFullYear(), this.getMonth(), this.getDate());
     };
 
+    /**
+     * 日期增加指定天数
+     * @param n 天数
+     * @return {Date}
+     */
     Date.prototype.addDay = function (n) {
         this.setDate(this.getDate() + Number(n));
         return this;
     };
 
+    /**
+     * 删除字符串两边的空格
+     * @return {String}
+     */
     String.prototype.trim = function () {
         return this.replace(/\s/g, '');
     };
 
-    /*
-     *形如"yyyy-MM-dd"的字符床转换成日期
+    /**
+     * 形如"yyyy-MM-dd"的字符床转换成日期
+     * @return {Date}
      */
     String.prototype.toDate = function () {
         if (!/^\d{1,4}-\d{1,2}-\d{1,2}$/.test(this))
@@ -150,10 +180,19 @@ var Evoque = (function (self)
         return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
     };
 
+    /**
+     * 获取字符串的字节数
+     * @return {Number}
+     */
     String.prototype.getBytesLength = function() {
         return this.replace(/[^\x00-\xff]/gi, "--").length;
     };
 
+    /**
+     * 获取Evoque包装对象
+     * @param parameter 可以是CSS选择器、js变量、DOM对象，也可以是DOMReady事件的回调函数
+     * @return {EvoqueClass}
+     */
     window.$ = function (parameter)
     {
         var list = [];
@@ -215,6 +254,11 @@ var Evoque = (function (self)
             }
         }
 
+        /**
+         * 按照传入的规则fn对包装集中的对象排序
+         * @param fn
+         * @return {*}
+         */
         this.sort = function (fn) {
             if ($.checkType(fn) === type.eFunction)
             {
@@ -228,6 +272,10 @@ var Evoque = (function (self)
             return this;
         };
 
+        /**
+         * 循环遍历包装集中的对象
+         * @param fn
+         */
         this.each = function (fn) {
             if ($.checkType(fn) === type.eFunction)
             {
@@ -244,10 +292,18 @@ var Evoque = (function (self)
     EvoqueClass.prototype = self;
 
     //Global method begin
+    /**
+     * 获取当前UserAgent的标识码
+     * @return {*}
+     */
     $.agent = function () {
         return _mAgent;
     };
 
+    /**
+     * 终止事件流
+     * @param event
+     */
     $.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
@@ -258,6 +314,10 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 取消事件的默认行为
+     * @param event
+     */
     $.cancelDefault = function (event) {
         event = event || window.event;
         if (event.preventDefault) {
@@ -268,6 +328,11 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 判断对象是否为空
+     * @param obj
+     * @return {Boolean}
+     */
     $.isObjectNull = function (obj)
     {
         if (obj === undefined)
@@ -281,6 +346,11 @@ var Evoque = (function (self)
         return obj === null;
     };
 
+    /**
+     * 判断字符串是否为空
+     * @param str
+     * @return {Boolean}
+     */
     $.isStringEmpty = function (str)
     {
         var ty = $.checkType(str);
@@ -302,11 +372,21 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 判断参数是否为对象
+     * @param obj
+     * @return {Boolean}
+     */
     $.isObject = function (obj)
     {
         return 'undefined,number,boolean,string'.indexOf(typeof obj) < 0;
     };
 
+    /**
+     * 判断参数的类型
+     * @param obj
+     * @return {window.type}
+     */
     $.checkType = function (obj)
     {
         var ty = typeof obj;
@@ -375,30 +455,47 @@ var Evoque = (function (self)
         return true;
     }
 
+    /**
+     * 加载Url
+     * @param url
+     */
     $.loadPage = function (url)
     {
         window.location.href = url;
     };
 
+    /**
+     * 集合对象转换为数组
+     * @param obj
+     * @return {*}
+     */
     $.makeArray = function (obj)
     {
         return core_slice.call(obj,0);
     };
 
+    /**
+     * 绑定页面卸载的事件，*对支持页面间缓存的UserAgent来说，则是绑定pageHide事件
+     * @param fn
+     */
     $.unload = function (fn)
     {
         core_addUnloadHandler(fn, false);
     };
 
+    /**
+     * 绑定页面加载的事件，*对支持页面间缓存的UserAgent来说，则是绑定pageShow事件
+     * @param fn
+     */
     $.load = function (fn)
     {
         core_addLoadedHandler(fn, false);
     };
 
     /**
-     *
+     * 绑定页面滚动至页面底部1/4位置的事件
      * @param fn
-     * @param checkHandle: 由于fn有可能会发出异步的ajax调用，故需要调用房提供一个验证能否继续触发滚动事件的回调函数，checkHandle就是这个回调函数的指针
+     * @param checkHandle: 由于fn有可能会发出异步的ajax调用，故需要调用方提供一个控制能否继续触发滚动事件的回调函数，checkHandle就是这个回调函数的指针
      */
     $.scroll2Bottom = function (fn, checkHandle)
     {
@@ -433,16 +530,28 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 判断是否支持触屏事件
+     * @return {Boolean}
+     */
     $.hasTouchEvent = function ()
     {
         return _hasTouchEvent;
     };
 
+    /**
+     * 胖墩是否支持离线存储
+     * @return {Boolean}
+     */
     $.supportSessionStorage = function () {
         return !!window.sessionStorage;
     };
     //Global method end
 
+    /**
+     * 获取表单项或基本数据类型的值
+     * @return {*}
+     */
     self.getVal = function () {
         var ret = null;
         switch ($.checkType(this[0]))
@@ -482,6 +591,10 @@ var Evoque = (function (self)
         return ret;
     };
 
+    /**
+     * 设置表单项的值
+     * @param val
+     */
     self.setVal = function (val) {
         this.each(function ()
         {
@@ -493,6 +606,11 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 获取Html标签的Attribute值
+     * @param name Attribute名称
+     * @return {String}
+     */
     self.getAttr = function (name) {
         if ($.checkType(this[0]) === type.eElement)
         {
@@ -504,6 +622,11 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 设置Html标签的Attribute值
+     * @param name Attribute名称
+     * @param value Attribute值
+     */
     self.setAttr = function (name, value) {
         this.each(function ()
         {
@@ -514,6 +637,10 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 删除Attribute
+     * @param name
+     */
     self.delAttr = function (name) {
         this.each(function ()
         {
@@ -528,6 +655,11 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 设置Html标签的Style
+     * @param name
+     * @param value
+     */
     self.setStyle = function (name, value) {
         this.each(function ()
         {
@@ -538,6 +670,11 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 根据CSS选择器获取子节点
+     * @param query
+     * @return {EvoqueClass}
+     */
     self.getChild = function (query) {
         var list = [];
         if ($.checkType(this[0]) === type.eElement)
@@ -558,6 +695,9 @@ var Evoque = (function (self)
         return new EvoqueClass(list);
     };
 
+    /**
+     * 清空子节点
+     */
     self.clearChild = function () {
         this.each(function ()
         {
@@ -575,6 +715,11 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 设置节点的内部Html。若innerHtml参数被忽略则是返回当前节点的内部Html
+     * @param innerHtml
+     * @return {*}
+     */
     self.html = function (innerHtml) {
         var ty = $.checkType(this[0]);
         if (innerHtml === undefined)
@@ -597,6 +742,11 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 设置节点的内部Text。若innerText参数被忽略则是返回当前节点的内部Text
+     * @param innerText
+     * @return {*}
+     */
     self.text = function (innerText) {
         var ty = $.checkType(this[0]);
         if (innerText === undefined)
@@ -619,6 +769,10 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 获取节点的class列表
+     * @return {Array}
+     */
     self.getClassList = function () {
         if ($.checkType(this[0]) === type.eElement)
         {
@@ -630,6 +784,10 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 添加节点的css类
+     * @param className
+     */
     self.addClass = function (className) {
         if ($.isStringEmpty(className))
         {
@@ -647,6 +805,10 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 删除节点的类
+     * @param className
+     */
     self.removeClass = function (className) {
         if ($.isStringEmpty(className))
         {
@@ -664,6 +826,9 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 隐藏DOM节点
+     */
     self.hide = function () {
         this.each(function ()
         {
@@ -674,6 +839,9 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 显示DOM节点
+     */
     self.show = function () {
         this.each(function ()
         {
@@ -684,6 +852,10 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 判断DOM节点是否隐藏
+     * @return {Boolean}
+     */
     self.isHide = function () {
         if ($.checkType(this[0]) === type.eElement)
         {
@@ -707,6 +879,9 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 设置表单项或者下拉框的可用状态
+     */
     self.enable = function () {
         this.each(function ()
         {
@@ -717,6 +892,9 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 设置表单项或者下拉框的禁用状态
+     */
     self.disable = function () {
         this.each(function ()
         {
@@ -727,6 +905,12 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 获取对象指定属性的辅助方法。若该对象的指定属性为空或者类型与默认对象中同名属性不一致，则从默认对象中获取同名属性的数据
+     * @param propertyName 属性名
+     * @param defObj 默认对象
+     * @return {*}
+     */
     self.getValueOfProperty = function (propertyName, defObj) {
         var isPropertyExistInThis = false;
         var isPropertyExistInDefObj = false;
@@ -763,6 +947,9 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 触发Click事件
+     */
     self.dispatchClick = function () {
         var evt = document.createEvent('MouseEvents');
         evt.initEvent('click', true, true);
@@ -771,6 +958,10 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 绑定Click事件，若支持触屏事件，则绑定Tap事件
+     * @param callback
+     */
     self.click = function (callback) {
         if (_hasTouchEvent)
         {
@@ -782,6 +973,12 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 绑定Html元素的事件处理回调
+     * @param evtName 事件名
+     * @param callback 处理回调
+     * @param useCapture 捕获模式开关
+     */
     self.addEventHandler = function (evtName, callback, useCapture) {
         if ($.checkType(useCapture) !== type.eBoolean)
         {
@@ -806,6 +1003,12 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 移除Html元素的事件处理回调
+     * @param evtName 事件名
+     * @param callback 处理回调
+     * @param useCapture 捕获模式开关
+     */
     self.removeEventHandler = function (evtName, callback, useCapture) {
         if ($.checkType(useCapture) !== type.eBoolean)
         {
@@ -830,10 +1033,20 @@ var Evoque = (function (self)
         });
     };
 
+    /**
+     * 声明自定义事件
+     * @param evtName 自定义事件名称
+     * @return {*}
+     */
     $.declareCustomEvent = function (evtName) {
         return innerDeclareCustomEvent(evtName);
     }
 
+    /**
+     * 触发自定义事件
+     * @param evtName 自定义事件名称
+     * @param arg 自定义事件参数
+     */
     self.dispatchCustomEvent = function (evtName, arg) {
         this.each(function () {
             innerDispatchCustomEvent(this, evtName, arg);
@@ -934,18 +1147,38 @@ var Evoque = (function (self)
         innerDeclareCustomEvent(touchEventType.swipeRight);
 
         //触屏事件
+        /**
+         * 绑定Tap轻击事件
+         * @param callback
+         */
         self.tap = function (callback) {
             this.addEventHandler(touchEventType.tap, callback);
         };
+        /**
+         * 绑定上滑事件
+         * @param callback
+         */
         self.swipeUp = function (callback) {
             this.addEventHandler(touchEventType.swipeUp, callback);
         };
+        /**
+         * 绑定下滑事件
+         * @param callback
+         */
         self.swipeDown = function (callback) {
             this.addEventHandler(touchEventType.swipeDown, callback);
         };
+        /**
+         * 绑定左滑事件
+         * @param callback
+         */
         self.swipeLeft = function (callback) {
             this.addEventHandler(touchEventType.swipeLeft, callback);
         };
+        /**
+         * 绑定右滑事件
+         * @param callback
+         */
         self.swipeRight = function (callback) {
             this.addEventHandler(touchEventType.swipeRight, callback);
         };
