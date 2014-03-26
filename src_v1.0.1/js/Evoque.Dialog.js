@@ -517,8 +517,9 @@ $.dialog = (function (self) {
 
         function createDefaultOption() {
             var option = {
+                //对话框标题
                 title:'',
-                icon:'',
+                //对话框内容，可以是文本字符串，也可以是要显示的div的id
                 content:'',
                 width:document.documentElement.clientWidth * 0.75,
                 height:100,
@@ -529,12 +530,14 @@ $.dialog = (function (self) {
                 onClickYes: function(){},
                 onClickNo: function(){},
                 onClickClose: function(){},
+                //点击背景遮罩层会触发onQuiting事件
                 onQuiting: function(){},
                 // customButton example:{ caption: 'xxxx', onClick: function(){} }
                 customButton: [],
                 onDialogShowed: function(){},
                 onDialogClosed: function(){},
                 autoClose: true,
+                //对话框显示出来之后的超时时间，超过指定时间自动关闭
                 timeout: 0,
                 onTimeout: function () {}
             };
