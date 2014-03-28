@@ -160,11 +160,38 @@ var Evoque = (function (self)
     };
 
     /**
-     * 删除字符串两边的空格
+     * 删除字符串两边的指定字符，若参数为空则删除空格
+     * @param c 指定字符
      * @return {String}
      */
-    String.prototype.trim = function () {
-        return this.replace(/\s/g, '');
+    String.prototype.trim = function (c) {
+        if ($.isStringEmpty(c))
+        {
+            c = ' ';
+        }
+        var si = -1;
+        for (var i = 0; i < this.length; ++i)
+        {
+            if (this[i] != c)
+            {
+                si = i;
+                break;
+            }
+        }
+        if (si < 0)
+        {
+            return '';
+        }
+        var ei = -1;
+        for (var j = this.length - 1; j >= 0; --j)
+        {
+            if (this[j] != c)
+            {
+                ei = j;
+                break;
+            }
+        }
+        return this.substring(si, ei + 1);
     };
 
     /**
