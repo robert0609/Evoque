@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            document.addEventListener('haschange', function (e) {
+                alert('changed!');
+            });
+
+            $('#divo').click(function () {
+                var div = document.createElement('div');
+                div.id = 'divNew';
+                $(div).text('我是新来的');
+                document.body.appendChild(div);
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="divo">yuan lai jiu you<div>hahahaha</div></div>
+</body>
+</html>

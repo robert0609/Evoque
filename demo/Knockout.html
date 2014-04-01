@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="../src_v1.0.1/js/knockout-3.1.0.debug.js"></script>
+    <script type="text/javascript">
+        var myViewModel = new initModel();
+        function Country(val, name, population) {
+            this.countryValue = val;
+            this.countryName = name;
+            this.countryPopulation = population;
+        }
+        function initModel()
+        {
+            this.personName = ko.observable('');
+            this.personAge = ko.observable(123);
+            this.fullName = ko.computed(function () {
+                return this.personName() + this.personAge();
+            }, this);
+            this.optionList = ko.observableArray([
+                new Country(1, "UK", 65000000),
+                new Country(2, "USA", 320000000),
+                new Country(3, "Sweden", 29000000)
+            ]);
+            this.selectedOption = ko.observable(2);
+        }
+
+        $(function () {
+//            myViewModel.fullName.subscribe(function(newValue) {
+//                $.dialog.alert("The person's full name is " + newValue);
+//            });
+            //myViewModel.fullName.extend({ notify: 'always' });
+            myViewModel.selectedOption.subscribe(function(newVal){
+                $.dialog.alert('selected: ' + newVal.countryName);
+            });
+            myViewModel.wantsSpam = ko.observable('true');
+            ko.applyBindings(myViewModel);
+        });
+
+        function changePersonName() {
+            myViewModel.personName('<i>Hello, world!</i>');
+        }
+    </script>
+</head>
+<body>
+The name is <span data-bind="text: personName"></span>
+<br>
+The full name is <span data-bind="text: fullName"></span>
+<br>
+<select data-bind="options: optionList, optionsValue: 'countryValue', optionsText: 'countryName', value: selectedOption, optionsCaption: 'choose......'"></select>
+<input type="text" data-bind="value: personName">
+<button onclick="$.dialog.alert(myViewModel.selectedOption());">show value</button>
+<button onclick="changePersonName();">change name</button>
+
+<p>Send me spam: <input type="radio" value="true" data-bind="checked: wantsSpam" /></p>
+</body>
+</html>

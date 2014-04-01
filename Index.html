@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-    <!--<script type="text/javascript" src="src/js/Evoque.js"></script>-->
+    <script type="text/javascript" src="src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="src/js/eDebugger.js"></script>
     <script type="text/javascript" src="test.js"></script>
     <script type="text/javascript">
@@ -23,20 +23,35 @@
             document.getElementById('ua').innerHTML = window.navigator.userAgent;
             //eDebugger.outputVar('navigator', navigator);
 
+            $('#testin').addEventHandler('input', function (e) {
+                var $this = $(this);
+                var val = $this.getVal();
+                if (val.indexOf(' ') > -1)
+                {
+                    $this.setVal($this.getVal().replace(' ', ''));
+                }
+            });
+
         }, false);
 
+        var sd = new Date();
         function redirect()
         {
-            location.href = './demo/ApplicationCache.html';
+            alert('#$##adf fddsg#####'.trim('#'));
+            //location.href = './demo/ApplicationCache.html';
         }
+
     </script>
     <title>H5Demo</title>
 </head>
 <body>
+<input type="text" id="testin">
     <div id="ua"></div>
     <ul>
-        <input type="datetime">
+        <li><a href="./demo/Delegate.html">Delegate</a></li>
+        <li><a href="./demo/Knockout.html">Knockout</a></li>
         <li><a href="javascript:void(0);" onclick="redirect();">ApplicationCache</a></li>
+        <li><a href="./demo/TouchEvent.html">TouchEvent</a></li>
         <li><a href="./demo/TouchClickEventFlow.html">TouchClickEventFlow</a></li>
         <li><a href="./demo/TestUnload.html">TestUnload</a></li>
         <li><a href="./demo/QuerySelector.html">QuerySelector</a></li>

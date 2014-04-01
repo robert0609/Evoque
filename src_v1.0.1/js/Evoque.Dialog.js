@@ -13,9 +13,9 @@ $.dialog = (function (self) {
      * @param message
      * @return {*}
      */
-    self.alert = function (message)
+    self.alert = function (message, onDialogClosed)
     {
-        return gDialog.alert(message);
+        return gDialog.alert(message, onDialogClosed);
     };
 
     self.showLoading = function (loadingMsg, callback)
@@ -128,10 +128,11 @@ $.dialog = (function (self) {
             }
         }
 
-        this.alert = function (message)
+        this.alert = function (message, onDialogClosed)
         {
             this.showMessageBox({
-                content:message
+                content:message,
+                onDialogClosed: onDialogClosed
             });
         };
 
@@ -483,8 +484,9 @@ $.dialog = (function (self) {
             document.body.appendChild(dialogObj);
             var w = option.getValueOfProperty('width', defaultOption);
             dialogObj.style.width = w + 'px';
-            dialogObj.style.maxHeight = document.documentElement.clientHeight * 0.8 + 'px';
-            dialogObj.style.overflowY = 'auto';
+            //TODO：设置了这两个属性之后，loading转圈的图片不生效
+//            dialogObj.style.maxHeight = document.documentElement.clientHeight * 0.8 + 'px';
+//            dialogObj.style.overflowY = 'auto';
             var h = dialogObj.clientHeight;
             dialogObj.style.marginLeft = (0 - w) / 2 +'px';
             dialogObj.style.marginTop = (0 - h) / 2 + 'px';
@@ -576,11 +578,11 @@ $.dialog = (function (self) {
      * @param message
      * @return {*}
      */
-    Evoque.alert = function (message)
+    Evoque.alert = function (message, onDialogClosed)
     {
         genDialog.apply(this);
         this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.alert(message);
+        return this.dialog.alert(message, onDialogClosed);
     };
 
     Evoque.showLoading = function (loadingMsg, callback)

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <title></title>
+    <script type="text/javascript">
+        $(function () {
+
+            $('.touchable').addEventHandler('click', function () {
+                $.dialog.alert('click');
+            });
+
+            $('.touchable').click(function () {
+                $.dialog.alert('tap');
+            });
+            /*$('.touchable').addEventHandler('touchstart', function (ev) {
+                var msg = '';
+                msg += 'Last: ' + ev.changedTouches.length + '<br>';
+                if (ev.changedTouches.length > 0)
+                {
+                    msg += 'clientX:' + ev.changedTouches[0].clientX + '; clientY:' + ev.changedTouches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.changedTouches[0].pageX + '; pageY:' + ev.changedTouches[0].pageY + '<br>';
+                }
+                msg += 'Remaining on element: ' + ev.targetTouches.length + '<br>';
+                if (ev.targetTouches.length > 0)
+                {
+                    msg += 'clientX:' + ev.targetTouches[0].clientX + '; clientY:' + ev.targetTouches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.targetTouches[0].pageX + '; pageY:' + ev.targetTouches[0].pageY + '<br>';
+                }
+                msg += 'Remaining on document: ' + ev.touches.length + '<br>';
+                if (ev.touches.length > 0)
+                {
+                    msg += 'clientX:' + ev.touches[0].clientX + '; clientY:' + ev.touches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.touches[0].pageX + '; pageY:' + ev.touches[0].pageY + '<br>';
+                }
+                eDebugger.output(msg);
+            });
+
+            $('.touchable').addEventHandler('touchmove', function (ev) {
+                var msg = '';
+                msg += 'Last: ' + ev.changedTouches.length + '<br>';
+                if (ev.changedTouches.length > 0)
+                {
+                    msg += 'clientX:' + ev.changedTouches[0].clientX + '; clientY:' + ev.changedTouches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.changedTouches[0].pageX + '; pageY:' + ev.changedTouches[0].pageY + '<br>';
+                }
+                msg += 'Current Target: ' + ev.targetTouches.length + '<br>';
+                if (ev.targetTouches.length > 0)
+                {
+                    msg += 'clientX:' + ev.targetTouches[0].clientX + '; clientY:' + ev.targetTouches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.targetTouches[0].pageX + '; pageY:' + ev.targetTouches[0].pageY + '<br>';
+                }
+                msg += 'Current: ' + ev.touches.length + '<br>';
+                if (ev.touches.length > 0)
+                {
+                    msg += 'clientX:' + ev.touches[0].clientX + '; clientY:' + ev.touches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.touches[0].pageX + '; pageY:' + ev.touches[0].pageY + '<br>';
+                }
+                eDebugger.output(msg);
+            });
+
+            $('.touchable').addEventHandler('touchend', function (ev) {
+                var msg = '';
+                msg += 'Last: ' + ev.changedTouches.length + '<br>';
+                if (ev.changedTouches.length > 0)
+                {
+                    msg += 'clientX:' + ev.changedTouches[0].clientX + '; clientY:' + ev.changedTouches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.changedTouches[0].pageX + '; pageY:' + ev.changedTouches[0].pageY + '<br>';
+                }
+                msg += 'Remaining on element: ' + ev.targetTouches.length + '<br>';
+                if (ev.targetTouches.length > 0)
+                {
+                    msg += 'clientX:' + ev.targetTouches[0].clientX + '; clientY:' + ev.targetTouches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.targetTouches[0].pageX + '; pageY:' + ev.targetTouches[0].pageY + '<br>';
+                }
+                msg += 'Remaining on document: ' + ev.touches.length + '<br>';
+                if (ev.touches.length > 0)
+                {
+                    msg += 'clientX:' + ev.touches[0].clientX + '; clientY:' + ev.touches[0].clientY + '<br>';
+                    msg += 'pageX:' + ev.touches[0].pageX + '; pageY:' + ev.touches[0].pageY + '<br>';
+                }
+                eDebugger.output(msg);
+            });*/
+        });
+    </script>
+</head>
+<body style="height: 800px;">
+<div class="touchable" style="border-color: green; border-width: 2px; border-style: solid; width: 300px;height: 200px;">Touchable Element 1</div>
+</body>
+</html>
