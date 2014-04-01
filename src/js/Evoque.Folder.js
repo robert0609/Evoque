@@ -2,6 +2,7 @@
 Evoque.folder = (function (self) {
     var titleClass = 'folder-title';
     var contentClass = 'folder-content';
+    var groupAttr = 'folder-group';
 
     var defaultOption = {
         folderId: '',
@@ -48,7 +49,8 @@ Evoque.folder = (function (self) {
         }
         var onFolded = option.getValueOfProperty('onFolded', defaultOption);
         var onUnfolded = option.getValueOfProperty('onUnfolded', defaultOption);
-        return new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
+        folder.__innerFolder = new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
+        return folder.__innerFolder;
     };
 
     function folderClass(folder, mode, status, autoTop, onFolded, onUnfolded)
@@ -86,6 +88,19 @@ Evoque.folder = (function (self) {
         {
             $title.addEventHandler('click', titleClickOnce);
         }
+
+        this.open = function () {
+            if (_isFolded)
+            {
+                $title.dispatchClick();
+            }
+        };
+        this.close = function () {
+            if (!_isFolded)
+            {
+                $title.dispatchClick();
+            }
+        };
 
         function titleClick()
         {
@@ -125,6 +140,17 @@ Evoque.folder = (function (self) {
         }
 
         function unfold() {
+            var grpAttr = $folder.getAttr(groupAttr);
+            if (!$.isStringEmpty(grpAttr))
+            {
+                $('[' + groupAttr + '="' + grpAttr + '"]').each(function () {
+                    if ($.isObjectNull(this.__innerFolder))
+                    {
+                        return;
+                    }
+                    this.__innerFolder.close();
+                });
+            }
             $title.removeClass('folder-title-fold');
             $title.addClass('folder-title-unfold');
             $content.removeClass('folder-content-fold');
