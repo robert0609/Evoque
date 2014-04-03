@@ -560,29 +560,37 @@ var Evoque = (function (self)
     $.scroll2Element = function (destinationX, destinationY) {
         var dx = destinationX - window.pageXOffset;
         var dy = destinationY - window.pageYOffset;
-        var vy = dy > 0 ? 10: -10;
-        var vx = vy * dx / dy;
-        var ay = dy > 0 ? 2 : -2;
-        var ax = ay * dx / dy;
+        var vy = dy == 0 ? 0 : (dy > 0 ? 10: -10);
+        var vx = dx == 0 ? 0 : (vy == 0 ? (dx > 0 ? 10 : -10) : (vy * dx / dy));
+        var ay = dy == 0 ? 0 : (dy > 0 ? 2 : -2);
+        var ax = dx == 0 ? 0 : (ay == 0 ? (dx > 0 ? 2 : -2) : (ay * dx / dy));
 
         var thresholdDx = Math.abs(dx) / 2;
         var thresholdDy = Math.abs(dy) / 2;
         var changedAxDirection = false;
         var changedAyDirection = false;
-        var reachedX = false;
-        var reachedY = false;
+        var reachedX = dx == 0 ? true : false;
+        var reachedY = dy == 0 ? true : false;
         var intervalId = window.setInterval(function ()
         {
             var currentX = window.pageXOffset;
             var currentY = window.pageYOffset;
             var nextX = currentX + vx;
-            if ((vx > 0 && nextX > destinationX) || (vx < 0 && nextX < destinationX))
+            if (reachedX)
+            {
+                nextX = destinationX;
+            }
+            else if ((vx > 0 && nextX > destinationX) || (vx < 0 && nextX < destinationX))
             {
                 nextX = destinationX;
                 reachedX = true;
             }
             var nextY = currentY + vy;
-            if ((vy > 0 && nextY > destinationY) || (vy < 0 && nextY < destinationY))
+            if (reachedY)
+            {
+                nextY = destinationY;
+            }
+            else if ((vy > 0 && nextY > destinationY) || (vy < 0 && nextY < destinationY))
             {
                 nextY = destinationY;
                 reachedY = true;
