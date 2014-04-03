@@ -557,6 +557,67 @@ var Evoque = (function (self)
         }
     };
 
+    $.scroll2Element = function (destinationX, destinationY) {
+        var dx = destinationX - window.pageXOffset;
+        var dy = destinationY - window.pageYOffset;
+        var vy = dy > 0 ? 10: -10;
+        var vx = vy * dx / dy;
+        var ay = dy > 0 ? 2 : -2;
+        var ax = ay * dx / dy;
+
+        var thresholdDx = Math.abs(dx) / 2;
+        var thresholdDy = Math.abs(dy) / 2;
+        var changedAxDirection = false;
+        var changedAyDirection = false;
+        var reachedX = false;
+        var reachedY = false;
+        var intervalId = window.setInterval(function ()
+        {
+            var currentX = window.pageXOffset;
+            var currentY = window.pageYOffset;
+            var nextX = currentX + vx;
+            if ((vx > 0 && nextX > destinationX) || (vx < 0 && nextX < destinationX))
+            {
+                nextX = destinationX;
+                reachedX = true;
+            }
+            var nextY = currentY + vy;
+            if ((vy > 0 && nextY > destinationY) || (vy < 0 && nextY < destinationY))
+            {
+                nextY = destinationY;
+                reachedY = true;
+            }
+            window.scrollTo(nextX, nextY);
+            if (reachedX && reachedY)
+            {
+                window.clearInterval(intervalId);
+                return;
+            }
+            //设置速度
+            vx += ax;
+            if (Math.abs(vx) < Math.abs(ax))
+            {
+                vx = 0 - ax;
+            }
+            vy += ay;
+            if (Math.abs(vy) < Math.abs(ay))
+            {
+                vy = 0 - ay;
+            }
+            //路程过半则调转加速度的方向
+            if (!changedAxDirection && Math.abs(destinationX - currentX) < thresholdDx)
+            {
+                ax = 0 - ax;
+                changedAxDirection = true;
+            }
+            if (!changedAyDirection && Math.abs(destinationY - currentY) < thresholdDy)
+            {
+                ay = 0 - ay;
+                changedAyDirection = true;
+            }
+        }, 50);
+    };
+
     /**
      * 判断是否支持触屏事件
      * @return {Boolean}
