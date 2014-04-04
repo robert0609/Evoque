@@ -267,54 +267,18 @@ var Evoque = (function (self)
         return new EvoqueClass(list);
     };
 
-    function EvoqueClass(objArray)
+    function array2Dictionary(arr)
     {
-        var _innerArray = objArray;
-        resetOrder.call(this);
-
-        function resetOrder()
+        this.length = arr.length;
+        for (var i = 0; i < arr.length; ++i)
         {
-            this.length = _innerArray.length;
-            for (var i = 0; i < _innerArray.length; ++i)
-            {
-                this[i] = _innerArray[i];
-            }
+            this[i] = arr[i];
         }
+    }
 
-        /**
-         * 按照传入的规则fn对包装集中的对象排序
-         * @param fn
-         * @return {*}
-         */
-        this.sort = function (fn) {
-            if ($.checkType(fn) === type.eFunction)
-            {
-                core_sort.call(_innerArray, fn);
-            }
-            else
-            {
-                core_sort.call(_innerArray);
-            }
-            resetOrder.call(this);
-            return this;
-        };
-
-        /**
-         * 循环遍历包装集中的对象
-         * @param fn
-         */
-        this.each = function (fn) {
-            if ($.checkType(fn) === type.eFunction)
-            {
-                for (var i = 0; i < _innerArray.length; ++i)
-                {
-                    if (fn.call(_innerArray[i], i) === false)
-                    {
-                        break;
-                    }
-                }
-            }
-        };
+    function EvoqueClass(objArray) {
+        this.innerObjectList = objArray;
+        array2Dictionary.call(this, this.innerObjectList);
     }
     EvoqueClass.prototype = self;
 
@@ -557,13 +521,16 @@ var Evoque = (function (self)
         }
     };
 
-    $.scroll2Element = function (destinationX, destinationY) {
+    $.scrollTo = function (destinationX, destinationY) {
         var dx = destinationX - window.pageXOffset;
         var dy = destinationY - window.pageYOffset;
-        var vy = dy == 0 ? 0 : (dy > 0 ? 10: -10);
-        var vx = dx == 0 ? 0 : (vy == 0 ? (dx > 0 ? 10 : -10) : (vy * dx / dy));
-        var ay = dy == 0 ? 0 : (dy > 0 ? 2 : -2);
-        var ax = dx == 0 ? 0 : (ay == 0 ? (dx > 0 ? 2 : -2) : (ay * dx / dy));
+        var vys = dy == 0 ? 0 : (dy > 0 ? 30 : -30);
+        var vxs = dx == 0 ? 0 : (vys == 0 ? (dx > 0 ? 30 : -30) : (vys * dx / dy));
+        var vy = dy == 0 ? 0 : (dy > 0 ? Math.max(vys, dy / 40) : Math.min(vys, dy / 40));
+        var vx = dx == 0 ? 0 : (vy == 0 ? (dx > 0 ? Math.max(vxs, dx / 40) : Math.min(vxs, dx / 40)) : (vy * dx / dy));
+        //var ay = dy == 0 ? 0 : (dy > 0 ? 5 : -5);
+        //var ax = dx == 0 ? 0 : (ay == 0 ? (dx > 0 ? 5 : -5) : (ay * dx / dy));
+        var ay = 0, ax = 0;
 
         var thresholdDx = Math.abs(dx) / 2;
         var thresholdDy = Math.abs(dy) / 2;
@@ -623,7 +590,7 @@ var Evoque = (function (self)
                 ay = 0 - ay;
                 changedAyDirection = true;
             }
-        }, 50);
+        }, 25);
     };
 
     /**
@@ -642,7 +609,63 @@ var Evoque = (function (self)
     $.supportSessionStorage = function () {
         return !!window.sessionStorage;
     };
+
+    var _chars16 = '0123456789ABCDEF'.split('');
+    /**
+     * 生成GUID
+     * @return {String}
+     */
+    $.guid = function () {
+        var uuid = [], i;
+        // rfc4122, version 4 form
+        var r;
+        // rfc4122 requires these characters
+        uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+        uuid[14] = '4';
+        // Fill in random data.  At i==19 set the high bits of clock sequence as
+        // per rfc4122, sec. 4.1.5
+        for (i = 0; i < 36; i++)
+        {
+            if (!uuid[i])
+            {
+                r = 0 | Math.random()*16;
+                uuid[i] = _chars16[(i == 19) ? (r & 0x3) | 0x8 : r];
+            }
+        }
+        return uuid.join('');
+    };
     //Global method end
+
+    /**
+     * 按照传入的规则fn对包装集中的对象排序
+     * @param fn
+     * @return {*}
+     */
+    self.sort = function (fn) {
+        if ($.checkType(fn) === type.eFunction)
+        {
+            core_sort.call(this.innerObjectList, fn);
+        }
+        array2Dictionary.call(this, this.innerObjectList);
+        return this;
+    };
+
+    /**
+     * 循环遍历包装集中的对象
+     * @param fn
+     */
+    self.each = function (fn) {
+        if ($.checkType(fn) === type.eFunction)
+        {
+            for (var i = 0; i < this.length; ++i)
+            {
+                if (fn.call(this[i], i) === false)
+                {
+                    break;
+                }
+            }
+        }
+    };
 
     /**
      * 获取表单项或基本数据类型的值
