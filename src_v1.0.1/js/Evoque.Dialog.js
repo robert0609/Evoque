@@ -18,6 +18,21 @@ $.dialog = (function (self) {
         return gDialog.alert(message, onDialogClosed);
     };
 
+    /**
+     * 弹出带有yes和no按钮的确认框
+     * @param message
+     * @param onclickyes
+     * @return {*}
+     */
+    self.prompt = function (message, onclickyes) {
+        return gDialog.showMessageBox({
+            content: message,
+            button: 'no|yes',
+            onClickYes: onclickyes,
+            autoClose: false
+        });
+    };
+
     self.showLoading = function (loadingMsg, callback)
     {
         return gDialog.showLoading(loadingMsg, callback);
@@ -583,6 +598,23 @@ $.dialog = (function (self) {
         genDialog.apply(this);
         this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
         return this.dialog.alert(message, onDialogClosed);
+    };
+
+    /**
+     * 弹出带有yes和no按钮的确认框
+     * @param message
+     * @param onclickyes
+     * @return {*}
+     */
+    self.prompt = function (message, onclickyes) {
+        genDialog.apply(this);
+        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
+        return this.dialog.showMessageBox({
+            content: message,
+            button: 'no|yes',
+            onClickYes: onclickyes,
+            autoClose: false
+        });
     };
 
     Evoque.showLoading = function (loadingMsg, callback)
