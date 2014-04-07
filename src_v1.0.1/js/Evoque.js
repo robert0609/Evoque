@@ -138,7 +138,7 @@ var Evoque = (function (self)
         var y = Number(this.getFullYear());
         var m = Number(this.getMonth()) + 1;
         var d = Number(this.getDate());
-        return y + '-' + m + '-' + d;
+        return y + '-' + m.toString().padLeft(2, '0') + '-' + d.toString().padLeft(2, '0');
     };
 
     /**
@@ -157,6 +157,53 @@ var Evoque = (function (self)
     Date.prototype.addDay = function (n) {
         this.setDate(this.getDate() + Number(n));
         return this;
+    };
+
+    /**
+     * 将日期序列化为JSON的格式
+     * @return {String}
+     */
+    Date.prototype.toJSONDate = function () {
+        var ret = '/Date({0}+0800)/';
+        var mt = this.getTime();
+        return ret.replace('{0}', mt.toString());
+    };
+
+    /**
+     * 将JSON序列化格式的日期字符串转换为日期类型
+     * @return {Date}
+     */
+    String.prototype.fromJSONDate = function () {
+        var reg = /\/Date\(\d+\+0800\)\//g;
+        if (!reg.test(this))
+        {
+            throw 'Error format JSON Date String!'
+        }
+        var rets = this.match(/\(\d+\+/g);
+        if (rets.length > 0)
+        {
+            return new Date(Number(rets[0].substring(1, rets[0].length - 1)));
+        }
+        else
+        {
+            return null;
+        }
+    };
+
+    /**
+     * 使用指定字符补足字符串的左边至指定长度
+     * @param n 指定长度
+     * @param c 指定字符
+     * @return {String}
+     */
+    String.prototype.padLeft = function (n, c) {
+        var ret = this;
+        var s = $.isStringEmpty(c) ? ' ' : c;
+        while (ret.length < n)
+        {
+            ret = s + ret;
+        }
+        return ret;
     };
 
     /**

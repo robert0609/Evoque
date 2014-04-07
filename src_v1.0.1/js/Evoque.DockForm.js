@@ -105,34 +105,26 @@ Evoque.dockForm = (function (self) {
             $(element).show();
             document.body.appendChild(bgObj);
             document.body.appendChild(div);
-            setDivSize(element);
+            setDivSize();
             $(div).addClass('bottomTop');
             showFlag = true;
 
             return this;
         };
 
-        function setDivSize(element)
+        function setDivSize()
         {
             switch (direction)
             {
                 case 'left':
                 case 'right':
-                    if (element.clientWidth < maxWidth)
-                    {
-                        div.style.width = element.clientWidth + 'px';
-                    }
-                    else
+                    if (div.clientWidth > maxWidth)
                     {
                         div.style.width = maxWidth + 'px';
                     }
                     break;
                 default:
-                    if (element.clientHeight < maxHeight)
-                    {
-                        div.style.height = element.clientHeight + 'px';
-                    }
-                    else
+                    if (div.clientHeight > maxHeight)
                     {
                         div.style.height = maxHeight + 'px';
                     }
