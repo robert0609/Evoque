@@ -1,0 +1,13 @@
+.folder-title-fold{
+    background-color: #f8f8f8;
+}
+.folder-title-unfold{
+    background-color: #F8F8F8;
+}
+.folder-content-fold{
+    display: none;
+}
+.folder-content-unfold{
+    display: block;
+    overflow: hidden;
+}

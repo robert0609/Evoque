@@ -164,30 +164,28 @@ var Evoque = (function (self)
      * @return {String}
      */
     Date.prototype.toJSONDate = function () {
-        var ret = '/Date({0}+0800)/';
-        var mt = this.getTime();
-        return ret.replace('{0}', mt.toString());
+        var ret = '/Date({0})/';
+        var msLocal = this.getTime();
+        var offset = this.getTimezoneOffset();
+        var msUtc = msLocal - offset * 60000;
+        return ret.replace('{0}', msUtc.toString());
     };
 
     /**
      * 将JSON序列化格式的日期字符串转换为日期类型
      * @return {Date}
      */
-    String.prototype.fromJSONDate = function () {
-        var reg = /\/Date\(\d+\+0800\)\//g;
-        if (!reg.test(this))
+    Date.fromJSONDate = function (jsonDateString) {
+        var reg = /\/Date\(\d+\)\//g;
+        if (!reg.test(jsonDateString))
         {
-            throw 'Error format JSON Date String!'
+            throw 'Error format JSON UTC Date String!'
         }
-        var rets = this.match(/\(\d+\+/g);
-        if (rets.length > 0)
-        {
-            return new Date(Number(rets[0].substring(1, rets[0].length - 1)));
-        }
-        else
-        {
-            return null;
-        }
+        var matches = jsonDateString.match(/\(\d+\)/g);
+        var msUtc = Number(matches[0].substring(1, matches[0].length - 1));
+        var offset = (new Date()).getTimezoneOffset();
+        var msLocal = msUtc + offset * 60000;
+        return new Date(msLocal);
     };
 
     /**
@@ -569,6 +567,22 @@ var Evoque = (function (self)
     };
 
     $.scrollTo = function (destinationX, destinationY) {
+        var bodyW = document.body.scrollWidth;
+        var winW = document.documentElement.clientWidth;
+        var maxScrollWidth = 0;
+        if (bodyW > winW)
+        {
+            maxScrollWidth = bodyW - winW;;
+        }
+        var bodyH = document.body.scrollHeight;
+        var winH = document.documentElement.clientHeight;
+        var maxScrollHeight = 0;
+        if (bodyH > winH)
+        {
+            maxScrollHeight = bodyH - winH;;
+        }
+        destinationX = Math.min(destinationX, maxScrollWidth);
+        destinationY = Math.min(destinationY, maxScrollHeight);
         var dx = destinationX - window.pageXOffset;
         var dy = destinationY - window.pageYOffset;
         var vys = dy == 0 ? 0 : (dy > 0 ? 30 : -30);
@@ -585,6 +599,7 @@ var Evoque = (function (self)
         var changedAyDirection = false;
         var reachedX = dx == 0 ? true : false;
         var reachedY = dy == 0 ? true : false;
+
         var intervalId = window.setInterval(function ()
         {
             var currentX = window.pageXOffset;
