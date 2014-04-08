@@ -164,11 +164,9 @@ var Evoque = (function (self)
      * @return {String}
      */
     Date.prototype.toJSONDate = function () {
-        var ret = '/Date({0})/';
+        var ret = '/Date({0}+0800)/';
         var msLocal = this.getTime();
-        var offset = this.getTimezoneOffset();
-        var msUtc = msLocal - offset * 60000;
-        return ret.replace('{0}', msUtc.toString());
+        return ret.replace('{0}', msLocal.toString());
     };
 
     /**
@@ -176,16 +174,18 @@ var Evoque = (function (self)
      * @return {Date}
      */
     Date.fromJSONDate = function (jsonDateString) {
-        var reg = /\/Date\(\d+\)\//g;
+        var reg = /\/Date\(\d+(\+0800)?\)\//g;
         if (!reg.test(jsonDateString))
         {
             throw 'Error format JSON UTC Date String!'
         }
-        var matches = jsonDateString.match(/\(\d+\)/g);
-        var msUtc = Number(matches[0].substring(1, matches[0].length - 1));
-        var offset = (new Date()).getTimezoneOffset();
-        var msLocal = msUtc + offset * 60000;
-        return new Date(msLocal);
+        var matches = jsonDateString.match(/\(.+\)/g);
+        var ms = matches[0].substring(1, matches[0].length - 1);
+        if (ms.indexOf('+') > -1)
+        {
+            ms = ms.substring(0, ms.indexOf('+'));
+        }
+        return new Date(Number(ms));
     };
 
     /**
