@@ -1,4 +1,4 @@
-//Dependency: Evoque.js
+//Dependency: Evoque.js, Evoque.Session.js
 $.history = (function (self)
 {
     //history enable switcher
