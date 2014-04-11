@@ -58,6 +58,7 @@ Evoque.folder = (function (self) {
         var $folder = $(folder);
         var $title = $folder.getChild('.' + titleClass);
         var $content = $folder.getChild('.' + contentClass);
+        var maxContentHeight = 0;
 
         if (mode !== 'normal')
         {
@@ -132,11 +133,31 @@ Evoque.folder = (function (self) {
         }
 
         function fold() {
-            $title.removeClass('folder-title-unfold');
-            $title.addClass('folder-title-fold');
-            $content.removeClass('folder-content-unfold');
-            $content.addClass('folder-content-fold');
-            onFolded.apply({ title: $title[0], content: $content[0]});
+            if (maxContentHeight > 0)
+            {
+                var speed = maxContentHeight / 3;
+                var intervalId = window.setInterval(function () {
+                    var curH = $content[0].clientHeight;
+                    if (curH > 0)
+                    {
+                        curH -= speed;
+                        if (curH < 0)
+                        {
+                            curH = 0;
+                        }
+                        $content.setStyle('height', curH + 'px');
+                    }
+                    else
+                    {
+                        window.clearInterval(intervalId);
+                        $title.removeClass('folder-title-unfold');
+                        $title.addClass('folder-title-fold');
+                        $content.removeClass('folder-content-unfold');
+                        $content.addClass('folder-content-fold');
+                        onFolded.apply({ title: $title[0], content: $content[0]});
+                    }
+                }, 25);
+            }
         }
 
         function unfold() {
@@ -155,17 +176,20 @@ Evoque.folder = (function (self) {
             $title.addClass('folder-title-unfold');
             $content.removeClass('folder-content-fold');
             $content.addClass('folder-content-unfold');
-            var contentHeight = $content[0].clientHeight;
-            var speed = contentHeight / 3;
+            if (maxContentHeight == 0)
+            {
+                maxContentHeight = $content[0].clientHeight;
+            }
+            var speed = maxContentHeight / 3;
             $content.setStyle('height', '0px');
             var intervalId = window.setInterval(function () {
                 var curH = $content[0].clientHeight;
-                if (curH < contentHeight)
+                if (curH < maxContentHeight)
                 {
                     curH += speed;
-                    if (curH > contentHeight)
+                    if (curH > maxContentHeight)
                     {
-                        curH = contentHeight;
+                        curH = maxContentHeight;
                     }
                     $content.setStyle('height', curH + 'px');
                 }
@@ -188,6 +212,26 @@ Evoque.folder = (function (self) {
         option = option || {};
         this.each(function () {
             self.create(option, this);
+        });
+    };
+
+    Evoque.openFolder = function () {
+        this.each(function () {
+            if ($.isObjectNull(this.__innerFolder))
+            {
+                return;
+            }
+            this.__innerFolder.open();
+        });
+    };
+
+    Evoque.closeFolder = function () {
+        this.each(function () {
+            if ($.isObjectNull(this.__innerFolder))
+            {
+                return;
+            }
+            this.__innerFolder.close();
         });
     };
 
