@@ -1161,6 +1161,10 @@ var Evoque = (function (self)
      * @param useCapture 捕获模式开关
      */
     self.addEventHandler = function (evtName, callback, useCapture) {
+        if (evtName == 'click')
+        {
+            evtName = 'tap';
+        }
         if ($.checkType(useCapture) !== type.eBoolean)
         {
             useCapture = false;
@@ -1191,6 +1195,10 @@ var Evoque = (function (self)
      * @param useCapture 捕获模式开关
      */
     self.removeEventHandler = function (evtName, callback, useCapture) {
+        if (evtName == 'click')
+        {
+            evtName = 'tap';
+        }
         if ($.checkType(useCapture) !== type.eBoolean)
         {
             useCapture = false;
@@ -1364,6 +1372,17 @@ var Evoque = (function (self)
             this.addEventHandler(touchEventType.swipeRight, callback);
         };
 
+        var _bg = document.createElement('div');
+        _bg.style.width = document.documentElement.clientWidth + 'px';
+        _bg.style.height = document.documentElement.clientHeight + 'px';
+        _bg.style.zIndex = 100000;
+        _bg.style.position = 'fixed';
+        _bg.style.top = 0;
+        _bg.style.left = 0;
+        _bg.style.opacity = 0;
+        _bg.style.margin = 0;
+        _bg.style.padding = 0;
+
         function innerBindTouchEvent(ele)
         {
             if (ele.__isBindTouchEvent)
@@ -1400,9 +1419,15 @@ var Evoque = (function (self)
                 touchState.touchEndTime = new Date();
                 var evtTyp = touchState.touchType();
                 var that = this;
+                if (_mAgent === mAgent.android)
+                {
+                    document.body.appendChild(_bg);
+                    setTimeout(function () {document.body.removeChild(_bg);}, 350);
+                }
                 $(evtTyp).each(function () {
                     innerDispatchCustomEvent(that, this);
                 });
+                $.cancelDefault(e);
             });
 
             ele.__isBindTouchEvent = true;
