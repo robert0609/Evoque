@@ -2,6 +2,7 @@
 $.cache = (function (self)
 {
     var __global = new cacheClass();
+    var __elementCacheKeyProperty = 'elementCache';
 
     self.create = function () {
         return new cacheClass();
@@ -83,6 +84,26 @@ $.cache = (function (self)
             }
         };
     }
+
+    //API
+    Evoque.cache = function () {
+        if (this.length < 1)
+        {
+            return null;
+        }
+        var ele = this[0];
+        var key = ele[__elementCacheKeyProperty];
+        if ($.isStringEmpty(key))
+        {
+            key = $.guid();
+            ele[__elementCacheKeyProperty] = key;
+        }
+        if (!$.cache.containsKey(key))
+        {
+            $.cache.push(key, new cacheClass());
+        }
+        return $.cache.get(key);
+    };
 
     return self;
 }($.cache || {}));

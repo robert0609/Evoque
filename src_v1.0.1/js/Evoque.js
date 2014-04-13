@@ -1132,11 +1132,29 @@ var Evoque = (function (self)
      * 触发Click事件
      */
     self.dispatchClick = function () {
-        var evt = document.createEvent('MouseEvents');
-        evt.initEvent('click', true, true);
-        this.each(function () {
-            this.dispatchEvent(evt);
-        });
+        if (_hasTouchEvent)
+        {
+            this.each(function () {
+                if (innerIsBindedTapEvent(this))
+                {
+                    innerDispatchCustomEvent(this, 'tap');
+                }
+                else
+                {
+                    var evt = document.createEvent('MouseEvents');
+                    evt.initEvent('click', true, true);
+                    this.dispatchEvent(evt);
+                }
+            });
+        }
+        else
+        {
+            var evt = document.createEvent('MouseEvents');
+            evt.initEvent('click', true, true);
+            this.each(function () {
+                this.dispatchEvent(evt);
+            });
+        }
     };
 
     /**
@@ -1161,7 +1179,7 @@ var Evoque = (function (self)
      * @param useCapture 捕获模式开关
      */
     self.addEventHandler = function (evtName, callback, useCapture) {
-        if (evtName == 'click')
+        if (_hasTouchEvent && evtName == 'click')
         {
             evtName = 'tap';
         }
@@ -1195,7 +1213,7 @@ var Evoque = (function (self)
      * @param useCapture 捕获模式开关
      */
     self.removeEventHandler = function (evtName, callback, useCapture) {
-        if (evtName == 'click')
+        if (_hasTouchEvent && evtName == 'click')
         {
             evtName = 'tap';
         }
@@ -1522,6 +1540,19 @@ var Evoque = (function (self)
             {
                 this.x = x;
                 this.y = y;
+            }
+        }
+
+        function innerIsBindedTapEvent(ele)
+        {
+            var tapEvtListName = _customEvents['tap'];
+            if ($.checkType(ele[tapEvtListName]) === type.eArray && ele[tapEvtListName].length > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }
