@@ -665,7 +665,7 @@ var Evoque = (function (self)
     };
 
     /**
-     * 胖墩是否支持离线存储
+     * 判断是否支持离线存储
      * @return {Boolean}
      */
     $.supportSessionStorage = function () {
@@ -1400,6 +1400,10 @@ var Evoque = (function (self)
         _bg.style.opacity = 0;
         _bg.style.margin = 0;
         _bg.style.padding = 0;
+        _bg.onclick = function (e) {
+            $.cancelDefault(e);
+            $.cancelEventFlow(e);
+        };
 
         function innerBindTouchEvent(ele)
         {
