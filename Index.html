@@ -20,66 +20,62 @@
                     'document_body_clientHeight': document.body.clientHeight
                 });
             }*/
-            document.getElementById('ua').innerHTML = window.navigator.userAgent;
-            //eDebugger.outputVar('navigator', navigator);
+            //document.getElementById('ua').innerHTML = window.navigator.userAgent;
+            var dateStr = '2014-05-29';
+            var now = dateStr.toDate().toJSONDate();
+            var s = Date.fromJSONDate(now);
 
-            $('#testin').addEventHandler('input', function (e) {
-                var $this = $(this);
-                var val = $this.getVal();
-                if (val.indexOf(' ') > -1)
-                {
-                    $this.setVal($this.getVal().replace(' ', ''));
-                }
-            });
+            //document.getElementById('ua').innerHTML = 'devicePixelRatio: ' + window.devicePixelRatio;
+            eDebugger.outputVar('screen', screen);
 
         }, false);
 
         var sd = new Date();
         function redirect()
         {
-            alert('#$##adf fddsg#####'.trim('#'));
-            //location.href = './demo/ApplicationCache.html';
+            location.href = './demo/ApplicationCache.html';
         }
 
     </script>
     <title>H5Demo</title>
 </head>
 <body>
-<input type="text" id="testin">
-    <div id="ua"></div>
+    <div id="ua" onclick="alert(document.documentElement.clientHeight);">sssss</div>
     <ul>
-        <li><a href="./demo/Delegate.html">Delegate</a></li>
-        <li><a href="./demo/Knockout.html">Knockout</a></li>
         <li><a href="javascript:void(0);" onclick="redirect();">ApplicationCache</a></li>
+        <li><a href="./demo/App.html">App</a></li>
+        <li><a href="./demo/Ajax.html">Ajax</a></li>
+        <li><a href="./demo/Button.html">Button</a></li>
+        <li><a href="./demo/Calendar.html">Calendar</a></li>
+        <li><a href="./demo/Container.html">Container</a></li>
+        <li><a href="./demo/Camera.html">Camera</a></li>
+        <li><a href="./demo/Dialog.html">Dialog</a></li>
+        <li><a href="./demo/DockForm.html">DockForm</a></li>
+        <li><a href="./demo/Delegate.html">Delegate</a></li>
+        <li><a href="./demo/FileUpload.html">FileUpload</a></li>
+        <li><a href="./demo/Folder.html">Folder</a></li>
+        <li><a href="http://10.2.10.18:2040/findaround/">Findaround</a></li>
+        <li><a href="./demo/Geo.html">Geo</a></li>
+        <li><a href="http://m.tujia.com/o?code=GaoDe&unittypeid=3077&start=2014-2-14&end=2014-2-15">gaode</a></li>
+        <li><a href="./demo/History.html">History</a></li>
+        <li><a href="./demo/HistorySimple.html">HistorySimple</a></li>
+        <li><a href="./demo/IETest.html">IETest</a></li>
+        <li><a href="./demo/JSONTest.html">JSONTest</a></li>
+        <li><a href="./demo/Knockout.html">Knockout</a></li>
+        <li><a href="./demo/LanunchApp.html">LanunchApp</a></li>
+        <li><a href="./demo/Loader.html">Loader</a></li>
+        <li><a href="./demo/Location.html">Location</a></li>
+        <li><a href="./demo/QuerySelector.html">QuerySelector</a></li>
+        <li><a href="./demo/RangeSelect.html">RangeSelect</a></li>
+        <li><a href="./demo/Sliderbar.html">Sliderbar</a></li>
+        <li><a href="./demo/Scroll.html">Scroll</a></li>
+        <li><a href="http://10.2.10.18:2040/sanya_gongyu/shotel/">shotel</a></li>
+        <li><a href="http://m.tujia.com/sanya_gongyu/sanyawan_6398.htm?mref=share">share</a></li>
         <li><a href="./demo/TouchEvent.html">TouchEvent</a></li>
         <li><a href="./demo/TouchClickEventFlow.html">TouchClickEventFlow</a></li>
         <li><a href="./demo/TestUnload.html">TestUnload</a></li>
-        <li><a href="./demo/QuerySelector.html">QuerySelector</a></li>
-        <li><a href="./demo/IETest.html">IETest</a></li>
-        <li><a href="./demo/App.html">App</a></li>
-        <li><a href="./demo/Ajax.html">Ajax</a></li>
-        <li><a href="./demo/Calendar.html">Calendar</a></li>
-        <li><a href="./demo/Container.html">Container</a></li>
-        <li><a href="./demo/Dialog.html">Dialog</a></li>
-        <li><a href="./demo/DockForm.html">DockForm</a></li>
-        <li><a href="./demo/RangeSelect.html">RangeSelect</a></li>
-        <li><a href="./demo/Button.html">Button</a></li>
-        <li><a href="./demo/Sliderbar.html">Sliderbar</a></li>
         <li><a href="./demo/Tab.html">Tab</a></li>
-        <li><a href="./demo/LanunchApp.html">LanunchApp</a></li>
-        <li><a href="./demo/Loader.html">Loader</a></li>
-        <li><a href="./demo/FileUpload.html">FileUpload</a></li>
-        <li><a href="./demo/Camera.html">Camera</a></li>
-        <li><a href="./demo/Geo.html">Geo</a></li>
-        <li><a href="./demo/History.html">History</a></li>
-        <li><a href="./demo/JSONTest.html">JSONTest</a></li>
-        <li><a href="./demo/Location.html">Location</a></li>
-        <li><a href="./demo/Scroll.html">Scroll</a></li>
-        <li><a href="http://m.tujia.com/o?code=GaoDe&unittypeid=3077&start=2014-2-14&end=2014-2-15">gaode</a></li>
-        <li><a href="http://10.2.10.18:2040/sanya_gongyu/shotel/">shotel</a></li>
-        <li><a href="http://10.2.10.18:2040/findaround/">findaround</a></li>
-        <li><a href="./demo/Folder.html">Folder</a></li>
-        <li><a href="http://m.tujia.com/sanya_gongyu/sanyawan_6398.htm?mref=share">share</a></li>
+        <li><a href="./demo/WebWorker.html">WebWorker</a></li>
     </ul>
 </body>
 </html>
