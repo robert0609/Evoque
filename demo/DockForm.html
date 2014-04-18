@@ -4,19 +4,33 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.DockForm.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.DockForm.css" />
+    <!--<script type="text/javascript" src="../src/js/Evoque.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/Evoque.DockForm.js"></script>-->
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.DockForm.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.DockForm.css" />
     <script type="text/javascript">
+        $(function () {
+            $('#b1').addEventHandler('click', function () {
+                $('#dockForm').showDockForm();
+            });
+//            $('#b1').addEventHandler('click', function (e) {
+//                $('#dockForm').showDockForm();
+//            });
+        });
         function onClick()
         {
             $('#dockForm').showDockForm();
         }
+        function clickBody()
+        {
+            alert('clickBody');
+        }
     </script>
 </head>
-<body>
+<body onclick="clickBody();">
     <header>Header!!!!!!!!!!!!!</header>
-    <a href="javascript:onClick();">Click me!</a>
+    <div id="b1" style="width: 200px; height: 200px; background-color: green;">Click me!</div>
     <section id="dockForm" style="background-color: #1e90ff; display: none; height: 200px;">dihiahgn hdanfdjkshasdnflkad fhudasalk</section>
 </body>
 </html>

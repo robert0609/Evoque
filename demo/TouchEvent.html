@@ -13,13 +13,14 @@
         $(function () {
 
             $('.touchable').addEventHandler('click', function () {
+                $.cancelDefault(ev);
                 $.dialog.alert('click');
             });
-
-            $('.touchable').click(function () {
-                $.dialog.alert('tap');
-            });
-            /*$('.touchable').addEventHandler('touchstart', function (ev) {
+//
+//            $('.touchable').click(function () {
+//                $.dialog.alert('tap');
+//            });
+            $('.touchable').addEventHandler('touchstart', function (ev) {
                 var msg = '';
                 msg += 'Last: ' + ev.changedTouches.length + '<br>';
                 if (ev.changedTouches.length > 0)
@@ -86,7 +87,8 @@
                     msg += 'pageX:' + ev.touches[0].pageX + '; pageY:' + ev.touches[0].pageY + '<br>';
                 }
                 eDebugger.output(msg);
-            });*/
+                //$.cancelEventFlow(ev);
+            });
         });
     </script>
 </head>

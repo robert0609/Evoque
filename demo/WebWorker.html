@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Worker example: Multicore computation</title>
+    <!--<script type="text/javascript" src="worker.js"></script>-->
+    <!--<script type="text/javascript" src="core.js"></script>-->
+</head>
+<body>
+<p>Result: <output id="result"></output></p>
+<script>
+    var worker = new Worker('worker.js');
+    worker.onmessage = function (event) {
+        document.getElementById('result').textContent = event.data;
+    };
+</script>
+</body>
+</html>

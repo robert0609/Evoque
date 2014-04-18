@@ -39,7 +39,7 @@
             myViewModel.selectedOption.subscribe(function(newVal){
                 $.dialog.alert('selected: ' + newVal.countryName);
             });
-            myViewModel.wantsSpam = ko.observable('true');
+            myViewModel.wantsSpam = ko.observable(true);
             ko.applyBindings(myViewModel);
         });
 

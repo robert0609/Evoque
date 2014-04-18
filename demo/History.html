@@ -9,28 +9,31 @@
     <script type="text/javascript" src="../src/js/json2.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Session.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.History.js"></script>
+    <!--<script type="text/javascript" src="../src/js/Evoque.History.js"></script>-->
     <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         var i = 1;
         $(function () {
-            $('#divHis').html($.history.show());
+//            $('#divHis').html($.history.show());
+//
+//            $.history.backHandleByBrowser = function () {
+//                $.dialog.alert('Clicked back button!');
+//            };
 
-            $.history.backHandleByBrowser = function () {
-                $.dialog.alert('Clicked back button!');
-            };
-
-//            window.addEventListener('popstate', function (e) {
+            ++i;
+            var url = 'http://10.2.10.129:4001/' + i + '/';
+            history.replaceState({ url: url }, i, url);
+            window.addEventListener('popstate', function (e) {
 //                ++i;
-//                var url = 'http://10.2.10.18:4001/' + i + '/';
+//                var url = 'http://10.2.10.129:4001/' + i + '/';
 //                history.replaceState({ url: url }, i, url);
 //                ++i;
-//                var url = 'http://10.2.10.18:4001/' + i + '/';
+//                var url = 'http://10.2.10.129:4001/' + i + '/';
 //                history.pushState({ url: url }, i, url);
-//                var obj = history.state;
-//                $('#test').html('e.state:' + JSON.stringify(e.state) + '; history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
-//            });
+                var obj = history.state;
+                $('#test').html('e.state:' + JSON.stringify(e.state) + '; history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
+            });
 
             //$('#test').html(history.pushState);
         });
@@ -41,7 +44,7 @@
             {
                 $('#test1').html('***history.length:' + history.length);
                 ++i;
-                var url = 'http://10.2.10.18:4001/' + i + '/';
+                var url = 'http://10.2.10.129:4001/' + i + '/';
                 history.pushState({url: url}, i, url);
                 var obj = history.state;
                 $('#test').html('history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
@@ -52,14 +55,40 @@
             }
         }
 
+        function btnReplaceClick()
+        {
+            try
+            {
+                $('#test1').html('***history.length:' + history.length);
+                ++i;
+                var url = 'http://10.2.10.129:4001/' + i + '/';
+                history.replaceState({url: url}, i, url);
+                var obj = history.state;
+                $('#test').html('history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
+            }
+            catch (ex)
+            {
+                alert(ex);
+            }
+        }
+
         /**
-         * 在pushState和popState的过程中,history.length数值不准,经测试，在Chrome浏览器下只有在调用pushState方法时候才会刷新history.length数值,在popstate事件回调的时候不会刷新history.length数值
+         * 在pushState和popState的过程中,history.length数值不准,
+         * 经测试，在Chrome浏览器、FireFox、IE10下都是：只有在调用pushState方法时候才会刷新history.length数值,在popstate事件回调的时候不会刷新history.length数值
+         *
+         * 为什么这么设计？想明白了：在pop的时候不改变history的长度，是为了与后退按钮相对的前进按钮能够正常向历史栈的前方记录移动指针而故意设计的。
+         * 只有在重新pushState的时候，浏览器认为是要更改历史栈的数据了，所以才变更历史栈的长度
+         *
+         * replaceState也不会更改历史栈的长度和数据
+         *
+         * 后退和前进按钮都会触发popstate事件
          */
     </script>
 </head>
 <body>
 <a href="javascript:btnClick();">pushState</a>
 <a href="javascript:history.go(-1);">back</a>
+<a href="javascript:btnReplaceClick();">replaceState</a>
 
 <a href="history/1.html">1.html</a>
 <div id="divHis"></div>

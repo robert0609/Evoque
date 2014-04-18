@@ -14,7 +14,7 @@
 //            window.setTimeout(function () {
 //                $.dialog.closeCurrentDialog();
 //            }, 2000);
-            /*$.dialog.alert('alert 1');
+            $.dialog.alert('alert 1');
             $.dialog.alert('dialog');
             $.dialog.showMessageBox({
                 title:'title',
@@ -43,14 +43,14 @@
                 onDialogClosed: function () {
                     alert('onDialogClosed---1');
                 }
-            });*/
+            });
             $.dialog.showModalDialog({
                 content:'dialog',
                 onQuiting: function () {
-                    //alert('onQuiting---2');
+                    alert('onQuiting---2');
                 },
                 onDialogClosed: function () {
-                    //alert('onDialogClosed---2');
+                    alert('onDialogClosed---2');
                 },
                 autoClose: false
             });
