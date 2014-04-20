@@ -132,13 +132,63 @@ var Evoque = (function (self)
     //Extension
     /**
      * 日期类型转换成字符串：Date --> 'yyyy-MM-dd'
+     * @parameter format: 'yyyy-MM-dd HH:mm:ss'
      * @return {String}
      */
-    Date.prototype.toCustomString = function () {
+    Date.prototype.toCustomString = function (format) {
         var y = Number(this.getFullYear());
-        var m = Number(this.getMonth()) + 1;
+        var M = Number(this.getMonth()) + 1;
         var d = Number(this.getDate());
-        return y + '-' + m.toString().padLeft(2, '0') + '-' + d.toString().padLeft(2, '0');
+        if ($.isStringEmpty(format))
+        {
+            return y + '-' + M.toString().padLeft(2, '0') + '-' + d.toString().padLeft(2, '0');
+        }
+        var H = Number(this.getHours());
+        var m = Number(this.getMinutes());
+        var s = Number(this.getSeconds());
+        var operations = [];
+        if (format.indexOf('yyyy') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('yyyy', y.toString());
+            });
+        }
+        if (format.indexOf('MM') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('MM', M.toString().padLeft(2, '0'));
+            });
+        }
+        if (format.indexOf('dd') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('dd', d.toString().padLeft(2, '0'));
+            });
+        }
+        if (format.indexOf('HH') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('HH', H.toString().padLeft(2, '0'));
+            });
+        }
+        if (format.indexOf('mm') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('mm', m.toString().padLeft(2, '0'));
+            });
+        }
+        if (format.indexOf('ss') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('ss', s.toString().padLeft(2, '0'));
+            });
+        }
+        var ret = format;
+        for (var i = 0; i < operations.length; ++i)
+        {
+            ret = operations[i].call(window, ret);
+        }
+        return ret;
     };
 
     /**
@@ -240,16 +290,24 @@ var Evoque = (function (self)
     };
 
     /**
-     * 形如"yyyy-MM-dd"的字符床转换成日期
+     * 形如"yyyy-MM-dd"或"yyyy-MM-dd HH:mm:ss"或"yyyy/MM/dd"或"yyyy/MM/dd HH:mm:ss"的字符床转换成日期
      * @return {Date}
      */
     String.prototype.toDate = function () {
-        if (!/^\d{1,4}-\d{1,2}-\d{1,2}$/.test(this))
+        if (!/^\d{1,4}[-/]\d{1,2}[-/]\d{1,2}(\s+\d{1,2}:\d{1,2}:\d{1,2})?$/.test(this))
         {
             throw 'Invalided string value!';
         }
-        var strs = this.split('-');
-        return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
+        var strs = this.replace(/\s+/g, '|').split(/[-/\s:\|]/g);
+        if (strs.length == 3)
+        {
+            return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
+        }
+        else if (strs.length == 6)
+        {
+            return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]), Number(strs[3]), Number(strs[4]), Number(strs[5]));
+        }
+        return null;
     };
 
     /**
