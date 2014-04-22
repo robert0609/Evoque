@@ -294,9 +294,14 @@ var Evoque = (function (self)
      * @return {Date}
      */
     String.prototype.toDate = function () {
+        var ret = new Date(this);
+        if ($.checkType(ret) === type.eDate && !isNaN(ret.valueOf()))
+        {
+            return ret;
+        }
         if (!/^\d{1,4}[-/]\d{1,2}[-/]\d{1,2}(\s+\d{1,2}:\d{1,2}:\d{1,2})?$/.test(this))
         {
-            throw 'Invalided string value!';
+            throw 'Invalid string value!';
         }
         var strs = this.replace(/\s+/g, '|').split(/[-/\s:\|]/g);
         if (strs.length == 3)
@@ -1618,6 +1623,34 @@ var Evoque = (function (self)
             }
         }
     }
+
+    /**
+     * 扩展全局功能。扩展之后调用方式：$.name.method()
+     * @param name 功能对象名
+     * @param obj 提供功能调用的对象
+     */
+    $.extend = function (name, obj) {
+        Object.defineProperty($, name, {
+            get: function () {
+                obj.evoqueTarget = undefined;
+                return obj;
+            }
+        });
+    };
+
+    /**
+     * 扩展Evoque功能。扩展之后调用方式：$('').name.method()，在method内部使用self.evoqueTarget可以获取调用的evoque对象
+     * @param name 功能对象名
+     * @param obj 提供功能调用的对象
+     */
+    self.extend = function (name, obj) {
+        Object.defineProperty(self, name, {
+            get: function () {
+                obj.evoqueTarget = this;
+                return obj;
+            }
+        });
+    };
 
     return self;
 }(Evoque || {}));
