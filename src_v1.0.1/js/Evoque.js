@@ -4,6 +4,7 @@ var Evoque = (function (self)
     self.FrameworkVersion = '1.0.1';
 
     var _hasTouchEvent = 'ontouchstart' in window;
+    var _enableTapEvent;
     //根据UserAgent判断访问网站的平台
     var _agent = navigator.userAgent.toLowerCase();
     /**
@@ -727,6 +728,32 @@ var Evoque = (function (self)
         return _hasTouchEvent;
     };
 
+    $.enableTapEvent = function () {
+        if ($.checkType(_enableTapEvent) === type.eBoolean)
+        {
+            return _enableTapEvent;
+        }
+        //查找文档元数据：<meta name="EvoqueEnableTapEvent" content="true" />
+        var $meta = $('meta[name="EvoqueEnableTapEvent"]');
+        if ($meta.length < 1)
+        {
+            _enableTapEvent = true;
+        }
+        else
+        {
+            var content = $meta.getAttr('content');
+            if ($.isStringEmpty(content) || content.toLowerCase() !== 'false')
+            {
+                _enableTapEvent = true;
+            }
+            else
+            {
+                _enableTapEvent = false;
+            }
+        }
+        return _enableTapEvent;
+    };
+
     /**
      * 判断是否支持离线存储
      * @return {Boolean}
@@ -1195,7 +1222,7 @@ var Evoque = (function (self)
      * 触发Click事件
      */
     self.dispatchClick = function () {
-        if (_hasTouchEvent)
+        if (_hasTouchEvent && $.enableTapEvent())
         {
             this.each(function () {
                 if (innerIsBindedTapEvent(this))
@@ -1225,7 +1252,7 @@ var Evoque = (function (self)
      * @param callback
      */
     self.click = function (callback) {
-        if (_hasTouchEvent)
+        if (_hasTouchEvent && $.enableTapEvent())
         {
             this.tap(callback);
         }
@@ -1242,9 +1269,16 @@ var Evoque = (function (self)
      * @param useCapture 捕获模式开关
      */
     self.addEventHandler = function (evtName, callback, useCapture) {
-        if (_hasTouchEvent && evtName == 'click')
+        if (_hasTouchEvent)
         {
-            evtName = 'tap';
+            if ($.enableTapEvent() && evtName == 'click')
+            {
+                evtName = 'tap';
+            }
+            else if (!$.enableTapEvent() && evtName == 'tap')
+            {
+                evtName = 'click';
+            }
         }
         if ($.checkType(useCapture) !== type.eBoolean)
         {
@@ -1276,9 +1310,16 @@ var Evoque = (function (self)
      * @param useCapture 捕获模式开关
      */
     self.removeEventHandler = function (evtName, callback, useCapture) {
-        if (_hasTouchEvent && evtName == 'click')
+        if (_hasTouchEvent)
         {
-            evtName = 'tap';
+            if ($.enableTapEvent() && evtName == 'click')
+            {
+                evtName = 'tap';
+            }
+            else if (!$.enableTapEvent() && evtName == 'tap')
+            {
+                evtName = 'click';
+            }
         }
         if ($.checkType(useCapture) !== type.eBoolean)
         {
