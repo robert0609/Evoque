@@ -3,8 +3,11 @@ $.container = (function (self)
 {
     var defaultOption = {
         divIdList: [],
+        startDivId: '',
         onShow: function () {},
-        onHide: function () {}
+        onHide: function () {},
+        //同一个页面最多只能有一个container开启history操控
+        enableHistory: false
     };
 
     self.create = function (option)
@@ -17,14 +20,25 @@ $.container = (function (self)
         var divIdList = option.getValueOfProperty('divIdList', defaultOption);
         var onShowMtd = option.getValueOfProperty('onShow', defaultOption);
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);
-        if ($.checkType(divIdList) !== type.eArray)
+        var enableHistory = option.getValueOfProperty('enableHistory', defaultOption);
+        if ($.checkType(divIdList) !== type.eArray || divIdList.length < 1)
         {
             throw 'Parameter is error!';
         }
-        return new containerClass(divIdList, onShowMtd, onHideMtd);
+        var startDivId = option.getValueOfProperty('startDivId', defaultOption);
+        if (!$.isStringEmpty(startDivId) && divIdList.indexOf(startDivId) < 0)
+        {
+            startDivId = divIdList[0];
+        }
+        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory);
+        if (!$.isStringEmpty(startDivId))
+        {
+            obj.display(startDivId);
+        }
+        return obj;
     };
 
-    function containerClass(divIdList, onShow, onHide)
+    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory)
     {
         var onShowIsFn = $.checkType(onShow) === type.eFunction;
         var onHideIsFn = $.checkType(onHide) === type.eFunction;
@@ -41,14 +55,54 @@ $.container = (function (self)
         var currentDisplayId = '';
         this.currentDisplay = null;
 
+        if (enableHistory)
+        {
+            var that = this;
+            window.addEventListener('popstate', function (e) {
+                if ($.isObjectNull(e.state))
+                {
+                    return;
+                }
+                var parameter = createOption();
+                if ($.checkType(e.state.remainHideDivInput) === type.eBoolean)
+                {
+                    parameter.remainHideDivInput = e.state.remainHideDivInput;
+                }
+                innerDisplay.call(that, e.state.toShowId, parameter, true);
+            });
+        }
+
         this.display = function(divId, option)
         {
             var parameter = createOption();
-            if (!$.isObjectNull(option) && $.checkType(option.remainHideDivInput) === type.eBoolean)
+            if (!$.isObjectNull(option))
             {
-                parameter.remainHideDivInput = option.remainHideDivInput;
+                if ($.checkType(option.remainHideDivInput) === type.eBoolean)
+                {
+                    parameter.remainHideDivInput = option.remainHideDivInput;
+                }
             }
+            innerDisplay.call(this, divId, parameter);
+            if (enableHistory)
+            {
+                if (startDivId === divId)
+                {
+                    history.replaceState({ toShowId: divId, remainHideDivInput: parameter.remainHideDivInput }, document.title, location.href);
+                }
+                else
+                {
+                    history.pushState({ toShowId: divId, remainHideDivInput: parameter.remainHideDivInput }, document.title, location.href);
+                }
+            }
+        };
 
+        function innerDisplay(divId, parameter, isBack)
+        {
+            var backFlag = false;
+            if ($.checkType(isBack) === type.eBoolean && isBack)
+            {
+                backFlag = true;
+            }
             var toShowId = divId;
             var toShowDiv = null;
             for (var i = 0; i < ids.length; ++i)
@@ -67,6 +121,8 @@ $.container = (function (self)
                         this.currentDisplay = null;
                         if (toHideDiv.length > 0 && onHideIsFn)
                         {
+                            //**
+                            parameter.backMode = backFlag;
                             onHide.call(toHideDiv[0], parameter);
                         }
                     }
@@ -82,7 +138,7 @@ $.container = (function (self)
                     onShow.call(toShowDiv[0]);
                 }
             }
-        };
+        }
 
         this.showDialog = function(divId)
         {
@@ -152,7 +208,7 @@ $.container = (function (self)
         function createOption()
         {
             return {
-                remainHideDivInput : false
+                remainHideDivInput: false
             };
         }
 
