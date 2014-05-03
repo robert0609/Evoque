@@ -19,6 +19,7 @@ $.validate = (function (self)
 
     var compare = 'compare';
     var compare_target = 'target';
+    var compare_targetSelector = 'targetSelector';
 
     var errorMsg = "errorMessage";
 
@@ -197,17 +198,26 @@ $.validate = (function (self)
     {
         var ret = true;
         var val = ele.value;
+        var tarVal = '';
         var tarId = json[compare_target];
-        if (!$.isStringEmpty(tarId))
+        if ($.isStringEmpty(tarId))
         {
-            var tarVal = $('#' + tarId).getVal();
-            if (!$.isStringEmpty(tarVal))
+            var tarSelector = json[compare_targetSelector];
+            if (!$.isStringEmpty(tarSelector))
             {
-                if (val != tarVal)
-                {
-                    container.alert(json[errorMsg]);
-                    ret = false;
-                }
+                tarVal = $(tarSelector).getVal();
+            }
+        }
+        else
+        {
+            tarVal = $('#' + tarId).getVal();
+        }
+        if (!$.isStringEmpty(tarVal))
+        {
+            if (val != tarVal)
+            {
+                container.alert(json[errorMsg]);
+                ret = false;
             }
         }
 
