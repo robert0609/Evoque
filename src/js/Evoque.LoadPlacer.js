@@ -14,6 +14,8 @@ Evoque.loader = (function (self)
         loadMode: 'append'
     };
 
+    var loadExFlag = 'LoadException:';
+
     self.load = function (option, element) {
         if ($.isObjectNull(option))
         {
@@ -65,17 +67,24 @@ Evoque.loader = (function (self)
                 //returnType : 'html',
                 onSuccess: function (returnObj)
                 {
-                    if (loadMode === 'replace')
+                    $(element).hide();
+                    element.innerHTML = '';
+                    if (returnObj.trim().substr(0, 14) === loadExFlag)
                     {
-                        parent.innerHTML = returnObj;
+                        onfail.call(window, { type: returnObj.trim().substr(14) });
                     }
                     else
                     {
-                        parent.innerHTML += returnObj;
+                        if (loadMode === 'replace')
+                        {
+                            parent.innerHTML = returnObj;
+                        }
+                        else
+                        {
+                            parent.innerHTML += returnObj;
+                        }
+                        onsuccess.call(window);
                     }
-                    $(element).hide();
-                    element.innerHTML = '';
-                    onsuccess.call(window);
                 },
                 onFail: function (e)
                 {
