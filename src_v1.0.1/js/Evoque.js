@@ -261,14 +261,24 @@ var Evoque = (function (self)
      * @return {String}
      */
     String.prototype.trim = function (c) {
+        if ($.isStringEmpty(this) || this.length === 0)
+        {
+            return this;
+        }
+        var reg = null
         if ($.isStringEmpty(c))
         {
-            c = ' ';
+            reg = new RegExp('\\s', 'g');
+        }
+        else
+        {
+            reg = new RegExp(c, 'g');
         }
         var si = -1;
         for (var i = 0; i < this.length; ++i)
         {
-            if (this[i] != c)
+            reg.lastIndex = 0;
+            if (!reg.test(this[i]))
             {
                 si = i;
                 break;
@@ -281,7 +291,8 @@ var Evoque = (function (self)
         var ei = -1;
         for (var j = this.length - 1; j >= 0; --j)
         {
-            if (this[j] != c)
+            reg.lastIndex = 0;
+            if (!reg.test(this[j]))
             {
                 ei = j;
                 break;
