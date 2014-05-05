@@ -40,6 +40,10 @@ $.ajax = (function (self)
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
         {
+            if ($.app() === mApp.hmbrowser)
+            {
+                return;
+            }
             xmlhttp.timeoutId = setTimeout(function () {
                 xmlhttp.abort();
                 xmlhttp.ontimeout();
@@ -78,6 +82,10 @@ $.ajax = (function (self)
         }
         if (!xmlhttp.evoque_sptTimeout)
         {
+            if ($.app() === mApp.hmbrowser)
+            {
+                return;
+            }
             xmlhttp.timeoutId = setTimeout(function () {
                 xmlhttp.abort();
                 xmlhttp.ontimeout();

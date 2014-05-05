@@ -18,7 +18,8 @@ var Evoque = (function (self)
         weixin: 2,
         gaode: 3,
         qqbrowser: 4,
-        ucbrowser: 5
+        ucbrowser: 5,
+        hmbrowser: 6
     };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
@@ -45,6 +46,13 @@ var Evoque = (function (self)
     else if (_agent.indexOf('ucbrowser') > -1)
     {
         _mApp = mApp.ucbrowser;
+    }
+    else if (_agent.indexOf('miuibrowser') > -1)
+    {
+        if (_agent.indexOf('build/hm') > -1)
+        {
+            _mApp = mApp.hmbrowser;
+        }
     }
 
     window.type = {
@@ -271,6 +279,10 @@ var Evoque = (function (self)
     //Global method begin
     $.agent = function () {
         return _mAgent;
+    };
+
+    $.app = function () {
+        return _mApp;
     };
 
     $.cancelEventFlow = function (event) {

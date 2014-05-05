@@ -55,6 +55,8 @@ $.container = (function (self)
         var currentDisplayId = '';
         this.currentDisplay = null;
 
+        var lastTop = {};
+
         if (enableHistory)
         {
             var that = this;
@@ -69,6 +71,7 @@ $.container = (function (self)
                     parameter.remainHideDivInput = e.state.remainHideDivInput;
                 }
                 innerDisplay.call(that, e.state.toShowId, parameter, true);
+                window.scrollTo(0, 0);
             });
         }
 
@@ -116,6 +119,7 @@ $.container = (function (self)
                     if (!$.isStringEmpty(currentDisplayId) && ids[i] === currentDisplayId)
                     {
                         var toHideDiv = this.currentDisplay;
+                        lastTop[toHideDiv.id] = document.body.scrollTop;
                         hide(toHideDiv, parameter.remainHideDivInput);
                         currentDisplayId = '';
                         this.currentDisplay = null;
