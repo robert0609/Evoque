@@ -55,6 +55,13 @@ var Evoque = (function (self)
     {
         _mApp = mApp.ucbrowser;
     }
+    else if (_agent.indexOf('miuibrowser') > -1)
+    {
+        if (_agent.indexOf('build/hm') > -1)
+        {
+            _mApp = mApp.hmbrowser;
+        }
+    }
 
     /**
      * 数据类型字典变量
@@ -409,6 +416,10 @@ var Evoque = (function (self)
      */
     $.agent = function () {
         return _mAgent;
+    };
+
+    $.app = function () {
+        return _mApp;
     };
 
     /**
