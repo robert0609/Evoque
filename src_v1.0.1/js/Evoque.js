@@ -656,6 +656,11 @@ var Evoque = (function (self)
         }
     };
 
+    /**
+     * 带有动画效果的滚动处理
+     * @param destinationX 目的地X坐标
+     * @param destinationY 目的地Y坐标
+     */
     $.scrollTo = function (destinationX, destinationY) {
         var bodyW = document.body.scrollWidth;
         var winW = document.documentElement.clientWidth;
@@ -749,11 +754,14 @@ var Evoque = (function (self)
      * 判断是否支持触屏事件
      * @return {Boolean}
      */
-    $.hasTouchEvent = function ()
-    {
+    $.hasTouchEvent = function () {
         return _hasTouchEvent;
     };
 
+    /**
+     * 是否启动tap事件替换click事件
+     * @return {*}
+     */
     $.enableTapEvent = function () {
         if ($.checkType(_enableTapEvent) === type.eBoolean)
         {

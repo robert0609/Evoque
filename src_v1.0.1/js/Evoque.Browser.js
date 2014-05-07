@@ -1,18 +1,39 @@
 //Dependency: Evoque.js
 $.extend('browser', (function (self) {
-    var _enableClickBackControl = false;
+
+    self.enableClickBackControl = function () {
+        //查找文档元数据：<meta name="EvoqueClickBackControl" content="true" />
+        var $meta = $('meta[name="EvoqueClickBackControl"]');
+        if ($meta.length < 1)
+        {
+            return false;
+        }
+        else
+        {
+            var content = $meta.getAttr('content');
+            if ($.isStringEmpty(content) || content.toLowerCase() !== 'true')
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    };
 
     var clickBackHandles = [];
+    var isTriggerPushed = false;
 
     self.clickBack = function (fn) {
-        if ($.checkType(fn) === type.eFunction)
+        if (self.enableClickBackControl() && $.checkType(fn) === type.eFunction)
         {
             clickBackHandles.push(fn);
         }
     };
 
     window.addEventListener('popstate', function (e) {
-        if (!_enableClickBackControl)
+        if (!self.enableClickBackControl() || !isTriggerPushed)
         {
             return;
         }
@@ -28,10 +49,13 @@ $.extend('browser', (function (self) {
         }
     });
 
-    self.enableClickBackControl = function () {
-        window.history.replaceState(history.state, document.title, location.href);
-        window.history.pushState(history.state, document.title, location.href);
-        _enableClickBackControl = true;
+    self.pushBackHandleTrigger = function () {
+        if (self.enableClickBackControl())
+        {
+            window.history.replaceState(history.state, document.title, location.href);
+            window.history.pushState(history.state, document.title, location.href);
+            isTriggerPushed = true;
+        }
     };
 
     return self;
