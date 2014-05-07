@@ -418,6 +418,10 @@ var Evoque = (function (self)
         return _mAgent;
     };
 
+    /**
+     * 获取当前内嵌的应用标识码
+     * @return {*}
+     */
     $.app = function () {
         return _mApp;
     };
