@@ -1,25 +1,32 @@
 //Dependency: Evoque.js
 $.extend('browser', (function (self) {
 
+    var _enableClickBackControl;
+
     self.enableClickBackControl = function () {
+        if ($.checkType(_enableClickBackControl) === type.eBoolean)
+        {
+            return _enableClickBackControl;
+        }
         //查找文档元数据：<meta name="EvoqueClickBackControl" content="true" />
         var $meta = $('meta[name="EvoqueClickBackControl"]');
         if ($meta.length < 1)
         {
-            return false;
+            _enableClickBackControl = false;
         }
         else
         {
             var content = $meta.getAttr('content');
             if ($.isStringEmpty(content) || content.toLowerCase() !== 'true')
             {
-                return false;
+                _enableClickBackControl = false;
             }
             else
             {
-                return true;
+                _enableClickBackControl = true;
             }
         }
+        return _enableClickBackControl;
     };
 
     var clickBackHandles = [];
