@@ -94,8 +94,10 @@ Evoque.extend('dateTimePicker', (function (self) {
         $divConfirm.click(function () {
             $dialog.closeCurrentDialog();
             var selectDate = new Date(y.getVal(), M.getVal() - 1, d.getVal(), H.getVal(), m.getVal(), s.getVal());
-            caller.value = selectDate.toCustomString(getDateFormat());
-            //$dialog.setVal(selectDate.toCustomString(getDateFormat()));
+            $dialog.setVal(selectDate.toCustomString(getDateFormat()));
+            var event = document.createEvent('HTMLEvents');
+            event.initEvent('change', true, false);
+            caller.dispatchEvent(event);
         });
 
         function getDateFormat() {
