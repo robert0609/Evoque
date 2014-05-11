@@ -318,14 +318,28 @@ var Evoque = (function (self)
         {
             return ret;
         }
-        if (!/^\d{1,4}[-/]\d{1,2}[-/]\d{1,2}(\s+\d{1,2}:\d{1,2}:\d{1,2})?$/.test(this))
+        var datetimeStr = this.trim();
+        if (!/^(\d{1,4}[-/]\d{1,2}[-/]\d{1,2}(\s+\d{1,2}:\d{1,2}:\d{1,2})?)|(\d{1,2}:\d{1,2}:\d{1,2})$/.test(datetimeStr))
         {
             throw 'Invalid string value!';
         }
-        var strs = this.replace(/\s+/g, '|').split(/[-/\s:\|]/g);
+        var isTimeFormat = false;
+        if (/^\d{1,2}:\d{1,2}:\d{1,2}$/.test(datetimeStr))
+        {
+            isTimeFormat = true;
+        }
+        var strs = datetimeStr.replace(/\s+/g, '|').split(/[-/\s:\|]/g);
         if (strs.length == 3)
         {
-            return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
+            if (isTimeFormat)
+            {
+                var now = new Date();
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(strs[0]), Number(strs[1]), Number(strs[2]));
+            }
+            else
+            {
+                return new Date(Number(strs[0]), Number(strs[1]) - 1, Number(strs[2]));
+            }
         }
         else if (strs.length == 6)
         {
