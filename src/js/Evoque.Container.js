@@ -94,10 +94,25 @@ $.container = (function (self)
                 }
                 else
                 {
-                    history.pushState({ toShowId: divId, remainHideDivInput: parameter.remainHideDivInput }, document.title, location.href);
+                    history.pushState({ toShowId: divId, remainHideDivInput: parameter.remainHideDivInput }, document.title, genHref());
                 }
             }
         };
+
+        function genHref() {
+            var href = location.href;
+            var idx = href.indexOf('?');
+            var stamp = (new Date()).getTime();
+            if (idx > -1)
+            {
+                href = href.substr(0, idx + 1) + 'timestamp=' + stamp;
+            }
+            else
+            {
+                href += '?timestamp=' + stamp;
+            }
+            return href;
+        }
 
         function innerDisplay(divId, parameter, isBack)
         {

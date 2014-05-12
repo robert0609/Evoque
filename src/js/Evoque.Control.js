@@ -171,7 +171,7 @@ Evoque.control = (function (self)
             }
 
             return {
-                setVal: function (v) {
+                setVal: function (v, forceChange) {
                     if (v < min)
                     {
                         v = min;
@@ -180,10 +180,13 @@ Evoque.control = (function (self)
                     {
                         v = max;
                     }
-                    var flg = v == input1.getVal();
-                    if (flg)
+                    if ($.checkType(forceChange) !== type.eBoolean || !forceChange)
                     {
-                        return;
+                        var flg = v == input1.getVal();
+                        if (flg)
+                        {
+                            return;
+                        }
                     }
                     if (beforeValChange.call(input, 0) === false)
                     {
