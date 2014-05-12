@@ -75,7 +75,7 @@ Evoque.extend('dateTimePicker', (function (self) {
 
         var $dialog = $(caller);
         $dialog.setAttr('readonly', 'readonly');
-        $dialog.addEventHandler('focus', function () {
+        $dialog.click(function () {
             var val = $dialog.getVal();
             var init = $.isStringEmpty(val) ? new Date() : $dialog.getVal().toDate();
             y.setVal(Number(init.getFullYear()));
