@@ -785,18 +785,18 @@ var Evoque = (function (self)
         var $meta = $('meta[name="EvoqueEnableTapEvent"]');
         if ($meta.length < 1)
         {
-            _enableTapEvent = true;
+            _enableTapEvent = false;
         }
         else
         {
             var content = $meta.getAttr('content');
-            if ($.isStringEmpty(content) || content.toLowerCase() !== 'false')
+            if ($.isStringEmpty(content) || content.toLowerCase() !== 'true')
             {
-                _enableTapEvent = true;
+                _enableTapEvent = false;
             }
             else
             {
-                _enableTapEvent = false;
+                _enableTapEvent = true;
             }
         }
         return _enableTapEvent;
