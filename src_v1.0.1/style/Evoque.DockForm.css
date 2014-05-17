@@ -6,14 +6,14 @@
     opacity: 0.5;
     margin: 0;
     padding: 0;
-    z-index: 50000;
+    z-index: 5000;
 }
 .dockform-dg-div{
     overflow: auto;
     position: fixed;
     margin: 0;
     padding: 0;
-    z-index: 50010;
+    z-index: 5010;
 }
 /*自下而上*/
 @-webkit-keyframes bottomTop {
