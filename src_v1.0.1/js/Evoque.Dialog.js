@@ -390,11 +390,13 @@ $.dialog = (function (self) {
 
             dialogObj.style.opacity = 1;
             var title = option.getValueOfProperty('title', defaultOption);
+            var content = option.getValueOfProperty('content', defaultOption);
+            var buttonProperty = option.getValueOfProperty('button', defaultOption);
+            var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
             if (!$.isStringEmpty(title)) {
                 titleObj.innerHTML = title;
                 dialogObj.appendChild(titleObj);
             }
-            var content = option.getValueOfProperty('content', defaultOption);
             if (!$.isStringEmpty(content))
             {
                 var eContent = $('#' + content);
@@ -405,7 +407,15 @@ $.dialog = (function (self) {
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
                     ele.style.display = 'block';
-                    $(dialogObj).addClass('mdialog-dg-div-raw');
+                    //判断如果显示预设按钮的情况
+                    if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
+                    {
+                        $(dialogObj).addClass('mdialog-dg-div-white');
+                    }
+                    else
+                    {
+                        $(dialogObj).addClass('mdialog-dg-div-raw');
+                    }
                     $(contentObj).addClass('mdialog-content-div-raw');
                 }
                 else
@@ -416,8 +426,6 @@ $.dialog = (function (self) {
                 }
                 dialogObj.appendChild(contentObj);
             }
-            var buttonProperty = option.getValueOfProperty('button', defaultOption);
-            var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
             if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
             {
                 if (!$.isStringEmpty(buttonProperty))
