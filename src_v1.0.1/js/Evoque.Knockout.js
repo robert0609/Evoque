@@ -1,7 +1,7 @@
 //Dependency: Evoque.js, knockout.js
 $.knockout = (function (self)
 {
-    ko.extenders.dateFormat = function (target) {
+    ko.extenders.dateFormat = function (target, format) {
         var result = ko.computed({
             read: function () {
                 var curVal = target();
@@ -11,7 +11,7 @@ $.knockout = (function (self)
                 }
                 else
                 {
-                    return Date.fromJSONDate(curVal).toCustomString();
+                    return Date.fromJSONDate(curVal).toCustomString(format);
                 }
             },
             write: function (value) {

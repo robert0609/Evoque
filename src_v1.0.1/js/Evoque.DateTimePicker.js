@@ -3,7 +3,9 @@ Evoque.extend('dateTimePicker', (function (self) {
 
     var defaultOption = {
         //date/datetime/time
-        format: 'date'
+        format: 'date',
+        //显示时间的精度, 只有format为datetime或time时有效: hour/minute/second
+        precision: 'minute'
     };
 
     self.create = function (option) {
@@ -13,13 +15,14 @@ Evoque.extend('dateTimePicker', (function (self) {
         {
             format = 'date';
         }
+        var precision = $option.getValueOfProperty('precision', defaultOption).toLowerCase();
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var picker = new pickerClass(this, format);
+            var picker = new pickerClass(this, format, precision);
         });
     };
 
-    function pickerClass(caller, format) {
+    function pickerClass(caller, format, precision) {
         var container = document.createElement('div');
         container.id = 'evoqueDateTimePicker' + $.guid();
         var $container = $(container);
@@ -51,26 +54,24 @@ Evoque.extend('dateTimePicker', (function (self) {
         var m = createInput(4, valueChanged);
         var s = createInput(5, valueChanged);
 
-        if (format === 'date')
+        if (format === 'date' || format === 'datetime')
         {
             div1.appendChild(y.getElement());
             div1.appendChild(M.getElement());
             div1.appendChild(d.getElement());
         }
-        else if (format === 'time')
+        if (format === 'time' || format === 'datetime')
         {
             div2.appendChild(H.getElement());
-            div2.appendChild(m.getElement());
-            div2.appendChild(s.getElement());
-        }
-        else if (format === 'datetime')
-        {
-            div1.appendChild(y.getElement());
-            div1.appendChild(M.getElement());
-            div1.appendChild(d.getElement());
-            div2.appendChild(H.getElement());
-            div2.appendChild(m.getElement());
-            div2.appendChild(s.getElement());
+            if (precision === 'minute')
+            {
+                div2.appendChild(m.getElement());
+            }
+            else if (precision === 'second')
+            {
+                div2.appendChild(m.getElement());
+                div2.appendChild(s.getElement());
+            }
         }
 
         var $dialog = $(caller);
@@ -108,11 +109,33 @@ Evoque.extend('dateTimePicker', (function (self) {
             }
             else if (format === 'time')
             {
-                dateFormat = 'HH:mm:ss';
+                if (precision === 'hour')
+                {
+                    dateFormat = 'HH:00:00';
+                }
+                else if (precision === 'minute')
+                {
+                    dateFormat = 'HH:mm:00';
+                }
+                else if (precision === 'second')
+                {
+                    dateFormat = 'HH:mm:ss';
+                }
             }
             else if (format === 'datetime')
             {
-                dateFormat = 'yyyy-MM-dd HH:mm:ss';
+                if (precision === 'hour')
+                {
+                    dateFormat = 'yyyy-MM-dd HH:00:00';
+                }
+                else if (precision === 'minute')
+                {
+                    dateFormat = 'yyyy-MM-dd HH:mm:00';
+                }
+                else if (precision === 'second')
+                {
+                    dateFormat = 'yyyy-MM-dd HH:mm:ss';
+                }
             }
             return dateFormat;
         }
@@ -279,16 +302,6 @@ Evoque.extend('dateTimePicker', (function (self) {
                 }
             };
         }
-
-        function adjustMonthRange() {
-
-        }
-
-        function adjustDayRange() {
-
-        }
-
-
     }
 
     return self;
