@@ -1,4 +1,4 @@
-﻿//Dependency: Evoque.js
+﻿//Dependency: Evoque.js, Evoque.Cache.js
 Evoque.extend('calendarV2', (function (self) {
     var defaultOption = {
         startDate: (new Date()).getYMD(),
@@ -28,7 +28,11 @@ Evoque.extend('calendarV2', (function (self) {
         var onSelected = option.getValueOfProperty('onSelected');
 
         caller.each(function () {
-            var calendar = new calendarClass(this, startDate, activeDate, mode, onRenderDateTd, onSelected);
+            var thisCache = $(this).cache();
+            if (!thisCache.containsKey('calendar_v2'))
+            {
+                thisCache.push('calendar_v2', new calendarClass(this, startDate, activeDate, mode, onRenderDateTd, onSelected));
+            }
         });
     };
 

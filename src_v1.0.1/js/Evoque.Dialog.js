@@ -132,6 +132,7 @@ $.dialog = (function (self) {
             if ($.checkType(onDialogShowed) === type.eFunction)
             {
                 onDialogShowed.call(window);
+                setCenter();
             }
             if ($.checkType(cmd.afterShow) === type.eFunction)
             {
@@ -507,13 +508,17 @@ $.dialog = (function (self) {
             document.body.appendChild(dialogObj);
             var w = option.getValueOfProperty('width', defaultOption);
             dialogObj.style.width = w + 'px';
+
+        }
+
+        function setCenter() {
             //TODO：设置了这两个属性之后，loading转圈的图片不生效
 //            dialogObj.style.maxHeight = document.documentElement.clientHeight * 0.8 + 'px';
 //            dialogObj.style.overflowY = 'auto';
+            var w = dialogObj.clientWidth;
             var h = dialogObj.clientHeight;
             dialogObj.style.marginLeft = (0 - w) / 2 +'px';
             dialogObj.style.marginTop = (0 - h) / 2 + 'px';
-
         }
 
         function disappearAnimation(dObj)
