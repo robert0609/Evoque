@@ -167,10 +167,22 @@ var Evoque = (function (self)
                 return str.replace('MM', M.toString().padLeft(2, '0'));
             });
         }
+        else if (format.indexOf('M') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('M', M.toString());
+            });
+        }
         if (format.indexOf('dd') > -1)
         {
             operations.push(function (str) {
                 return str.replace('dd', d.toString().padLeft(2, '0'));
+            });
+        }
+        else if (format.indexOf('d') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('d', d.toString());
             });
         }
         if (format.indexOf('HH') > -1)
@@ -179,16 +191,34 @@ var Evoque = (function (self)
                 return str.replace('HH', H.toString().padLeft(2, '0'));
             });
         }
+        else if (format.indexOf('H') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('H', H.toString());
+            });
+        }
         if (format.indexOf('mm') > -1)
         {
             operations.push(function (str) {
                 return str.replace('mm', m.toString().padLeft(2, '0'));
             });
         }
+        else if (format.indexOf('m') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('m', m.toString());
+            });
+        }
         if (format.indexOf('ss') > -1)
         {
             operations.push(function (str) {
                 return str.replace('ss', s.toString().padLeft(2, '0'));
+            });
+        }
+        else if (format.indexOf('s') > -1)
+        {
+            operations.push(function (str) {
+                return str.replace('s', s.toString());
             });
         }
         var ret = format;
@@ -1140,6 +1170,22 @@ var Evoque = (function (self)
                 if (this.classList.contains(className))
                 {
                     this.classList.remove(className);
+                }
+            }
+        });
+    };
+
+    /**
+     * 清空节点的css样式
+     */
+    self.clearClass = function () {
+        this.each(function () {
+            if ($.checkType(this) === type.eElement)
+            {
+                var clses = $(this).getClassList();
+                for (var i = 0; i < clses.length; ++i)
+                {
+                    this.classList.remove(clses[i]);
                 }
             }
         });

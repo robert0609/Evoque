@@ -2,11 +2,12 @@
 Evoque.extend('calendarV2', (function (self) {
     var defaultOption = {
         startDate: (new Date()).getYMD(),
-        originalDate: (new Date()).getYMD(),
         onRenderDateTd: null,
         onSelected: function () {},
         //显示模式: waterfall:瀑布展示从开始日算起的6个月的日历; switch:左右按钮切换上下月的日历
-        mode: 'switch'
+        displayMode: 'switch',
+        //选择模式: single|range
+        pickMode: 'single'
     };
 
     self.create = function (option) {
@@ -18,25 +19,51 @@ Evoque.extend('calendarV2', (function (self) {
         var caller = self.evoqueTarget;
         defaultOption.startDate = (new Date()).getYMD();
         var startDate = option.getValueOfProperty('startDate', defaultOption);
-        defaultOption.originalDate = (new Date()).getYMD();
-        var activeDate = option.getValueOfProperty('originalDate', defaultOption);
-        var mode = option.getValueOfProperty('mode').toLowerCase();
+        var mode = option.getValueOfProperty('displayMode', defaultOption).toLowerCase();
         if (mode !== 'switch' && mode !== 'waterfall') {
             throw 'Mode is error! It must be one of ["switch", "waterfall"]';
         }
-        var onRenderDateTd = option.getValueOfProperty('onRenderDateTd');
-        var onSelected = option.getValueOfProperty('onSelected');
+        var pickMode = option.getValueOfProperty('pickMode', defaultOption).toLowerCase();
+        if (pickMode !== 'single' && pickMode !== 'range')
+        {
+            throw 'PickMode is error! It must be one of ["single", "range"]';
+        }
+        var onRenderDateTd = option.getValueOfProperty('onRenderDateTd', defaultOption);
+        var onSelected = option.getValueOfProperty('onSelected', defaultOption);
 
         caller.each(function () {
             var thisCache = $(this).cache();
             if (!thisCache.containsKey('calendar_v2'))
             {
-                thisCache.push('calendar_v2', new calendarClass(this, startDate, activeDate, mode, onRenderDateTd, onSelected));
+                thisCache.push('calendar_v2', new calendarClass(this, startDate, mode, pickMode, onRenderDateTd, onSelected));
             }
         });
     };
 
-    function calendarClass(element, minDate, activeDate, mode, onRenderDateTd, onSelected)
+    self.setActiveDate = function () {
+        var parameters = arguments;
+        var caller = self.evoqueTarget;
+        caller.each(function () {
+            var thisCache = $(this).cache();
+            if (thisCache.containsKey('calendar_v2'))
+            {
+                thisCache.get('calendar_v2').setActiveDate.apply(thisCache.get('calendar_v2'), parameters);
+            }
+        });
+    };
+
+    self.reset = function () {
+        var caller = self.evoqueTarget;
+        caller.each(function () {
+            var thisCache = $(this).cache();
+            if (thisCache.containsKey('calendar_v2'))
+            {
+                thisCache.get('calendar_v2').reset();
+            }
+        });
+    };
+
+    function calendarClass(element, minDate, mode, pickMode, onRenderDateTd, onSelected)
     {
         var minYear = Number(minDate.getFullYear());
         var minMonth = Number(minDate.getMonth());
@@ -48,9 +75,10 @@ Evoque.extend('calendarV2', (function (self) {
         var maxDay = Number(maxDate.getDate());
         var maxWeek = Number(maxDate.getDay());
 
-        if (activeDate < minDate)
+        var selectDates = [];
+        if (pickMode === 'single')
         {
-            activeDate = minDate;
+            selectDates.push(minDate);
         }
 
         function initTable(displayMonth) {
@@ -81,8 +109,15 @@ Evoque.extend('calendarV2', (function (self) {
                         if (curY == minYear && curM == minMonth) {
                             return;
                         }
-                        loadMonth(new Date(curY, curM - 1, 1));
-                        setPrevNext();
+                        var $nowDisplay = $(element).getChild('table[curYM="' + curY + '-' + curM + '"]');
+                        $nowDisplay.hide();
+                        var $toDisplay = $(element).getChild('table[curYM="' + curY + '-' + (curM - 1).toString() + '"]');
+                        if ($toDisplay.length === 0)
+                        {
+                            $toDisplay = initTable(new Date(curY, curM - 1, 1));
+                            element.insertBefore($toDisplay[0], $nowDisplay[0]);
+                        }
+                        $toDisplay.show();
                     });
                     $next.addClass('next');
                     $next.text('→');
@@ -93,8 +128,15 @@ Evoque.extend('calendarV2', (function (self) {
                         if (curY == maxYear && curM == maxMonth) {
                             return;
                         }
-                        loadMonth(new Date(curY, curM + 1, 1));
-                        setPrevNext();
+                        var $nowDisplay = $(element).getChild('table[curYM="' + curY + '-' + curM + '"]');
+                        $nowDisplay.hide();
+                        var $toDisplay = $(element).getChild('table[curYM="' + curY + '-' + (curM + 1).toString() + '"]');
+                        if ($toDisplay.length === 0)
+                        {
+                            $toDisplay = initTable(new Date(curY, curM + 1, 1));
+                            element.appendChild($toDisplay[0]);
+                        }
+                        $toDisplay.show();
                     });
                 }
                 var title = document.createElement('th');
@@ -132,6 +174,7 @@ Evoque.extend('calendarV2', (function (self) {
                 // 当前要显示的年和月
                 var year = Number(dateDisplay.getFullYear());
                 var month = Number(dateDisplay.getMonth());
+                $table.setAttr('curYM', year + '-' + month);
 
                 var monthStr = month + 1;
                 var title = $($table.getChild('thead>tr>th')[1]);
@@ -178,28 +221,62 @@ Evoque.extend('calendarV2', (function (self) {
                             }
                             else
                             {
-                                if (date - activeDate == 0)
-                                {
-                                    $td.addClass('active');
-                                }
-                                else
-                                {
-                                    $td.addClass('day');
-                                }
+                                $td.addClass('day');
                                 $td.text(date.getDate());
                             }
                             $td.setAttr('curD', date.getDate());
                             $td.click(function (event) {
                                 var curY = Number(title.getAttr('curY'));
                                 var curM = Number(title.getAttr('curM'));
-                                curM += 1;
                                 var curD = Number($(event.currentTarget).getAttr('curD'));
+                                var selVal = new Date(curY, curM, curD);
+                                curM += 1;
                                 var sel = curY + '-' + curM + '-' + curD;
+                                if (pickMode === 'range')
+                                {
+                                    reselectRange(selVal);
+                                }
+                                else
+                                {
+                                    var last = findDayTd(selectDates[0]);
+                                    unselect(last);
+                                    selectDates[0] = selVal;
+                                    var nowSel = findDayTd(selectDates[0]);
+                                    select(nowSel);
+                                }
                                 if ($.checkType(onSelected) === type.eFunction)
                                 {
-                                    onSelected.call(this, event, { selectDate: sel, selectDateValue: new Date(curY, curM - 1, curD) });
+                                    if (pickMode === 'range')
+                                    {
+                                        if (selectDates.length > 1)
+                                        {
+                                            var minus = selectDates[0] - selectDates[1];
+                                            var min, max;
+                                            if (minus < 0)
+                                            {
+                                                min = selectDates[0];
+                                                max = selectDates[1];
+                                            }
+                                            else
+                                            {
+                                                min = selectDates[1];
+                                                max = selectDates[0];
+                                            }
+                                            onSelected.call(this, event, { selectDateStart: min, selectDateEnd: max });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        onSelected.call(this, event, { selectDate: selVal });
+                                    }
                                 }
                             });
+                            //保存初始td样式
+                            $td.cache().push('initClass', $td.getClassList());
+                            if (pickMode === 'single' && date - selectDates[0] == 0)
+                            {
+                                select($td);
+                            }
                         }
                         else {
                             $td.addClass('old');
@@ -246,6 +323,180 @@ Evoque.extend('calendarV2', (function (self) {
                 element.appendChild(initTable(d)[0]);
             }
         }
+
+        function findDayTd(date) {
+            var y = date.getFullYear();
+            var m = date.getMonth();
+            var d = date.getDate();
+            return $(element).getChild('table[curYM="' + y + '-' + m + '"] td[curD="' + d + '"]');
+        }
+
+        function select($td) {
+            $td.clearClass();
+            $td.addClass('active');
+        }
+
+        function unselect($td) {
+            $td.removeClass('active');
+            var clses = $td.cache().get('initClass');
+            $(clses).each(function () {
+                $td.addClass(this);
+            });
+        }
+
+        function reselectRange(selVal) {
+            if (selectDates.length === 0)
+            {
+                selectDates.push(selVal);
+                var nowSel = findDayTd(selectDates[0]);
+                select(nowSel);
+            }
+            else
+            {
+                var minus, min, max, loopDate;
+                minus = selVal - selectDates[selectDates.length - 1];
+                if (minus === 0)
+                {
+                    return;
+                }
+                if (selectDates.length > 1)
+                {
+                    minus = selectDates[1] - selectDates[0];
+                    if (minus > 0)
+                    {
+                        min = selectDates[0];
+                        max = selectDates[1];
+                    }
+                    else
+                    {
+                        min = selectDates[1];
+                        max = selectDates[0];
+                    }
+                    loopDate = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+                    while (loopDate <= max)
+                    {
+                        unselect(findDayTd(loopDate));
+                        loopDate.addDay(1);
+                    }
+                    selectDates.shift();
+                }
+                minus = selVal - selectDates[0];
+                if (minus != 0)
+                {
+                    selectDates.push(selVal);
+                    if (minus > 0)
+                    {
+                        min = selectDates[0];
+                        max = selectDates[1];
+                    }
+                    else
+                    {
+                        min = selectDates[1];
+                        max = selectDates[0];
+                    }
+                    loopDate = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+                    while (loopDate <= max)
+                    {
+                        select(findDayTd(loopDate));
+                        loopDate.addDay(1);
+                    }
+                }
+            }
+        }
+
+        return {
+            reset: function () {
+                if (pickMode === 'range')
+                {
+                    var minus, min, max, loopDate;
+                    if (selectDates.length > 0)
+                    {
+                        if (selectDates.length === 1)
+                        {
+                            unselect(findDayTd(selectDates[0]));
+                        }
+                        else
+                        {
+                            minus = selectDates[1] - selectDates[0];
+                            if (minus > 0)
+                            {
+                                min = selectDates[0];
+                                max = selectDates[1];
+                            }
+                            else
+                            {
+                                min = selectDates[1];
+                                max = selectDates[0];
+                            }
+                            loopDate = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+                            while (loopDate <= max)
+                            {
+                                unselect(findDayTd(loopDate));
+                                loopDate.addDay(1);
+                            }
+                        }
+                        selectDates = [];
+                    }
+                }
+            },
+            setActiveDate: function () {
+                if (pickMode === 'range')
+                {
+                    if (arguments.length !== 2)
+                    {
+                        return;
+                    }
+                    $(arguments).each(function () {
+                        if ($.checkType(this) !== type.eDate)
+                        {
+                            throw 'Parameter type is error!';
+                        }
+                    });
+                    this.reset();
+                    var minus, min, max, loopDate;
+                    selectDates.push(arguments[0]);
+                    selectDates.push(arguments[1]);
+                    minus = selectDates[1] - selectDates[0];
+                    if (minus != 0)
+                    {
+                        if (minus > 0)
+                        {
+                            min = selectDates[0];
+                            max = selectDates[1];
+                        }
+                        else
+                        {
+                            min = selectDates[1];
+                            max = selectDates[0];
+                        }
+                        loopDate = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+                        while (loopDate <= max)
+                        {
+                            select(findDayTd(loopDate));
+                            loopDate.addDay(1);
+                        }
+                    }
+                }
+                else
+                {
+                    if (arguments.length !== 1)
+                    {
+                        return;
+                    }
+                    $(arguments).each(function () {
+                        if ($.checkType(this) !== type.eDate)
+                        {
+                            throw 'Parameter type is error!';
+                        }
+                    });
+                    var last = findDayTd(selectDates[0]);
+                    unselect(last);
+                    selectDates[0] = arguments[0];
+                    var nowSel = findDayTd(selectDates[0]);
+                    select(nowSel);
+                }
+            }
+        };
     }
 
     return self;
