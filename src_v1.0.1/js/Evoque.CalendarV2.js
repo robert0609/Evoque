@@ -454,8 +454,8 @@ Evoque.extend('calendarV2', (function (self) {
                     });
                     this.reset();
                     var minus, min, max, loopDate;
-                    selectDates.push(arguments[0]);
-                    selectDates.push(arguments[1]);
+                    selectDates.push(arguments[0].getYMD());
+                    selectDates.push(arguments[1].getYMD());
                     minus = selectDates[1] - selectDates[0];
                     if (minus != 0)
                     {
@@ -491,7 +491,7 @@ Evoque.extend('calendarV2', (function (self) {
                     });
                     var last = findDayTd(selectDates[0]);
                     unselect(last);
-                    selectDates[0] = arguments[0];
+                    selectDates[0] = arguments[0].getYMD();
                     var nowSel = findDayTd(selectDates[0]);
                     select(nowSel);
                 }
