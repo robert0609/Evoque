@@ -208,13 +208,14 @@ Evoque.extend('calendarV2', (function (self) {
                 function genDayTd(date) {
                     var td = document.createElement('td');
                     var $td = $(td);
-                    if (date - minDate < 0 || date - maxDate > 0)
-                    {
-                        $td.addClass('old');
-                    }
-                    else
-                    {
-                        if (Number(date.getFullYear()) === year && Number(date.getMonth()) === month) {
+                    if (Number(date.getFullYear()) === year && Number(date.getMonth()) === month) {
+                        if (date - minDate < 0 || date - maxDate > 0)
+                        {
+                            $td.addClass('old');
+                            $td.text(date.getDate());
+                        }
+                        else
+                        {
                             if ($.checkType(onRenderDateTd) === type.eFunction)
                             {
                                 onRenderDateTd.call(td, { renderTarget: td, tdDate: date });
@@ -278,9 +279,9 @@ Evoque.extend('calendarV2', (function (self) {
                                 select($td);
                             }
                         }
-                        else {
-                            $td.addClass('old');
-                        }
+                    }
+                    else {
+                        $td.addClass('old');
                     }
 
                     return td;
