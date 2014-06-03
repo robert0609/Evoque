@@ -59,6 +59,10 @@ Evoque.loader = (function (self)
 
         this.loadSomething = function (url, query, onsuccess, onfail, timeout, loadMode)
         {
+            if (loadMode === 'replace')
+            {
+                parent.innerHTML = '';
+            }
             element.innerHTML = loadingElement;
             $(element).show();
             $.ajax.get({
