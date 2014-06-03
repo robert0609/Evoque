@@ -315,12 +315,12 @@ Evoque.extend('calendarV2', (function (self) {
 
             return $table;
         }
-        element.appendChild(initTable(minDate)[0]);
+        element.appendChild(initTable(new Date(minYear, minMonth, 1))[0]);
         if (mode === 'waterfall')
         {
             for (var i = 1; i < 6; ++i)
             {
-                var d = new Date(minYear, minMonth + i, minDay);
+                var d = new Date(minYear, minMonth + i, 1);
                 element.appendChild(initTable(d)[0]);
             }
         }
