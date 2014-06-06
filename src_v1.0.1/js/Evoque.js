@@ -138,6 +138,10 @@ var Evoque = (function (self)
     }
 
     //Extension
+    Date.prototype.copy = function () {
+        return new Date(this.getTime());
+    };
+
     /**
      * 日期类型转换成字符串：Date --> 'yyyy-MM-dd'
      * @parameter format: 'yyyy-MM-dd HH:mm:ss'

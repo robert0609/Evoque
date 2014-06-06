@@ -248,7 +248,7 @@ Evoque.extend('calendarV2', (function (self) {
                                 else
                                 {
                                     if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
-                                        newSelectDate: selVal,
+                                        newSelectDate: selVal.copy(),
                                         findDayTd: findDayTd
                                     }))
                                     {
@@ -278,12 +278,12 @@ Evoque.extend('calendarV2', (function (self) {
                                                 min = selectDates[1];
                                                 max = selectDates[0];
                                             }
-                                            onSelected.call(this, event, { selectDateStart: min, selectDateEnd: max });
+                                            onSelected.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy() });
                                         }
                                     }
                                     else
                                     {
-                                        onSelected.call(this, event, { selectDate: selVal });
+                                        onSelected.call(this, event, { selectDate: selVal.copy() });
                                     }
                                 }
                             });
@@ -380,8 +380,8 @@ Evoque.extend('calendarV2', (function (self) {
                     return;
                 }
                 if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
-                    newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1] : selVal,
-                    newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1] : selVal,
+                    newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
+                    newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
                     findDayTd: findDayTd
                 }))
                 {
