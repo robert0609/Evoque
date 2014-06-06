@@ -217,11 +217,11 @@ Evoque.extend('calendarV2', (function (self) {
                         }
                         else
                         {
-                            $td.addClass('canClick');
+                            $td.setAttr('canClick', '1');
                             if ($.checkType(onRenderDateTd) === type.eFunction)
                             {
                                 onRenderDateTd.call(td, { renderTarget: td, tdDate: date, disableSelect: function () {
-                                    $(this.renderTarget).removeClass('canClick');
+                                    $(this.renderTarget).setAttr('canClick', '0');
                                 } });
                             }
                             else
@@ -365,7 +365,8 @@ Evoque.extend('calendarV2', (function (self) {
         }
 
         function isTdCanClick(td) {
-            return td.classList.contains('canClick');
+            var canClick = $(td).getAttr('canClick');
+            return !$.isStringEmpty(canClick) && canClick == '1';
         }
 
         function reselectRange(selVal, event, onBeforeSelect) {
