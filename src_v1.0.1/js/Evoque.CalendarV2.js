@@ -247,12 +247,16 @@ Evoque.extend('calendarV2', (function (self) {
                                 }
                                 else
                                 {
-                                    if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
-                                        newSelectDate: selVal.copy(),
-                                        findDayTd: findDayTd
-                                    }))
+                                    if ($.checkType(onBeforeSelect) === type.eFunction)
                                     {
-                                        return;
+                                        var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
+                                            newSelectDate: selVal.copy(),
+                                            findDayTd: findDayTd
+                                        });
+                                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                                        {
+                                            return;
+                                        }
                                     }
                                     var last = findDayTd(selectDates[0]);
                                     unselect(last);
@@ -379,13 +383,17 @@ Evoque.extend('calendarV2', (function (self) {
                 {
                     return;
                 }
-                if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
-                    newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
-                    newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
-                    findDayTd: findDayTd
-                }))
+                if ($.checkType(onBeforeSelect) === type.eFunction)
                 {
-                    return;
+                    var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
+                        newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
+                        newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
+                        findDayTd: findDayTd
+                    });
+                    if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                    {
+                        return;
+                    }
                 }
                 if (selectDates.length > 1)
                 {
@@ -480,6 +488,18 @@ Evoque.extend('calendarV2', (function (self) {
                             throw 'Parameter type is error!';
                         }
                     });
+                    if ($.checkType(onBeforeSelect) === type.eFunction)
+                    {
+                        var beforeResult = onBeforeSelect.call(this, null, {
+                            newSelectDateStart: arguments[0].copy(),
+                            newSelectDateEnd: arguments[1].copy(),
+                            findDayTd: findDayTd
+                        });
+                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                        {
+                            return;
+                        }
+                    }
                     this.reset();
                     var minus, min, max, loopDate;
                     selectDates.push(arguments[0].getYMD());
@@ -517,6 +537,17 @@ Evoque.extend('calendarV2', (function (self) {
                             throw 'Parameter type is error!';
                         }
                     });
+                    if ($.checkType(onBeforeSelect) === type.eFunction)
+                    {
+                        var beforeResult = onBeforeSelect.call(this, null, {
+                            newSelectDate: arguments[0].copy(),
+                            findDayTd: findDayTd
+                        });
+                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                        {
+                            return;
+                        }
+                    }
                     var last = findDayTd(selectDates[0]);
                     unselect(last);
                     selectDates[0] = arguments[0].getYMD();
