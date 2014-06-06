@@ -3,6 +3,7 @@ Evoque.extend('calendarV2', (function (self) {
     var defaultOption = {
         startDate: (new Date()).getYMD(),
         onRenderDateTd: null,
+        onBeforeSelect: function () {},
         onSelected: function () {},
         //显示模式: waterfall:瀑布展示从开始日算起的6个月的日历; switch:左右按钮切换上下月的日历
         displayMode: 'switch',
@@ -29,13 +30,14 @@ Evoque.extend('calendarV2', (function (self) {
             throw 'PickMode is error! It must be one of ["single", "range"]';
         }
         var onRenderDateTd = option.getValueOfProperty('onRenderDateTd', defaultOption);
+        var onBeforeSelect = option.getValueOfProperty('onBeforeSelect', defaultOption);
         var onSelected = option.getValueOfProperty('onSelected', defaultOption);
 
         caller.each(function () {
             var thisCache = $(this).cache();
             if (!thisCache.containsKey('calendar_v2'))
             {
-                thisCache.push('calendar_v2', new calendarClass(this, startDate, mode, pickMode, onRenderDateTd, onSelected));
+                thisCache.push('calendar_v2', new calendarClass(this, startDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected));
             }
         });
     };
@@ -63,7 +65,7 @@ Evoque.extend('calendarV2', (function (self) {
         });
     };
 
-    function calendarClass(element, minDate, mode, pickMode, onRenderDateTd, onSelected)
+    function calendarClass(element, minDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected)
     {
         var minYear = Number(minDate.getFullYear());
         var minMonth = Number(minDate.getMonth());
@@ -84,7 +86,6 @@ Evoque.extend('calendarV2', (function (self) {
         function initTable(displayMonth) {
             var table = document.createElement('table');
             var $table = $(table);
-            $table.addClass('table-wrap');
             $table.addClass('table-calendar');
             initHead();
             initBody();
@@ -216,9 +217,12 @@ Evoque.extend('calendarV2', (function (self) {
                         }
                         else
                         {
+                            $td.addClass('canClick');
                             if ($.checkType(onRenderDateTd) === type.eFunction)
                             {
-                                onRenderDateTd.call(td, { renderTarget: td, tdDate: date });
+                                onRenderDateTd.call(td, { renderTarget: td, tdDate: date, disableSelect: function () {
+                                    $(this.renderTarget).removeClass('canClick');
+                                } });
                             }
                             else
                             {
@@ -227,6 +231,10 @@ Evoque.extend('calendarV2', (function (self) {
                             }
                             $td.setAttr('curD', date.getDate());
                             $td.click(function (event) {
+                                if (!event.currentTarget.classList.contains('canClick'))
+                                {
+                                    return;
+                                }
                                 var curY = Number(title.getAttr('curY'));
                                 var curM = Number(title.getAttr('curM'));
                                 var curD = Number($(event.currentTarget).getAttr('curD'));
