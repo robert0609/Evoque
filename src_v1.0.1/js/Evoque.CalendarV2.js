@@ -231,7 +231,7 @@ Evoque.extend('calendarV2', (function (self) {
                             }
                             $td.setAttr('curD', date.getDate());
                             $td.click(function (event) {
-                                if (!event.currentTarget.classList.contains('canClick'))
+                                if (!isTdCanClick(event.currentTarget))
                                 {
                                     return;
                                 }
@@ -243,10 +243,16 @@ Evoque.extend('calendarV2', (function (self) {
                                 var sel = curY + '-' + curM + '-' + curD;
                                 if (pickMode === 'range')
                                 {
-                                    reselectRange(selVal);
+                                    reselectRange(selVal, event, onBeforeSelect);
                                 }
                                 else
                                 {
+                                    if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
+                                        newSelectDate: selVal
+                                    }))
+                                    {
+                                        return;
+                                    }
                                     var last = findDayTd(selectDates[0]);
                                     unselect(last);
                                     selectDates[0] = selVal;
@@ -353,7 +359,11 @@ Evoque.extend('calendarV2', (function (self) {
             });
         }
 
-        function reselectRange(selVal) {
+        function isTdCanClick(td) {
+            return td.classList.contains('canClick');
+        }
+
+        function reselectRange(selVal, event, onBeforeSelect) {
             if (selectDates.length === 0)
             {
                 selectDates.push(selVal);
@@ -365,6 +375,13 @@ Evoque.extend('calendarV2', (function (self) {
                 var minus, min, max, loopDate;
                 minus = selVal - selectDates[selectDates.length - 1];
                 if (minus === 0)
+                {
+                    return;
+                }
+                if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
+                    newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1] : selVal,
+                    newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1] : selVal
+                }))
                 {
                     return;
                 }
