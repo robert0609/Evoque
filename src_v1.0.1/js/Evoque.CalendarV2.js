@@ -248,7 +248,8 @@ Evoque.extend('calendarV2', (function (self) {
                                 else
                                 {
                                     if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
-                                        newSelectDate: selVal
+                                        newSelectDate: selVal,
+                                        findDayTd: findDayTd
                                     }))
                                     {
                                         return;
@@ -380,7 +381,8 @@ Evoque.extend('calendarV2', (function (self) {
                 }
                 if ($.checkType(onBeforeSelect) === type.eFunction && !onBeforeSelect.call(event.currentTarget, event, {
                     newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1] : selVal,
-                    newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1] : selVal
+                    newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1] : selVal,
+                    findDayTd: findDayTd
                 }))
                 {
                     return;
