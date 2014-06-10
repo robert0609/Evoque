@@ -163,11 +163,6 @@ Evoque.control = (function (self)
                 {
                     aUp.addClass('disabled');
                 }
-                if (min == max)
-                {
-                    aDown.hide();
-                    aUp.hide();
-                }
             }
 
             return {
@@ -330,11 +325,6 @@ Evoque.control = (function (self)
                 else
                 {
                     aUp.addClass('disabled');
-                }
-                if (min == max)
-                {
-                    aDown.hide();
-                    aUp.hide();
                 }
             }
 
