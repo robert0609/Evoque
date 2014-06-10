@@ -282,17 +282,22 @@ Evoque.extend('calendarV2', (function (self) {
                                                 min = selectDates[1];
                                                 max = selectDates[0];
                                             }
-                                            onSelected.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy() });
+                                            onSelected.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy(), findDayTd: findDayTd });
+                                        }
+                                        else if (selectDates.length === 1)
+                                        {
+                                            onSelected.call(this, event, { selectDateStart: selectDates[0].copy(), findDayTd: findDayTd });
                                         }
                                     }
                                     else
                                     {
-                                        onSelected.call(this, event, { selectDate: selVal.copy() });
+                                        onSelected.call(this, event, { selectDate: selVal.copy(), findDayTd: findDayTd });
                                     }
                                 }
                             });
-                            //保存初始td样式
+                            //保存初始td样式和初始innerHTML
                             $td.cache().push('initClass', $td.getClassList());
+                            $td.cache().push('initInnerHtml', $td.html());
                             if (pickMode === 'single' && date - selectDates[0] == 0)
                             {
                                 select($td);
@@ -362,6 +367,8 @@ Evoque.extend('calendarV2', (function (self) {
             $(clses).each(function () {
                 $td.addClass(this);
             });
+            var innerHtml = $td.cache().get('initInnerHtml');
+            $td.html(innerHtml);
         }
 
         function isTdCanClick(td) {
@@ -370,25 +377,12 @@ Evoque.extend('calendarV2', (function (self) {
         }
 
         function reselectRange(selVal, event, onBeforeSelect) {
-            if (selectDates.length === 0)
+            if (selectDates.length === 0 || selectDates.length > 1)
             {
-                selectDates.push(selVal);
-                var nowSel = findDayTd(selectDates[0]);
-                select(nowSel);
-            }
-            else
-            {
-                var minus, min, max, loopDate;
-                minus = selVal - selectDates[selectDates.length - 1];
-                if (minus === 0)
-                {
-                    return;
-                }
                 if ($.checkType(onBeforeSelect) === type.eFunction)
                 {
                     var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
-                        newSelectDateStart: minus > 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
-                        newSelectDateEnd: minus < 0 ? selectDates[selectDates.length - 1].copy() : selVal.copy(),
+                        newSelectDateStart: selVal.copy(),
                         findDayTd: findDayTd
                     });
                     if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
@@ -415,28 +409,48 @@ Evoque.extend('calendarV2', (function (self) {
                         unselect(findDayTd(loopDate));
                         loopDate.addDay(1);
                     }
-                    selectDates.shift();
+                    selectDates.splice(0, selectDates.length);
                 }
+                selectDates.push(selVal);
+                var nowSel = findDayTd(selectDates[0]);
+                select(nowSel);
+            }
+            else if (selectDates.length === 1)
+            {
+                var minus, min, max, loopDate;
                 minus = selVal - selectDates[0];
-                if (minus != 0)
+                if (minus === 0)
                 {
-                    selectDates.push(selVal);
-                    if (minus > 0)
+                    return;
+                }
+                if ($.checkType(onBeforeSelect) === type.eFunction)
+                {
+                    var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
+                        newSelectDateStart: minus > 0 ? selectDates[0].copy() : selVal.copy(),
+                        newSelectDateEnd: minus < 0 ? selectDates[0].copy() : selVal.copy(),
+                        findDayTd: findDayTd
+                    });
+                    if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
                     {
-                        min = selectDates[0];
-                        max = selectDates[1];
+                        return;
                     }
-                    else
-                    {
-                        min = selectDates[1];
-                        max = selectDates[0];
-                    }
-                    loopDate = new Date(min.getFullYear(), min.getMonth(), min.getDate());
-                    while (loopDate <= max)
-                    {
-                        select(findDayTd(loopDate));
-                        loopDate.addDay(1);
-                    }
+                }
+                selectDates.push(selVal);
+                if (minus > 0)
+                {
+                    min = selectDates[0];
+                    max = selectDates[1];
+                }
+                else
+                {
+                    min = selectDates[1];
+                    max = selectDates[0];
+                }
+                loopDate = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+                while (loopDate <= max)
+                {
+                    select(findDayTd(loopDate));
+                    loopDate.addDay(1);
                 }
             }
         }
@@ -525,6 +539,7 @@ Evoque.extend('calendarV2', (function (self) {
                             loopDate.addDay(1);
                         }
                     }
+                    onSelected.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy(), findDayTd: findDayTd });
                 }
                 else
                 {
@@ -554,6 +569,7 @@ Evoque.extend('calendarV2', (function (self) {
                     selectDates[0] = arguments[0].getYMD();
                     var nowSel = findDayTd(selectDates[0]);
                     select(nowSel);
+                    onSelected.call(this, event, { selectDate: selectDates[0].copy(), findDayTd: findDayTd });
                 }
             }
         };
