@@ -204,6 +204,7 @@ Evoque.control = (function (self)
         minVal: 0,
         maxVal: 0,
         format: '{0}',
+        initVal: undefined,
         //flag: 1: up; -1: down; 0: no click
         beforeValueChange: function (flag) {},
         valueChanged: function (flag) {}
@@ -233,6 +234,11 @@ Evoque.control = (function (self)
         var min = option.getValueOfProperty('minVal', defaultOption_RangeSelect2);
         var max = option.getValueOfProperty('maxVal', defaultOption_RangeSelect2);
         var format = option.getValueOfProperty('format', defaultOption_RangeSelect2);
+        var initVal = option[0].initVal;
+        if ($.checkType(initVal) !== type.eNumber || initVal < min || initVal > max)
+        {
+            initVal = min;
+        }
         var beforeValChange = option.getValueOfProperty('beforeValueChange', defaultOption_RangeSelect2);
         var valChanged = option.getValueOfProperty('valueChanged', defaultOption_RangeSelect2);
         if (min > max)
@@ -296,7 +302,7 @@ Evoque.control = (function (self)
             div[0].appendChild(displayDiv[0]);
             div[0].appendChild(aUp[0]);
 
-            setValue(min);
+            setValue(initVal);
 
             function setValue(val)
             {
