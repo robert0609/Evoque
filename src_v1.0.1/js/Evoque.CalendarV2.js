@@ -503,6 +503,16 @@ Evoque.extend('calendarV2', (function (self) {
                             throw 'Parameter type is error!';
                         }
                     });
+                    var ad = arguments[0].getYMD();
+                    if (ad < minDate || ad > maxDate)
+                    {
+                        return;
+                    }
+                    ad = arguments[1].getYMD();
+                    if (ad < minDate || ad > maxDate)
+                    {
+                        return;
+                    }
                     if ($.checkType(onBeforeSelect) === type.eFunction)
                     {
                         var beforeResult = onBeforeSelect.call(this, null, {
@@ -553,6 +563,11 @@ Evoque.extend('calendarV2', (function (self) {
                             throw 'Parameter type is error!';
                         }
                     });
+                    var ad = arguments[0].getYMD();
+                    if (ad < minDate || ad > maxDate)
+                    {
+                        return;
+                    }
                     if ($.checkType(onBeforeSelect) === type.eFunction)
                     {
                         var beforeResult = onBeforeSelect.call(this, null, {
