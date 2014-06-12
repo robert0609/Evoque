@@ -293,6 +293,10 @@ var Evoque = (function (self)
         {
             ret = s + ret;
         }
+        if ($.isStringEmpty(s.trim()))
+        {
+            ret = ret.replace(' ', '&nbsp;');
+        }
         return ret;
     };
 
