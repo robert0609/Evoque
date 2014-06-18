@@ -1133,7 +1133,22 @@ var Evoque = (function (self)
     self.getClassList = function () {
         if ($.checkType(this[0]) === type.eElement)
         {
-            return $.makeArray(this[0].classList);
+            if ($.isObjectNull(this[0].classList))
+            {
+                var classText = this.getAttr('class').trim();
+                if ($.isStringEmpty(classText))
+                {
+                    return [];
+                }
+                else
+                {
+                    return classText.split(' ');
+                }
+            }
+            else
+            {
+                return $.makeArray(this[0].classList);
+            }
         }
         else
         {
@@ -1154,9 +1169,25 @@ var Evoque = (function (self)
         {
             if ($.checkType(this) === type.eElement)
             {
-                if (!this.classList.contains(className))
+                if ($.isObjectNull(this.classList))
                 {
-                    this.classList.add(className);
+                    var classText = $(this).getAttr('class');
+                    if ($.isStringEmpty(classText))
+                    {
+                        classText = '';
+                    }
+                    classText = classText.trim();
+                    if (classText.indexOf(className) < 0)
+                    {
+                        $(this).setAttr('class', classText + ' ' + className);
+                    }
+                }
+                else
+                {
+                    if (!this.classList.contains(className))
+                    {
+                        this.classList.add(className);
+                    }
                 }
             }
         });
@@ -1175,9 +1206,25 @@ var Evoque = (function (self)
         {
             if ($.checkType(this) === type.eElement)
             {
-                if (this.classList.contains(className))
+                if ($.isObjectNull(this.classList))
                 {
-                    this.classList.remove(className);
+                    var classText = $(this).getAttr('class');
+                    if ($.isStringEmpty(classText))
+                    {
+                        classText = '';
+                    }
+                    classText = classText.trim();
+                    if (classText.indexOf(className) > -1)
+                    {
+                        $(this).setAttr('class', classText.replace(className, ''));
+                    }
+                }
+                else
+                {
+                    if (this.classList.contains(className))
+                    {
+                        this.classList.remove(className);
+                    }
                 }
             }
         });
@@ -1190,10 +1237,17 @@ var Evoque = (function (self)
         this.each(function () {
             if ($.checkType(this) === type.eElement)
             {
-                var clses = $(this).getClassList();
-                for (var i = 0; i < clses.length; ++i)
+                if ($.isObjectNull(this.classList))
                 {
-                    this.classList.remove(clses[i]);
+                    $(this).setAttr('class', '');
+                }
+                else
+                {
+                    var clses = $(this).getClassList();
+                    for (var i = 0; i < clses.length; ++i)
+                    {
+                        this.classList.remove(clses[i]);
+                    }
                 }
             }
         });
