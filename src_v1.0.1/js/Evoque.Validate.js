@@ -1,6 +1,5 @@
 //Dependency: Evoque.js, Evoque.Cache.js
-$.validate = (function (self)
-{
+Evoque.extend('validate', (function (self) {
     var validAttrName = 'mvalid';
 
     var require = 'require';
@@ -224,9 +223,8 @@ $.validate = (function (self)
         return ret;
     }
 
-    //API
-    Evoque.valid = function () {
-        container = this;
+    self.valid = function () {
+        container = self.evoqueTarget;
         var selectArray = container.getChild('select');
         for (var i = 0; i < selectArray.length; ++i)
         {
@@ -260,15 +258,15 @@ $.validate = (function (self)
         return true;
     };
 
-    Evoque.validRule = function (rule) {
+    self.validRule = function (rule) {
         if ($.isObjectNull(rule))
         {
             return;
         }
-        this.each(function () {
+        self.evoqueTarget.each(function () {
             $(this).cache().push(validAttrName, rule);
         });
     };
 
     return self;
-}($.validate || {}));
+}({})));
