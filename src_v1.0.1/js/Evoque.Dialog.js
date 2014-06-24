@@ -1,21 +1,46 @@
 //Dependency: Evoque.js
-$.dialog = (function (self) {
-    var zIndexStack = [];
-    var dialogList = [];
-    zIndexStack.push(10000);
-    var dialogGUID = 0;
-    var gDialog = new dialogClass(dialogGUID, zIndexStack.slice(zIndexStack.length - 1)[0]);
-    dialogList.push(gDialog);
-    ++dialogGUID;
+Evoque.extend('dialog', (function (self) {
+
+    var defaultOption = {
+        //对话框标题
+        title:'',
+        //对话框内容，可以是文本字符串，也可以是要显示的div的id
+        content:'',
+        width:document.documentElement.clientWidth * 0.75,
+        height:100,
+        //'ok', 'cancel', 'yes', 'no', 'close' OR multiple buttons: 'yes|no'
+        button:'',
+        onClickOk: function(){},
+        onClickCancel: function(){},
+        onClickYes: function(){},
+        onClickNo: function(){},
+        onClickClose: function(){},
+        //点击背景遮罩层会触发onQuiting事件
+        onQuiting: function(){},
+        // customButton example:{ caption: 'xxxx', onClick: function(){} }
+        customButton: [],
+        onDialogShowed: function(){},
+        onDialogClosed: function(){},
+        autoClose: true,
+        //对话框显示出来之后的超时时间，超过指定时间自动关闭
+        timeout: 0,
+        onTimeout: function () {}
+    };
 
     /**
      * 弹出2秒后自动消失的文本框，关联在全局dialog对象上
      * @param message
      * @return {*}
      */
-    self.alert = function (message, onDialogClosed)
-    {
-        return gDialog.alert(message, onDialogClosed);
+    self.alert = function (message, onDialogClosed) {
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
+        }
+        ctx.show({
+            content: message,
+            onDialogClosed: onDialogClosed
+        });
     };
 
     /**
@@ -25,7 +50,11 @@ $.dialog = (function (self) {
      * @return {*}
      */
     self.prompt = function (message, onclickyes) {
-        return gDialog.showMessageBox({
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
+        }
+        ctx.show({
             content: message,
             button: 'no|yes',
             onClickYes: onclickyes,
@@ -33,9 +62,30 @@ $.dialog = (function (self) {
         });
     };
 
-    self.showLoading = function (loadingMsg, callback)
-    {
-        return gDialog.showLoading(loadingMsg, callback);
+    /**
+     * 弹出表示加载中的菊花层
+     * @param loadingMsg
+     * @param callback
+     * @return {*}
+     */
+    self.showLoading = function (loadingMsg, callback) {
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
+        }
+        ctx.show({
+            content: loadingMsg,
+            onQuiting: function () {
+                return false;
+            },
+            autoClose: false,
+            timeout: 60,
+            onTimeout: function () {
+                ctx.show({
+                    content: '抱歉，你的网络不太好，请稍后重新刷新页面!'
+                });
+            }
+        }, callback);
     };
 
     /**
@@ -44,7 +94,11 @@ $.dialog = (function (self) {
      * @return {*}
      */
     self.showMessageBox = function (option) {
-        return gDialog.showMessageBox(option);
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
+        }
+        ctx.show(option);
     };
 
     /**
@@ -53,7 +107,11 @@ $.dialog = (function (self) {
      * @return {*}
      */
     self.showModalDialog = function (option) {
-        return gDialog.showModalDialog(option);
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
+        }
+        ctx.show(option);
     };
 
     /**
@@ -61,24 +119,46 @@ $.dialog = (function (self) {
      * @return {*}
      */
     self.closeCurrentDialog = function () {
-        return gDialog.closeCurrentDialog();
-    };
-
-    /**
-     * 关闭所有文本框，关联在全局dialog对象上
-     */
-    self.closeAll = function () {
-        for (var i = 0; i < dialogList.length; ++i)
-        {
-            dialogList[i].closeCurrentDialog();
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
         }
+        ctx.close();
     };
 
-    function dialogClass(dialogGUID, zIdx)
-    {
+    var dialogContextProperty = '__dialogContext';
+    var dialogCache = {};
+    var dialogStack = [];
+
+    function getDialogContext() {
+        if (this.length === 0)
+        {
+            return null;
+        }
+        return createDialogContext.call(this[0]);
+    }
+
+    function createDialogContext() {
+        var context = null;
+        var key = this[dialogContextProperty];
+        if ($.isStringEmpty(key))
+        {
+            key = $.guid();
+            this[dialogContextProperty] = key;
+            context = new dialogContextClass(key);
+            dialogCache[key] = context;
+        }
+        else
+        {
+            context = dialogCache[key];
+        }
+        return context;
+    }
+
+    function dialogContextClass(contextGuid) {
         var inited = false;
 
-        var defaultOption = null;
+        //var defaultOption = null;
         var sWidth = null;
         var sHeight = null;
         var bgObj = null;
@@ -109,134 +189,59 @@ $.dialog = (function (self) {
         var contentParentCache = null;
 
         //消息序列
-        var cmdSeq = [];
-        var cmdExecuting = false;
+        var showContextSeq = [];
+        var showContextExecuting = false;
 
-        function cmdClass(mtd, opn, aftCbk)
-        {
-            this.methodName = mtd;
-            this.option = opn;
-            this.afterShow = aftCbk;
-        }
-
-        function exeCmd()
-        {
-            var cmd = cmdSeq.shift();
-            if ($.isObjectNull(cmd))
+        function exeShowContext() {
+            var ctx = showContextSeq.shift();
+            if ($.isObjectNull(ctx))
             {
-                cmdExecuting = false;
-                zIndexStack.pop();
+                showContextExecuting = false;
+                var delIdx = -1;
+                for (var i = dialogStack.length - 1; i >= 0; --i) {
+                    if (dialogStack[i].dialogContextGuid === contextGuid) {
+                        delIdx = i;
+                        break;
+                    }
+                }
+                if (delIdx > -1) {
+                    dialogStack.splice(delIdx, 1);
+                }
                 return;
             }
-            show(cmd.option);
+            innerShow(ctx.option);
             if ($.checkType(onDialogShowed) === type.eFunction)
             {
                 onDialogShowed.call(window);
                 setCenter();
             }
-            if ($.checkType(cmd.afterShow) === type.eFunction)
+            if ($.checkType(ctx.afterShow) === type.eFunction)
             {
                 var waiting100 = window.setTimeout(function ()
                 {
                     window.clearTimeout(waiting100);
-                    cmd.afterShow.call();
+                    ctx.afterShow.call();
                 }, 100);
             }
         }
 
-        this.alert = function (message, onDialogClosed)
-        {
-            this.showMessageBox({
-                content:message,
-                onDialogClosed: onDialogClosed
-            });
-        };
-
-        this.showLoading = function (loadingMsg, callback)
-        {
-            var that = this;
-            this.showMessageBox({
-                content: loadingMsg,
-                onQuiting: function () {
-                    return false;
-                },
-                autoClose: false,
-                timeout: 60,
-                onTimeout: function () {
-                    that.alert('抱歉，你的网络不太好，请稍后重新刷新页面!')
-                }
-            }, callback);
-        };
-
-        this.showMessageBox = function (option, afterShowCallBack) {
-            if ($.isObjectNull(option))
-            {
-                throw 'Parameter is null!';
-            }
-            option = $(option);
-            cmdSeq.push(new cmdClass('show', option, afterShowCallBack));
-            if (cmdExecuting)
-            {
-                return;
-            }
-            cmdExecuting = true;
-            zIndexStack.push(zIdx + 1);
-            exeCmd();
-        };
-
-        this.showModalDialog = function (option) {
-            if ($.isObjectNull(option))
-            {
-                throw 'Parameter is null!';
-            }
-            option = $(option);
-            cmdSeq.push(new cmdClass('show', option));
-            if (cmdExecuting)
-            {
-                return;
-            }
-            cmdExecuting = true;
-            zIndexStack.push(zIdx + 1);
-            exeCmd();
-        };
-
-        this.closeCurrentDialog = function () {
-            reset();
-        };
-
-        this.setZIndex = function (zIdx) {
+        function init() {
             if (inited)
             {
                 return;
             }
-            bgObj.style.zIndex = zIdx;
-            dialogObj.style.zIndex = zIdx + 1;
-        };
-
-        this.initialize = function () {
-            init();
-        };
-
-        function init()
-        {
-            if (inited)
-            {
-                return;
-            }
-            defaultOption = createDefaultOption();
 
             sWidth = document.documentElement.clientWidth;
             sHeight = document.documentElement.clientHeight;
 
             bgObj = document.createElement('div');
-            bgObj.setAttribute('id', 'm-bgDiv_' + dialogGUID);
+            bgObj.setAttribute('id', 'm-bgDiv_' + contextGuid);
             $(bgObj).addClass('mdialog-bg-div');
             bgObj.style.width = sWidth + 'px';
             bgObj.style.height = getbackgroundHeight() + 'px';
-            bgObj.style.zIndex = zIdx;
             bgObj.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
             //增加点击背景返回的事件处理器
-            $(bgObj).addEventHandler('click', function (event) {
+            $(bgObj).click(function (event) {
                 var result;
                 if ($.checkType(onQuiting) === type.eFunction)
                 {
@@ -250,19 +255,17 @@ $.dialog = (function (self) {
             });
 
             bgObjWhite = document.createElement('div');
-            bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + dialogGUID);
+            bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + contextGuid);
             $(bgObjWhite).addClass('mdialog-bg-div-white');
             bgObjWhite.style.width = sWidth + 'px';
             bgObjWhite.style.height = getbackgroundHeight() + 'px';
-            bgObjWhite.style.zIndex = zIdx;
             bgObjWhite.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
 
             dialogObj = document.createElement('div');
-            dialogObj.setAttribute('align', 'center');
-            dialogObj.style.zIndex = zIdx + 1;
+            //dialogObj.setAttribute('align', 'center');
 
             titleObj = document.createElement('div');
-            titleObj.setAttribute('align', 'left');
+            //titleObj.setAttribute('align', 'left');
             $(titleObj).addClass('mdialog-title-div');
 
             contentObj = document.createElement('div');
@@ -271,122 +274,70 @@ $.dialog = (function (self) {
             $(buttonObj).addClass('mdialog-button-div');
 
             btnOK = createButton({ caption: '确定', onClick: function (event)
+            {
+                if ($.checkType(onClickOk) === type.eFunction)
                 {
-                    if ($.checkType(onClickOk) === type.eFunction)
-                    {
-                        return onClickOk.call(this, event);
-                    }
+                    return onClickOk.call(this, event);
                 }
+            }
             });
             btnCancel = createButton({ caption: '取消', onClick: function (event)
+            {
+                if ($.checkType(onClickCancel) === type.eFunction)
                 {
-                    if ($.checkType(onClickCancel) === type.eFunction)
-                    {
-                        return onClickCancel.call(this, event);
-                    }
+                    return onClickCancel.call(this, event);
                 }
+            }
             });
             btnYes = createButton({ caption: '是', onClick: function (event)
+            {
+                if ($.checkType(onClickYes) === type.eFunction)
                 {
-                    if ($.checkType(onClickYes) === type.eFunction)
-                    {
-                        return onClickYes.call(this, event);
-                    }
+                    return onClickYes.call(this, event);
                 }
+            }
             });
             btnNo = createButton({ caption: '否', onClick: function (event)
+            {
+                if ($.checkType(onClickNo) === type.eFunction)
                 {
-                    if ($.checkType(onClickNo) === type.eFunction)
-                    {
-                        return onClickNo.call(this, event);
-                    }
+                    return onClickNo.call(this, event);
                 }
+            }
             });
             btnClose = createButton({ caption: '关闭', onClick: function (event)
+            {
+                if ($.checkType(onClickClose) === type.eFunction)
                 {
-                    if ($.checkType(onClickClose) === type.eFunction)
-                    {
-                        return onClickClose.call(this, event);
-                    }
+                    return onClickClose.call(this, event);
                 }
+            }
             });
 
             inited = true;
         }
 
-        function reset(isTimeout)
-        {
-            if (cmdExecuting == false)
-            {
-                return;
-            }
-            if (isTimeout)
-            {
-                enableTimeout = false;
-            }
-            else
-            {
-                if (enableTimeout)
+        function createButton(btnOption) {
+            var btn = document.createElement('input');
+            btn.type = 'button';
+            btn.value = btnOption.caption;
+            $(btn).addClass('mdialog-button-input');
+            $(btn).click(function (event) {
+                var result;
+                if ($.checkType(btnOption.onClick) === type.eFunction)
                 {
-                    //阻止超时的处理
-                    window.clearTimeout(timeoutTimeoutId);
-                    enableTimeout = false;
+                    result = btnOption.onClick.call(this, event);
                 }
-            }
-
-            titleObj.innerHTML = '';
-            if ($.checkType(contentParentCache) === type.eElement)
-            {
-                if (contentObj.children.length > 0)
+                if (result == false)
                 {
-                    $(contentObj.firstElementChild).hide();
-                    contentParentCache.appendChild(contentObj.firstElementChild);
+                    return;
                 }
-            }
-            contentParentCache = null;
-            contentObj.innerHTML = '';
-            $(buttonObj).clearChild();
-
-            onClickOk = null;
-            onClickCancel = null;
-            onClickYes = null;
-            onClickNo = null;
-            onClickClose = null;
-
-            buttonObj.innerHTML = '';
-            $(dialogObj).clearChild();
-            $(dialogObj).setAttr('class', '');
-            $(contentObj).setAttr('class', '');
-            document.body.removeChild(dialogObj);
-            if ($('#m-bgDiv_' + dialogGUID).length > 0)
-            {
-                document.body.removeChild(bgObj);
-            }
-            if ($('#m-bgDivWhite_' + dialogGUID).length > 0)
-            {
-                document.body.removeChild(bgObjWhite);
-            }
-
-            if (isTimeout)
-            {
-                if ($.checkType(onTimeout) === type.eFunction)
-                {
-                    onTimeout.call(window);
-                }
-            }
-            else
-            {
-                if ($.checkType(onDialogClosed) === type.eFunction)
-                {
-                    onDialogClosed.call(window);
-                }
-            }
-            //弹出消息序列中下一个消息框
-            exeCmd();
+                reset();
+            });
+            return btn;
         }
 
-        function show(option)
-        {
+        function innerShow(option) {
             init();
 
             dialogObj.style.opacity = 1;
@@ -407,7 +358,7 @@ $.dialog = (function (self) {
                     var ele = eContent[0];
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
-                    ele.style.display = 'block';
+                    $(ele).show();
                     //判断如果显示预设按钮的情况
                     if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
                     {
@@ -421,7 +372,7 @@ $.dialog = (function (self) {
                 }
                 else
                 {
-                    contentObj.innerHTML = content;
+                    $(contentObj).html(content);
                     $(dialogObj).addClass('mdialog-dg-div');
                     $(contentObj).addClass('mdialog-content-div');
                 }
@@ -470,7 +421,7 @@ $.dialog = (function (self) {
                 }
                 dialogObj.appendChild(buttonObj);
 
-                bgObj.style.height = getbackgroundHeight() + 'px';
+                //bgObj.style.height = getbackgroundHeight() + 'px';
                 document.body.appendChild(bgObj);
             }
             else
@@ -478,7 +429,7 @@ $.dialog = (function (self) {
                 var autoClose = option.getValueOfProperty('autoClose', defaultOption);
                 if (autoClose)
                 {
-                    bgObjWhite.style.height = getbackgroundHeight() + 'px';
+                    //bgObjWhite.style.height = getbackgroundHeight() + 'px';
                     document.body.appendChild(bgObjWhite);
                     // 等待2秒自动消失
                     window.setTimeout(function () {
@@ -487,7 +438,7 @@ $.dialog = (function (self) {
                 }
                 else
                 {
-                    bgObj.style.height = getbackgroundHeight() + 'px';
+                    //bgObj.style.height = getbackgroundHeight() + 'px';
                     document.body.appendChild(bgObj);
                     // 当dialog没有任何按钮并且不自动关闭的时候，增加超时处理
                     var timeout = option.getValueOfProperty('timeout', defaultOption);
@@ -521,8 +472,77 @@ $.dialog = (function (self) {
             dialogObj.style.marginTop = (0 - h) / 2 + 'px';
         }
 
-        function disappearAnimation(dObj)
-        {
+        function reset(isTimeout) {
+            if (!showContextExecuting)
+            {
+                return;
+            }
+            if (isTimeout)
+            {
+                enableTimeout = false;
+            }
+            else
+            {
+                if (enableTimeout)
+                {
+                    //阻止超时的处理
+                    window.clearTimeout(timeoutTimeoutId);
+                    enableTimeout = false;
+                }
+            }
+
+            titleObj.innerHTML = '';
+            if ($.checkType(contentParentCache) === type.eElement)
+            {
+                if (contentObj.children.length > 0)
+                {
+                    $(contentObj.firstElementChild).hide();
+                    contentParentCache.appendChild(contentObj.firstElementChild);
+                }
+            }
+            contentParentCache = null;
+            contentObj.innerHTML = '';
+            $(buttonObj).clearChild();
+
+            onClickOk = null;
+            onClickCancel = null;
+            onClickYes = null;
+            onClickNo = null;
+            onClickClose = null;
+
+            buttonObj.innerHTML = '';
+            $(dialogObj).clearChild();
+            $(dialogObj).setAttr('class', '');
+            $(contentObj).setAttr('class', '');
+            document.body.removeChild(dialogObj);
+            if ($('#m-bgDiv_' + contextGuid).length > 0)
+            {
+                document.body.removeChild(bgObj);
+            }
+            if ($('#m-bgDivWhite_' + contextGuid).length > 0)
+            {
+                document.body.removeChild(bgObjWhite);
+            }
+
+            if (isTimeout)
+            {
+                if ($.checkType(onTimeout) === type.eFunction)
+                {
+                    onTimeout.call(window);
+                }
+            }
+            else
+            {
+                if ($.checkType(onDialogClosed) === type.eFunction)
+                {
+                    onDialogClosed.call(window);
+                }
+            }
+            //弹出消息序列中下一个消息框
+            exeShowContext();
+        }
+
+        function disappearAnimation(dObj) {
             var disappearIntervalId = window.setInterval(function ()
             {
                 var o = Number((dObj.style.opacity - 0.1).toFixed(1));
@@ -535,153 +555,71 @@ $.dialog = (function (self) {
             }, 50);
         }
 
-        function getbackgroundHeight()
-        {
-            if (document.body.clientHeight > document.documentElement.clientHeight)
+        this.show = function (option, afterShowCallBack) {
+            if ($.isObjectNull(option))
             {
-                return document.body.clientHeight;
+                throw 'Parameter is null!';
             }
-            else
+            option = $(option);
+            showContextSeq.push(new showContextClass(option, afterShowCallBack));
+            if (showContextExecuting)
             {
-                return document.documentElement.clientHeight;
+                return;
             }
-        }
+            showContextExecuting = true;
+            var zIndex = 9990;
+            if (dialogStack.length > 0) {
+                zIndex = dialogStack[dialogStack.length - 1].zIndex;
+            }
+            this.initialize();
+            this.setZIndex(zIndex + 10);
+            dialogStack.push({ dialogContextGuid: contextGuid, zIndex: this.getZIndex() });
+            exeShowContext();
+        };
 
-        function createButton(btnOption)
-        {
-            var btn = document.createElement('input');
-            btn.type = 'button';
-            btn.value = btnOption.caption;
-            $(btn).addClass('mdialog-button-input');
-            $(btn).addEventHandler('click', function (event)
+        this.close = function () {
+            reset();
+        };
+
+        this.setZIndex = function (zIdx) {
+            if (!inited)
             {
-                var result;
-                if ($.checkType(btnOption.onClick) === type.eFunction)
-                {
-                    result = btnOption.onClick.call(this, event);
-                }
-                if (result == false)
-                {
-                    return;
-                }
-                reset();
-            }, false);
-            return btn;
-        }
+                return;
+            }
+            bgObj.style.zIndex = zIdx;
+            bgObjWhite.style.zIndex = zIdx;
+            dialogObj.style.zIndex = zIdx + 1;
+        };
 
-        function createDefaultOption() {
-            var option = {
-                //对话框标题
-                title:'',
-                //对话框内容，可以是文本字符串，也可以是要显示的div的id
-                content:'',
-                width:document.documentElement.clientWidth * 0.75,
-                height:100,
-                //'ok', 'cancel', 'yes', 'no', 'close' OR multiple buttons: 'yes|no'
-                button:'',
-                onClickOk: function(){},
-                onClickCancel: function(){},
-                onClickYes: function(){},
-                onClickNo: function(){},
-                onClickClose: function(){},
-                //点击背景遮罩层会触发onQuiting事件
-                onQuiting: function(){},
-                // customButton example:{ caption: 'xxxx', onClick: function(){} }
-                customButton: [],
-                onDialogShowed: function(){},
-                onDialogClosed: function(){},
-                autoClose: true,
-                //对话框显示出来之后的超时时间，超过指定时间自动关闭
-                timeout: 0,
-                onTimeout: function () {}
-            };
+        this.getZIndex = function () {
+            if (showContextExecuting) {
+                return Number(dialogObj.style.zIndex);
+            }
+            else {
+                return 0;
+            }
+        };
 
-            return option;
-        }
+        this.initialize = function () {
+            init();
+        };
     }
 
-    //API
-    /**
-     * 弹出2秒后自动消失的文本框，关联在当前Evoque对象上
-     * @param message
-     * @return {*}
-     */
-    Evoque.alert = function (message, onDialogClosed)
-    {
-        genDialog.apply(this);
-        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.alert(message, onDialogClosed);
-    };
+    function showContextClass(opn, aftCbk) {
+        this.option = opn;
+        this.afterShow = aftCbk;
+    }
 
-    /**
-     * 弹出带有yes和no按钮的确认框
-     * @param message
-     * @param onclickyes
-     * @return {*}
-     */
-    self.prompt = function (message, onclickyes) {
-        genDialog.apply(this);
-        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.showMessageBox({
-            content: message,
-            button: 'no|yes',
-            onClickYes: onclickyes,
-            autoClose: false
-        });
-    };
-
-    Evoque.showLoading = function (loadingMsg, callback)
-    {
-        genDialog.apply(this);
-        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.showLoading(loadingMsg, callback);
-    };
-
-    /**
-     * 弹出根据option参数的自定义设置来显示的文本框，关联在当前Evoque对象上
-     * @param option
-     * @return {*}
-     */
-    Evoque.showMessageBox = function (option)
-    {
-        genDialog.apply(this);
-        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.showMessageBox(option);
-    };
-
-    /**
-     * 弹出根据option参数的自定义设置来显示的模态窗体，关联在当前Evoque对象上
-     * @param option
-     * @return {*}
-     */
-    Evoque.showModalDialog = function (option)
-    {
-        genDialog.apply(this);
-        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.showModalDialog(option);
-    };
-
-    /**
-     * 关闭当前显示的文本框，关联在当前Evoque对象上
-     * @return {*}
-     */
-    Evoque.closeCurrentDialog = function ()
-    {
-        genDialog.apply(this);
-        this.dialog.setZIndex(zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-        return this.dialog.closeCurrentDialog();
-    };
-
-    function genDialog()
-    {
-        if ($.checkType(this.dialog) !== type.eObject)
+    function getbackgroundHeight() {
+        if (document.body.clientHeight > document.documentElement.clientHeight)
         {
-            this.dialog = new dialogClass(dialogGUID, zIndexStack.slice(zIndexStack.length - 1)[0] + 1);
-            this.dialog.initialize();
-            dialogList.push(this.dialog);
-            ++dialogGUID;
+            return document.body.clientHeight;
+        }
+        else
+        {
+            return document.documentElement.clientHeight;
         }
     }
 
     return self;
-}($.dialog || {}));
+}({})));
