@@ -1,6 +1,5 @@
 //Dependency: Evoque.js
-$.appCache = (function (self)
-{
+$.extend('appCache', (function (self) {
     var defaultOption = {
         onShowUpdating: function (content) { },
         onComplete: function () { }
@@ -52,4 +51,4 @@ $.appCache = (function (self)
     });
 
     return self;
-}($.appCache || {}));
+}({})));

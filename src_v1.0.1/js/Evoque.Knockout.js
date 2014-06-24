@@ -1,6 +1,5 @@
 //Dependency: Evoque.js, knockout.js
-$.knockout = (function (self)
-{
+$.extend('knockout', (function (self) {
     ko.extenders.dateFormat = function (target, format) {
         var result = ko.computed({
             read: function () {
@@ -30,4 +29,4 @@ $.knockout = (function (self)
     };
 
     return self;
-}($.knockout || {}));
+}({})));

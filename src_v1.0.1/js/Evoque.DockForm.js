@@ -1,14 +1,14 @@
 //Dependency: Evoque.js
-Evoque.dockForm = (function (self) {
+Evoque.extend('dockForm', (function (self) {
     var defaultOption = {
-        elementId: '',
         // top|bottom|left|right. default: bottom
         direction: 'bottom'
     };
 
     var dockFormInstances = {};
 
-    self.show = function (option, element) {
+    self.show = function (option) {
+        option = option || {};
         self.hide();
 
         if ($.isObjectNull(option))
@@ -16,22 +16,16 @@ Evoque.dockForm = (function (self) {
             throw 'Parameter is null!';
         }
         option = $(option);
-        if ($.checkType(element) !== type.eElement)
-        {
-            var id = option.getValueOfProperty('elementId', defaultOption);
-            if ($.isStringEmpty(id))
+        var caller = self.evoqueTarget;
+        if (caller.length > 0) {
+            var element = caller[0];
+            var dir = option.getValueOfProperty('direction', defaultOption).toLowerCase();
+            if ($.isObjectNull(dockFormInstances[dir]))
             {
-                throw 'Parameter is error!';
+                dockFormInstances[dir] = new dockFormClass(dir);
             }
-            element = document.getElementById(id);
+            dockFormInstances[dir].show(element);
         }
-        var dir = option.getValueOfProperty('direction', defaultOption).toLowerCase();
-        if ($.isObjectNull(dockFormInstances[dir]))
-        {
-            dockFormInstances[dir] = new dockFormClass(dir);
-        }
-
-        dockFormInstances[dir].show(element);
     };
 
     self.hide = function () {
@@ -155,12 +149,7 @@ Evoque.dockForm = (function (self) {
      * @param option
      */
     Evoque.showDockForm = function (option) {
-        option = option || {};
-        if (this.length < 1)
-        {
-            return;
-        }
-        self.show(option, this[0]);
+        this.dockForm.show(option);
     };
 
     /**
@@ -171,4 +160,4 @@ Evoque.dockForm = (function (self) {
     };
 
     return self;
-}(Evoque.dockForm || {}));
+}({})));

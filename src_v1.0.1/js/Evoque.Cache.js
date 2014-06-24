@@ -1,6 +1,5 @@
 //Dependency: Evoque.js
-$.cache = (function (self)
-{
+$.extend('cache', (function (self) {
     var __global = new cacheClass();
     var __elementCacheKeyProperty = 'elementCache';
 
@@ -106,4 +105,4 @@ $.cache = (function (self)
     };
 
     return self;
-}($.cache || {}));
+}({})));

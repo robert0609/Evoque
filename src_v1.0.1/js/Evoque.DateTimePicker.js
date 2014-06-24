@@ -9,6 +9,7 @@ Evoque.extend('dateTimePicker', (function (self) {
     };
 
     self.create = function (option) {
+        option = option || {};
         var $option = $(option);
         var format = $option.getValueOfProperty('format', defaultOption).toLowerCase();
         if (format !== 'datetime' && format !== 'time')

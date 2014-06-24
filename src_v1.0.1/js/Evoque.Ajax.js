@@ -1,6 +1,5 @@
 ﻿//Dependency: Evoque.js, json2.js
-$.ajax = (function (self)
-{
+$.extend('ajax', (function (self) {
     var defaultOption = {
         // 'get'(default), 'post'
         method : 'get',
@@ -263,4 +262,4 @@ $.ajax = (function (self)
     }
 
     return self;
-}($.ajax || {}));
+}({})));

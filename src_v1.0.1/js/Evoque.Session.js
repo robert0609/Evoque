@@ -1,6 +1,5 @@
 //Dependency: Evoque.js, json2.js
-$.session = (function (self)
-{
+$.extend('session', (function (self) {
     function createFunction(fn)
     {
         return function () {
@@ -73,4 +72,4 @@ $.session = (function (self)
     });
 
     return self;
-}($.session || {}));
+}({})));

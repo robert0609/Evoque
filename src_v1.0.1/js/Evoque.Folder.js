@@ -1,11 +1,10 @@
 //Dependency: Evoque.js
-Evoque.folder = (function (self) {
+Evoque.extend('folder', (function (self) {
     var titleClass = 'folder-title';
     var contentClass = 'folder-content';
     var groupAttr = 'folder-group';
 
     var defaultOption = {
-        folderId: '',
         // 'normal' | 'once' | 'disable'
         mode: 'normal',
         // 'fold' | 'unfold'
@@ -15,31 +14,9 @@ Evoque.folder = (function (self) {
         onUnfolded: function () {}
     };
 
-    self.create = function (option, folderElement) {
-        if ($.isObjectNull(option))
-        {
-            throw 'Parameter is null!';
-        }
+    self.create = function (option) {
+        option = option || {};
         option = $(option);
-        var folder;
-        if ($.checkType(folderElement) === type.eElement)
-        {
-            folder = folderElement;
-        }
-        else
-        {
-            var folderId = option.getValueOfProperty('folderId', defaultOption);
-            if ($.isStringEmpty(folderId))
-            {
-                throw 'Parameter is error!';
-            }
-            var $folder = $('#' + folderId)
-            if ($folder.length < 1)
-            {
-                throw 'Parameter is error!';
-            }
-            folder = $folder[0];
-        }
         var mode = option.getValueOfProperty('mode', defaultOption).toLowerCase();
         var status = option.getValueOfProperty('status', defaultOption).toLowerCase();
         var autoTop = option.getValueOfProperty('autoTop', defaultOption);
@@ -49,8 +26,11 @@ Evoque.folder = (function (self) {
         }
         var onFolded = option.getValueOfProperty('onFolded', defaultOption);
         var onUnfolded = option.getValueOfProperty('onUnfolded', defaultOption);
-        folder.__innerFolder = new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
-        return folder.__innerFolder;
+        var caller = self.evoqueTarget;
+        caller.each(function () {
+            var folder = this;
+            folder.__innerFolder = new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
+        });
     };
 
     function folderClass(folder, mode, status, autoTop, onFolded, onUnfolded)
@@ -209,10 +189,7 @@ Evoque.folder = (function (self) {
     //API
     Evoque.createFolder = function (option)
     {
-        option = option || {};
-        this.each(function () {
-            self.create(option, this);
-        });
+        this.folder.create(option);
     };
 
     Evoque.openFolder = function () {
@@ -236,4 +213,4 @@ Evoque.folder = (function (self) {
     };
 
     return self;
-}(Evoque.folder || {}));
+}({})));

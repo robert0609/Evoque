@@ -1,6 +1,5 @@
 //Dependency: Evoque.js
-$.cookie = (function (self)
-{
+$.extend('cookie', (function (self) {
     self.get = function (key) {
         return getCookie(key);
     };
@@ -57,4 +56,4 @@ $.cookie = (function (self)
     }
 
     return self;
-}($.cookie || {}));
+}({})));

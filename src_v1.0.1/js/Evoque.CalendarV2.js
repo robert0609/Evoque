@@ -12,10 +12,7 @@ Evoque.extend('calendarV2', (function (self) {
     };
 
     self.create = function (option) {
-        if ($.isObjectNull(option))
-        {
-            throw 'Parameter is null!';
-        }
+        option = option || {};
         option = $(option);
         var caller = self.evoqueTarget;
         defaultOption.startDate = (new Date()).getYMD();
