@@ -15,10 +15,11 @@
             container = $.container.create({
                 divIdList: ['d1', 'd2'],
                 onShow: function () {},
-                onHide: function () {}
+                onHide: function () {},
+                enableHistory: true
             });
 
-            container.display('d2');
+            container.display('d2', { toShowDivIsFirst: true });
         });
         function click1()
         {

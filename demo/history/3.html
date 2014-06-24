@@ -7,12 +7,15 @@
     <title></title>
     <script type="text/javascript" src="../../src/js/eDebugger.js"></script>
     <script type="text/javascript" src="../../src/js/json2.js"></script>
-    <script type="text/javascript" src="../../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../../src/js/Evoque.Session.js"></script>
-    <script type="text/javascript" src="../../src/js/Evoque.History.js"></script>
+    <script type="text/javascript" src="../../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../../src_v1.0.1/js/Evoque.Session.js"></script>
+    <script type="text/javascript" src="../../src_v1.0.1/js/Evoque.History.js"></script>
     <script type="text/javascript">
         $(function () {
-            $('#divHis').html($.history.show());
+            //$('#divHis').html($.history.show());
+            $.history.popHistory(function (e) {
+                $('#divHis').text(e.pageId + ':3');
+            });
         });
     </script>
 </head>

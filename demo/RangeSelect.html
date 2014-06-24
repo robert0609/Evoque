@@ -12,7 +12,7 @@
         {
             $('.range').createRangeSelect({
                 minVal: 1,
-                maxVal: 10,
+                maxVal: 1,
                 enableManualInput: true,
                 beforeValueManualChanged: function (arg) {
                     if (this.value == 4)
@@ -27,7 +27,7 @@
             });
 
             $('.range').createRangeSelectFormat({
-                minVal: 0,
+                minVal: 5,
                 maxVal: 5,
                 format: '{0}位住客',
                 //flag: 1: up; -1: down; 0: no click

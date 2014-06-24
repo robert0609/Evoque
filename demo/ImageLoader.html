@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.ImageLoader.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#load').click(function () {
+                $('#imgTest').imageLoader.load();
+            });
+        });
+    </script>
+</head>
+<body>
+    <button id="load">Load Image</button>
+    <div style="width: 320px; height: 200px; left: 50px; top: 60px; position: fixed; background-color: gray; overflow: auto;" id="imgTest" evo-imgSrc="http://staticfile.tujia.com/upload/landlordunit/day_130730/thumb/20130730045844401_640_400.jpg">
+
+    </div>
+</body>
+</html>

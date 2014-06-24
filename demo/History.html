@@ -7,9 +7,9 @@
     <title></title>
     <script type="text/javascript" src="../src/js/eDebugger.js"></script>
     <script type="text/javascript" src="../src/js/json2.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Session.js"></script>
-    <!--<script type="text/javascript" src="../src/js/Evoque.History.js"></script>-->
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Session.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.History.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
     <script type="text/javascript">
@@ -21,9 +21,9 @@
 //                $.dialog.alert('Clicked back button!');
 //            };
 
-            ++i;
-            var url = 'http://10.2.10.129:4001/' + i + '/';
-            history.replaceState({ url: url }, i, url);
+//            ++i;
+//            var url = 'http://10.2.10.129:4001/' + i + '/';
+            //history.replaceState({ url: url }, i, url);
             window.addEventListener('popstate', function (e) {
 //                ++i;
 //                var url = 'http://10.2.10.129:4001/' + i + '/';
@@ -31,8 +31,9 @@
 //                ++i;
 //                var url = 'http://10.2.10.129:4001/' + i + '/';
 //                history.pushState({ url: url }, i, url);
+                //alert('pop');
                 var obj = history.state;
-                $('#test').html('e.state:' + JSON.stringify(e.state) + '; history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
+                //$('#test').html('e.state:' + JSON.stringify(e.state) + '; history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
             });
 
             //$('#test').html(history.pushState);
@@ -44,8 +45,18 @@
             {
                 $('#test1').html('***history.length:' + history.length);
                 ++i;
-                var url = 'http://10.2.10.129:4001/' + i + '/';
-                history.pushState({url: url}, i, url);
+                //var url = 'http://10.2.10.129:4001/' + i + '/';
+                var href = location.href;
+                if (href.indexOf('?') > -1)
+                {
+                    href = href.substr(0, href.indexOf('?') + 1) + 't=' + i;
+                }
+                else
+                {
+                    href += '?t=' + i;
+                }
+                var url = href;
+                history.pushState({ obj: {url: url}, x: '1', y: [ 0, 1, 2] }, i, url);
                 var obj = history.state;
                 $('#test').html('history.state:' + JSON.stringify(obj) + '; history.length:' + history.length);
             }

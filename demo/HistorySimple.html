@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="pageid" content="history.html">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src/js/json2.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Session.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.History.Simple.js"></script>
+    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        $(function () {
+            $.history.bindBackHandleOnce(function () {
+                $.dialog.alert('!!!');
+            });
+            $.history.bindBackHandleOnce(function () {
+                $.dialog.alert('...');
+            });
+            $('#cnt').html(history.length);
+        });
+
+        function click()
+        {
+            $('#cnt').html(history.length);
+        }
+    </script>
+</head>
+<body>
+<button onclick="click();">length</button>
+<div>history length: <span id="cnt"></span></div>
+</body>
+</html>

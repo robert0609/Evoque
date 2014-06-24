@@ -4,13 +4,22 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.Adapter.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         function click()
         {
-            //$.dialog.showLoading('loading');
+            //调用dialog控件显示
+//            $.dialog.showModalDialog({
+//                content:'article',
+//                width:document.documentElement.clientWidth * 0.9,
+//                onQuiting: function () {
+//                    return false;
+//                },
+//                autoClose: false
+//            });
 //            window.setTimeout(function () {
 //                $.dialog.closeCurrentDialog();
 //            }, 2000);
@@ -46,6 +55,7 @@
             });
             $.dialog.showModalDialog({
                 content:'dialog',
+                button:'yes|no',
                 onQuiting: function () {
                     alert('onQuiting---2');
                 },
@@ -54,17 +64,111 @@
                 },
                 autoClose: false
             });
+            $.dialog.showLoading('loading...');
+            //$(document).dialog.closeCurrentDialog();
+        }
 
+        function showSub() {
+            $('#subBtn').alert('sub alert 1');
+            $('#subBtn').alert('sub dialog');
+            $('#subBtn').showMessageBox({
+                title:'sub title',
+                icon:'',
+                content:'sub message text',
+                button:'yes|no',
+                onClickYes: function(){
+                    alert('click sub yes');
+                },
+                onClickNo: function(){
+                    alert('click sub no');
+                    return false;
+                },
+                customButton: [
+                    {
+                        caption: '自定义按钮',
+                        onClick: function(){
+                            alert('click sub custom button');
+                            return false;
+                        }
+                    }
+                ],
+                onQuiting: function () {
+                    alert('sub onQuiting---1');
+                },
+                onDialogClosed: function () {
+                    alert('sub onDialogClosed---1');
+                }
+            });
         }
     </script>
 </head>
-<body>
+<body style="height: 5000px;">
     <a href="javascript:click()">click here, show dialogs!</a>
 
-    <div id="dialog" style="background-color: green; display: none; height: 800px;"><h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6></div>
+    <div id="dialog" style="background-color: green; display: none;">
+        <h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6>
+        <button id="subBtn" onclick="showSub();">show sub dialog!</button>
+    </div>
 
     <div id="loading" style="display: none;">
-        <img src="../src/image/Evoque.Dialog/loading.gif">
+        <img src="../src_v1.0.1/image/Evoque.Dialog/loadingPage.GIF">
     </div>
+
+    <div id="article" style="display: none; background:#fff;">
+        <div style="overflow-y:auto;height: 400px;">
+            <div style="">
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+            如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
+            装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，
+            看看这篇文章 + 一点点实践（把官网上的例子拿来改改）即可...impress.js 是国外一位开发者受 Prezi 启发，采用 CSS3 与 JavaScript
+            语言完成的一个可供开发者使用的表现层框架(演示工具)。现在普通开发者可以利用 impress.js 自己开发出类似效果的演示工具，
+            但性能比基于 FLASH 的 Prezi 更优。其功能包括画布的无限旋转与缩放，任意角度放置任意大小的文字，CSS3 3D 效果支持等。
+            同时，也支持传统 PowerPoint 形式的幻灯演示。目前 impress.js 是基于 webkit 浏览器（Chrome、Safari）开发，而在其它
+        </div>
+        </div>
+    </div>
+
+    <div id="console"></div>
 </body>
 </html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cache.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.CalendarV2.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.CalendarV2.css" />
+    <script type="text/javascript">
+        function show() {
+//            $.dialog.showModalDialog({
+//                //对话框内容，可以是文本字符串，也可以是要显示的div的id
+//                content:'a',
+//                autoClose: false,
+//                onDialogShowed: function () {
+//                    $('#a').calendarV2.create({
+//                        startDate: new Date(2013, 7, 13),
+//                        displayMode: 'waterfall',
+//                        onSelected: function (e, arg) {
+//                            $('#a').alert(arg.selectDate);
+//                        }
+//                    });
+//                }
+//            });
+            $('#a').calendarV2.setActiveDate(new Date(2012, 4, 28), new Date(2012, 6, 20));
+        }
+
+
+        $(function () {
+            $('#a').calendarV2.create({
+                startDate: new Date(2014, 4, 13),
+                displayMode: 'waterfall',
+                pickMode: 'range',
+                onRenderDateTd: function (arg) {
+                    var td = arg.renderTarget;
+                    var $td = $(td);
+                    var tdDate = arg.tdDate;
+                    var today = (new Date()).getYMD();
+                    var d = tdDate.getDate();
+                    $td.text(d);
+                    var minus = tdDate - today;
+                    var span = document.createElement('span');
+                    td.appendChild(span);
+                    if (minus == 0)
+                    {
+                        $(span).text('今日');
+                    }
+                    else if (minus == 86400000)
+                    {
+                        $(span).text('明日');
+                    }
+                },
+                onSelected: function (e, arg) {
+                    var $s = arg.findDayTd(arg.selectDateStart);
+                    $s.getChild('span').text('入住');
+                    if (!$.isObjectNull(arg.selectDateEnd))
+                    {
+                        var $e = arg.findDayTd(arg.selectDateEnd);
+                        $e.getChild('span').text('离店');
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<button onclick="show();">show</button>
+<div id="a"></div>
+</body>
+</html>

@@ -12,7 +12,9 @@
     <script type="text/javascript">
         $(function () {
             $('#b1').addEventHandler('click', function () {
-                $('#dockForm').showDockForm();
+                $('#dockForm').showDockForm({
+                    direction: 'right'
+                });
             });
 //            $('#b1').addEventHandler('click', function (e) {
 //                $('#dockForm').showDockForm();
@@ -20,7 +22,9 @@
         });
         function onClick()
         {
-            $('#dockForm').showDockForm();
+            $('#dockForm').showDockForm({
+                direction: 'right'
+            });
         }
         function clickBody()
         {

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.DateTimePicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.DateTimePicker.css" />
+    <script type="text/javascript">
+        $(function () {
+            $('#a').dateTimePicker.create({
+                format: 'datetime'
+            });
+            $('#b').dateTimePicker.create({
+                format: 'time'
+            });
+            $('#c').dateTimePicker.create({
+                format: 'date'
+            });
+        });
+    </script>
+</head>
+<body>
+    <input id="a" type="text">
+    <input id="b" type="text">
+    <input id="c" type="text">
+</body>
+</html>
