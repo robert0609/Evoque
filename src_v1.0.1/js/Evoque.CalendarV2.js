@@ -362,7 +362,7 @@ Evoque.extend('calendarV2', (function (self) {
         }
 
         function unselect($td) {
-            $td.removeClass('active');
+            $td.clearClass();
             var clses = $td.cache().get('initClass');
             $(clses).each(function () {
                 $td.addClass(this);
