@@ -126,6 +126,15 @@ Evoque.extend('dialog', (function (self) {
         ctx.close();
     };
 
+    /**
+     * 关闭所有文本框，关联在全局$对象上
+     */
+    $.closeAllDialogs = function () {
+        for (var pName in dialogCache) {
+            dialogCache[pName].closeAll();
+        }
+    };
+
     var dialogContextProperty = '__dialogContext';
     var dialogCache = {};
     var dialogStack = [];
@@ -158,7 +167,6 @@ Evoque.extend('dialog', (function (self) {
     function dialogContextClass(contextGuid) {
         var inited = false;
 
-        //var defaultOption = null;
         var sWidth = null;
         var sHeight = null;
         var bgObj = null;
@@ -213,7 +221,7 @@ Evoque.extend('dialog', (function (self) {
             if ($.checkType(onDialogShowed) === type.eFunction)
             {
                 onDialogShowed.call(window);
-                setCenter();
+                //setCenter();
             }
             if ($.checkType(ctx.afterShow) === type.eFunction)
             {
@@ -239,7 +247,6 @@ Evoque.extend('dialog', (function (self) {
             $(bgObj).addClass('mdialog-bg-div');
             bgObj.style.width = sWidth + 'px';
             bgObj.style.height = getbackgroundHeight() + 'px';
-            bgObj.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
             //增加点击背景返回的事件处理器
             $(bgObj).click(function (event) {
                 var result;
@@ -259,13 +266,10 @@ Evoque.extend('dialog', (function (self) {
             $(bgObjWhite).addClass('mdialog-bg-div-white');
             bgObjWhite.style.width = sWidth + 'px';
             bgObjWhite.style.height = getbackgroundHeight() + 'px';
-            bgObjWhite.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
 
             dialogObj = document.createElement('div');
-            //dialogObj.setAttribute('align', 'center');
 
             titleObj = document.createElement('div');
-            //titleObj.setAttribute('align', 'left');
             $(titleObj).addClass('mdialog-title-div');
 
             contentObj = document.createElement('div');
@@ -421,7 +425,6 @@ Evoque.extend('dialog', (function (self) {
                 }
                 dialogObj.appendChild(buttonObj);
 
-                //bgObj.style.height = getbackgroundHeight() + 'px';
                 document.body.appendChild(bgObj);
             }
             else
@@ -429,7 +432,6 @@ Evoque.extend('dialog', (function (self) {
                 var autoClose = option.getValueOfProperty('autoClose', defaultOption);
                 if (autoClose)
                 {
-                    //bgObjWhite.style.height = getbackgroundHeight() + 'px';
                     document.body.appendChild(bgObjWhite);
                     // 等待2秒自动消失
                     window.setTimeout(function () {
@@ -438,7 +440,6 @@ Evoque.extend('dialog', (function (self) {
                 }
                 else
                 {
-                    //bgObj.style.height = getbackgroundHeight() + 'px';
                     document.body.appendChild(bgObj);
                     // 当dialog没有任何按钮并且不自动关闭的时候，增加超时处理
                     var timeout = option.getValueOfProperty('timeout', defaultOption);
@@ -578,6 +579,11 @@ Evoque.extend('dialog', (function (self) {
         };
 
         this.close = function () {
+            reset();
+        };
+
+        this.closeAll = function () {
+            showContextSeq.splice(0, showContextSeq.length);
             reset();
         };
 
