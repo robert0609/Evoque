@@ -1602,10 +1602,10 @@ var Evoque = (function (self)
     {
         var touchEventType = {
             tap: 'tap',
-            swipeUp: 'swipeup',
-            swipeDown: 'swipedown',
-            swipeLeft: 'swipeleft',
-            swipeRight: 'swiperight'
+            swipeUp: 'swipeUp',
+            swipeDown: 'swipeDown',
+            swipeLeft: 'swipeLeft',
+            swipeRight: 'swipeRight'
         };
         innerDeclareCustomEvent(touchEventType.tap);
         innerDeclareCustomEvent(touchEventType.swipeUp);
