@@ -60,9 +60,10 @@
     margin-top: 15px;
 }
 .ui-date-time .button-on{
-    display: block;
-    padding:9px 0;
-    font-size: 1.5rem;
+    display: inline-block;
+    padding:5px;
+    margin: 0 9px;
+    font-size: 1.2rem;
     color: #fff;
     text-align: center;
     vertical-align: middle;
