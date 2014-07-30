@@ -2,6 +2,7 @@
 Evoque.extend('calendarV2', (function (self) {
     var defaultOption = {
         startDate: (new Date()).getYMD(),
+        endDate: Date.min,
         onRenderDateTd: null,
         onBeforeSelect: function () {},
         onSelected: function () {},
@@ -17,6 +18,7 @@ Evoque.extend('calendarV2', (function (self) {
         var caller = self.evoqueTarget;
         defaultOption.startDate = (new Date()).getYMD();
         var startDate = option.getValueOfProperty('startDate', defaultOption);
+        var endDate = option.getValueOfProperty('endDate', defaultOption);
         var mode = option.getValueOfProperty('displayMode', defaultOption).toLowerCase();
         if (mode !== 'switch' && mode !== 'waterfall') {
             throw 'Mode is error! It must be one of ["switch", "waterfall"]';
@@ -34,7 +36,7 @@ Evoque.extend('calendarV2', (function (self) {
             var thisCache = $(this).cache();
             if (!thisCache.containsKey('calendar_v2'))
             {
-                thisCache.push('calendar_v2', new calendarClass(this, startDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected));
+                thisCache.push('calendar_v2', new calendarClass(this, startDate, endDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected));
             }
         });
     };
@@ -62,13 +64,15 @@ Evoque.extend('calendarV2', (function (self) {
         });
     };
 
-    function calendarClass(element, minDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected)
+    function calendarClass(element, minDate, maxDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected)
     {
         var minYear = Number(minDate.getFullYear());
         var minMonth = Number(minDate.getMonth());
         var minDay = Number(minDate.getDate());
         var minWeek = Number(minDate.getDay());
-        var maxDate = new Date(minYear, minMonth + 12, minDay - 1);
+        if (maxDate.equalMin()) {
+            maxDate = new Date(minYear, minMonth + 12, minDay - 1);
+        }
         var maxYear = Number(maxDate.getFullYear());
         var maxMonth = Number(maxDate.getMonth());
         var maxDay = Number(maxDate.getDate());

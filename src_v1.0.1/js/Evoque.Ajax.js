@@ -13,7 +13,9 @@ $.extend('ajax', (function (self) {
         onSuccess : function (returnObj) {},
         onFail : function () {},
         // seconds
-        timeOut : 30
+        timeOut : 30,
+        crossOrigin: false,
+        withCredentials: false
     };
 
     self.request = function (option)
@@ -47,14 +49,27 @@ $.extend('ajax', (function (self) {
             spliter = '?';
         }
         var parameterGet = option.getValueOfProperty('parameter', defaultOption);
+        var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
+        if (crossOrigin) {
+            var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
+            if (withCredentials) {
+                xmlhttp.withCredentials = 'true';
+            }
+        }
         //针对IE对ajax请求结果的缓存机制，增加时间戳参数
         parameterGet.timestamp = (new Date()).getTime();
         xmlhttp.open('get', urlTemp + spliter + serializeQuery(parameterGet), true);
         bindEvent(xmlhttp, option);
-        xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+        if (!crossOrigin) {
+            xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+        }
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
         {
+            if ($.app() === mApp.hmbrowser)
+            {
+                return;
+            }
             xmlhttp.timeoutId = setTimeout(function () {
                 xmlhttp.abort();
                 xmlhttp.ontimeout();
@@ -66,38 +81,57 @@ $.extend('ajax', (function (self) {
     {
         checkOption(option);
         option = $(option);
+        var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
+        if (crossOrigin) {
+            var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
+            if (withCredentials) {
+                xmlhttp.withCredentials = 'true';
+            }
+        }
         bindEvent(xmlhttp, option);
-        xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
-        //判断浏览器是否支持FormData类
-        if(window.FormData)
-        {
+        if (!crossOrigin) {
+            xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+        }
+
+        if (!crossOrigin && window.FormData) {
             // 使用FormData传递post数据，无须设置Content-Type. xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
             xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption), option[0].form));
         }
-        else
-        {
+        else {
             xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
             var pain = option.getValueOfProperty('parameter', defaultOption);
             var frm = option[0].form;
-            for (var i = 0; i < frm.length; ++i)
-            {
-                if ($.isStringEmpty(frm[i].name))
+            if (frm) {
+                for (var i = 0; i < frm.length; ++i)
                 {
-                    continue;
+                    if ($.isStringEmpty(frm[i].name))
+                    {
+                        continue;
+                    }
+                    pain[frm[i].name] = frm[i].value;
                 }
-                pain[frm[i].name] = frm[i].value;
             }
             xmlhttp.send(serializeQuery(pain));
         }
         if (!xmlhttp.evoque_sptTimeout)
         {
+            if ($.app() === mApp.hmbrowser)
+            {
+                return;
+            }
             xmlhttp.timeoutId = setTimeout(function () {
                 xmlhttp.abort();
                 xmlhttp.ontimeout();
             }, xmlhttp.timeout);
         }
+    };
+
+    self.postCrossOrigin = function (option) {
+        checkOption(option);
+        option.crossOrigin = true;
+        return self.post(option);
     };
 
     function checkOption(option)
@@ -208,7 +242,7 @@ $.extend('ajax', (function (self) {
                     if (!isFailed)
                     {
                         isFailed = true;
-                        onFail({ type: 'failed' });
+                        onFail({ type: 'failed', xhrContext: xmlhttp });
                     }
                 }
                 xmlhttp = null;

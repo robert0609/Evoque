@@ -27,7 +27,8 @@ var Evoque = (function (self)
         weixin: 2,
         gaode: 3,
         qqbrowser: 4,
-        ucbrowser: 5
+        ucbrowser: 5,
+        hmbrowser: 6
     };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
@@ -138,6 +139,16 @@ var Evoque = (function (self)
     }
 
     //Extension
+    /**
+     * javascript日期的最小值
+     * @type {Date}
+     */
+    Date.min = new Date(1970, 0, 1);
+
+    /**
+     * 复制一个等值的时间实例
+     * @return {Date}
+     */
     Date.prototype.copy = function () {
         return new Date(this.getTime());
     };
@@ -259,6 +270,14 @@ var Evoque = (function (self)
         var ret = '/Date({0}+0800)/';
         var msLocal = this.getTime();
         return ret.replace('{0}', msLocal.toString());
+    };
+
+    /**
+     * 判断时间类型是否等于最小值
+     * @return {Boolean}
+     */
+    Date.prototype.equalMin = function () {
+        return this - Date.min === 0;
     };
 
     /**
