@@ -8,6 +8,7 @@ Evoque.tab = (function (self)
 
     var defaultOption = {
         tabDivId: '',
+        defaultTabIndex: -1,
         onTabSwitched: function () {}
     };
 
@@ -31,10 +32,10 @@ Evoque.tab = (function (self)
                 throw 'Parameter is error!';
             }
         }
-        return new tabClass(tabId, option.getValueOfProperty('onTabSwitched', defaultOption));
+        return new tabClass(tabId, option.getValueOfProperty('defaultTabIndex', defaultOption), option.getValueOfProperty('onTabSwitched', defaultOption));
     };
 
-    function tabClass(tabDivElement, onTabSwitched)
+    function tabClass(tabDivElement, defaultTabIndex, onTabSwitched)
     {
         var tabList = {};
 
@@ -110,7 +111,12 @@ Evoque.tab = (function (self)
         }
 
         contentArray.hide();
-        if (titleArray.length > 0)
+        var currentTitle = tabDivObj.getChild('.' + titleClass + '>div[' + indexAttrName + '="' + defaultTabIndex + '"]');
+        if (currentTitle.length > 0)
+        {
+            switchTo(Number(currentTitle.getAttr(indexAttrName)));
+        }
+        else if (titleArray.length > 0)
         {
             switchTo(Number(titleArray.getAttr(indexAttrName)));
         }

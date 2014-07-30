@@ -100,18 +100,46 @@ $.container = (function (self)
         };
 
         function genHref() {
-            var href = location.href;
-            var idx = href.indexOf('?');
             var stamp = (new Date()).getTime();
-            if (idx > -1)
-            {
-                href = href.substr(0, idx + 1) + 'timestamp=' + stamp;
+            var query = queryStr2Dic(location.search);
+            query['timestamp'] = stamp.toString();
+            var url = location.protocol + '//' + location.host + location.pathname + queryDic2Str(query);
+            return url;
+        }
+
+        function queryStr2Dic(str) {
+            if ($.isStringEmpty(str)) {
+                return {};
             }
-            else
-            {
-                href += '?timestamp=' + stamp;
+            var dic = {};
+            var kvps = str.substr(1).split('&');
+            for (var i = 0; i < kvps.length; ++i) {
+                var kv = kvps[i].split('=');
+                var k = kv[0];
+                var v = '';
+                if (kv.length > 1) {
+                    v = kv[1];
+                }
+                dic[k] = v;
             }
-            return href;
+            return dic;
+        }
+
+        function queryDic2Str(dic) {
+            var str = '';
+            var arr = [];
+            for (var k in dic) {
+                var v = dic[k];
+                if ($.isStringEmpty(v)) {
+                    continue;
+                }
+                var kv = k + '=' + v;
+                arr.push(kv);
+            }
+            if (arr.length > 0) {
+                str = '?' + arr.join('&');
+            }
+            return str;
         }
 
         function innerDisplay(divId, parameter, isBack)
