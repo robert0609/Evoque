@@ -349,6 +349,13 @@ Evoque.control = (function (self)
                     }
                     setValue(v);
                     valChanged.call(input, 0);
+                },
+                setMaxVal: function (v) {
+                    max = v;
+                    var val = Number(input1.getVal());
+                    if (val > max) {
+                        setValue(max);
+                    }
                 }
             };
         }
