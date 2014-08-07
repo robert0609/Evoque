@@ -221,7 +221,6 @@ Evoque.extend('dialog', (function (self) {
             if ($.checkType(onDialogShowed) === type.eFunction)
             {
                 onDialogShowed.call(window);
-                //setCenter();
             }
             if ($.checkType(ctx.afterShow) === type.eFunction)
             {
@@ -244,7 +243,7 @@ Evoque.extend('dialog', (function (self) {
 
             bgObj = document.createElement('div');
             bgObj.setAttribute('id', 'm-bgDiv_' + contextGuid);
-            $(bgObj).addClass('mdialog-bg-div');
+            $(bgObj).addClass('bg-dialog');
             bgObj.style.width = sWidth + 'px';
             bgObj.style.height = getbackgroundHeight() + 'px';
             //增加点击背景返回的事件处理器
@@ -263,19 +262,19 @@ Evoque.extend('dialog', (function (self) {
 
             bgObjWhite = document.createElement('div');
             bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + contextGuid);
-            $(bgObjWhite).addClass('mdialog-bg-div-white');
+            $(bgObjWhite).addClass('bg-dialog-none');
             bgObjWhite.style.width = sWidth + 'px';
             bgObjWhite.style.height = getbackgroundHeight() + 'px';
 
             dialogObj = document.createElement('div');
 
             titleObj = document.createElement('div');
-            $(titleObj).addClass('mdialog-title-div');
+            $(titleObj).addClass('J-pop-hd');
 
             contentObj = document.createElement('div');
 
             buttonObj = document.createElement('div');
-            $(buttonObj).addClass('mdialog-button-div');
+            $(buttonObj).addClass('J-pop-button');
 
             btnOK = createButton({ caption: '确定', onClick: function (event)
             {
@@ -322,10 +321,9 @@ Evoque.extend('dialog', (function (self) {
         }
 
         function createButton(btnOption) {
-            var btn = document.createElement('input');
-            btn.type = 'button';
-            btn.value = btnOption.caption;
-            $(btn).addClass('mdialog-button-input');
+            var btn = document.createElement('span');
+            btn.innerHTML = btnOption.caption;
+            $(btn).addClass('button');
             $(btn).click(function (event) {
                 var result;
                 if ($.checkType(btnOption.onClick) === type.eFunction)
@@ -363,25 +361,15 @@ Evoque.extend('dialog', (function (self) {
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
                     $(ele).show();
-                    //判断如果显示预设按钮的情况
-                    if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
-                    {
-                        $(dialogObj).addClass('mdialog-dg-div-white');
-                    }
-                    else
-                    {
-                        $(dialogObj).addClass('mdialog-dg-div-raw');
-                    }
-                    $(contentObj).addClass('mdialog-content-div-raw');
                 }
                 else
                 {
                     $(contentObj).html(content);
-                    $(dialogObj).addClass('mdialog-dg-div');
-                    $(contentObj).addClass('mdialog-content-div');
+                    $(contentObj).addClass('J-pop-bd');
                 }
                 dialogObj.appendChild(contentObj);
             }
+            $(dialogObj).addClass('J-pop-box');
             if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
             {
                 if (!$.isStringEmpty(buttonProperty))
@@ -432,6 +420,7 @@ Evoque.extend('dialog', (function (self) {
                 var autoClose = option.getValueOfProperty('autoClose', defaultOption);
                 if (autoClose)
                 {
+                    $(dialogObj).addClass('J-pop-box-b');
                     document.body.appendChild(bgObjWhite);
                     // 等待2秒自动消失
                     window.setTimeout(function () {
@@ -461,16 +450,6 @@ Evoque.extend('dialog', (function (self) {
             var w = option.getValueOfProperty('width', defaultOption);
             dialogObj.style.width = w + 'px';
 
-        }
-
-        function setCenter() {
-            //TODO：设置了这两个属性之后，loading转圈的图片不生效
-//            dialogObj.style.maxHeight = document.documentElement.clientHeight * 0.8 + 'px';
-//            dialogObj.style.overflowY = 'auto';
-            var w = dialogObj.clientWidth;
-            var h = dialogObj.clientHeight;
-            dialogObj.style.marginLeft = (0 - w) / 2 +'px';
-            dialogObj.style.marginTop = (0 - h) / 2 + 'px';
         }
 
         function reset(isTimeout) {

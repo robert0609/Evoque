@@ -1,11 +1,35 @@
 //Dependency: Evoque.js
 $.extend('cookie', (function (self) {
+    var defaultOption = {
+        expires: (new Date()).addDay(1),
+        path: '/',
+        domain: ''
+    };
+
+    self.checkEnable = function () {
+        if ($.checkType(navigator.cookiesEnabled) === type.eBoolean)
+        {
+            return navigator.cookiesEnabled;
+        }
+        else
+        {
+            var result=false;
+            document.cookie = "testcookie=yes;";
+            var cookieSet = document.cookie;
+            if (cookieSet.indexOf("testcookie=yes") > -1)
+            {
+                result=true;
+            }
+            return result;
+        }
+    };
+
     self.get = function (key) {
         return getCookie(key);
     };
 
-    self.set = function (key, val) {
-        setCookie(key, val);
+    self.set = function (key, val, option) {
+        setCookie(key, val, option);
     };
 
     function getCookie(key)
@@ -21,7 +45,7 @@ $.extend('cookie', (function (self) {
         return null;
     }
 
-    function setCookie(key, val)
+    function setCookie(key, val, option)
     {
         //获取当前时间
         var date = new Date();
@@ -30,28 +54,39 @@ $.extend('cookie', (function (self) {
         {
             //将date设置为过去的时间
             date.setTime(date.getTime() - 10000);
-            //将userId这个cookie删除
+            //将这个cookie删除
             document.cookie = key + '=' + originalVal + '; expires=' + date.toUTCString() + '; path=/';
         }
-        if (!$.isObject(val) && val !== undefined)
+        option = option || {};
+        option = $(option);
+        var expires = option.getValueOfProperty('expires', defaultOption);
+        var path = option.getValueOfProperty('path', defaultOption);
+        var domain = option.getValueOfProperty('domain', defaultOption);
+        var strVal = null;
+        switch ($.checkType(val))
         {
-            //在设置新的同名Cookie
-            var now = new Date();
-            now.setDate(Number(now.getDate()) + 1);
-            var strVal = '';
-            switch ($.checkType(val))
-            {
-                case type.eBoolean:
-                    strVal = val ? 'True' : 'False';
-                    break;
-                case type.eNumber:
-                    strVal = val.toString();
-                    break;
-                case type.eString:
-                    strVal = val;
-                    break;
+            case type.eBoolean:
+                strVal = val ? 'True' : 'False';
+                break;
+            case type.eNumber:
+                strVal = val.toString();
+                break;
+            case type.eString:
+                strVal = val;
+                break;
+        }
+        if (!$.isStringEmpty(strVal)) {
+            var strCookie = key + '=' + strVal + '; expires=' + expires.toUTCString();
+            if ($.isStringEmpty(path)) {
+                strCookie += '; path=/';
             }
-            document.cookie = key + '=' + strVal + '; expires=' + now.toUTCString() + '; path=/';
+            else {
+                strCookie += '; path=' + path;
+            }
+            if (!$.isStringEmpty(domain)) {
+                strCookie += '; domain=' + domain;
+            }
+            document.cookie = strCookie;
         }
     }
 

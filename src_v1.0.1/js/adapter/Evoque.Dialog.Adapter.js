@@ -61,5 +61,20 @@ $.dialog = (function (self) {
         return this.dialog.closeCurrentDialog();
     };
 
+    window.mDialogManager = {
+        alert: function (message) {
+            return $.dialog.alert(message);
+        },
+        showLoading: function (loadingMsg, callback) {
+            return $.dialog.showLoading(loadingMsg, callback);
+        },
+        showMessageBox: function (option) {
+            return $.dialog.showMessageBox(option);
+        },
+        showModalDialog: function (option) {
+            return $.dialog.showModalDialog(option);
+        }
+    };
+
     return self;
 }($.dialog || {}));
