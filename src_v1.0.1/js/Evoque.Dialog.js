@@ -26,7 +26,9 @@ Evoque.extend('dialog', (function (self) {
         timeout: 0,
         onTimeout: function () {},
         //弹层的位置:'center', 'top'. default: 'center'
-        direction: 'center'
+        direction: 'center',
+        //弹层的布局样式版本:'plain', 'preset'. default: 'preset'
+        layoutVersion: 'preset'
     };
 
     /**
@@ -86,7 +88,8 @@ Evoque.extend('dialog', (function (self) {
                 ctx.show({
                     content: '抱歉，你的网络不太好，请稍后重新刷新页面!'
                 });
-            }
+            },
+            layoutVersion: 'plain'
         }, callback);
     };
 
@@ -378,10 +381,13 @@ Evoque.extend('dialog', (function (self) {
             var buttonProperty = option.getValueOfProperty('button', defaultOption);
             var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
             var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
-            originalDirection = direction;
+            var layoutVersion = option.getValueOfProperty('layoutVersion', defaultOption).toLowerCase();
+            var autoClose = option.getValueOfProperty('autoClose', defaultOption);
             if (!$.isStringEmpty(title)) {
                 titleObj.innerHTML = title;
-                dialogObj.appendChild(titleObj);
+                if (layoutVersion !== 'plain') {
+                    dialogObj.appendChild(titleObj);
+                }
             }
             if (!$.isStringEmpty(content))
             {
@@ -393,13 +399,23 @@ Evoque.extend('dialog', (function (self) {
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
                     $(ele).show();
+                    if (layoutVersion === 'plain') {
+                        $(dialogObj).addClass('J-pop-box-transparent');
+                    }
                 }
                 else
                 {
                     $(contentObj).html(content);
                     $(contentObj).addClass('J-pop-bd');
+                    if ($.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
+                        $(dialogObj).addClass('J-pop-box-b');
+                    }
                 }
                 dialogObj.appendChild(contentObj);
+            }
+            else
+            {
+                throw 'Content of dialog can not be null!';
             }
             $(dialogObj).addClass('J-pop-box');
             if (direction === 'top') {
@@ -446,16 +462,16 @@ Evoque.extend('dialog', (function (self) {
                         }
                     }
                 }
-                dialogObj.appendChild(buttonObj);
+                if (layoutVersion !== 'plain') {
+                    dialogObj.appendChild(buttonObj);
+                }
 
                 document.body.appendChild(bgObj);
             }
             else
             {
-                var autoClose = option.getValueOfProperty('autoClose', defaultOption);
                 if (autoClose)
                 {
-                    $(dialogObj).addClass('J-pop-box-b');
                     document.body.appendChild(bgObjWhite);
                     // 等待2秒自动消失
                     window.setTimeout(function () {
@@ -492,7 +508,12 @@ Evoque.extend('dialog', (function (self) {
             originalOrientation = $.orientation();
             originalWindowWidth = document.documentElement.clientWidth;
             originalWindowHeight = document.documentElement.clientHeight;
-
+            originalDirection = direction;
+            //show出来之后再判断下高度，超长则更改dialog的定位
+            if (originalDirection === 'center' && originalDialogHeight > originalWindowHeight) {
+                originalDirection = 'top';
+                $(dialogObj).addClass('J-pop-box-t');
+            }
         }
 
         function reset(isTimeout) {

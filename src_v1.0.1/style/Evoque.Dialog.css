@@ -88,7 +88,11 @@
   border-left: none;
   color:#f60;
 }
-
+/*透明弹框*/
+.J-pop-box-transparent{
+    background: rgba(0,0,0,0);
+    text-align: center;
+}
 /*黑色弹框*/
 .J-pop-box-b{
   background: rgba(0,0,0,.7);
