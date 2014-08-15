@@ -6,7 +6,7 @@ Evoque.extend('dialog', (function (self) {
         title:'',
         //对话框内容，可以是文本字符串，也可以是要显示的div的id
         content:'',
-        width:document.documentElement.clientWidth * 0.9,
+        width: 0,
         height:100,
         //'ok', 'cancel', 'yes', 'no', 'close' OR multiple buttons: 'yes|no'
         button:'',
@@ -202,8 +202,13 @@ Evoque.extend('dialog', (function (self) {
         var showContextSeq = [];
         var showContextExecuting = false;
 
+        var originalWindowWidth = 0;
+        var originalWindowHeight = 0;
         var originalDialogWidth = 0;
-        var originalDirection = mOrientation.vertical;
+        var originalDialogHeight = 0;
+        var originalOrientation = mOrientation.vertical;
+
+        var originalDirection = 'center';
 
         function exeShowContext() {
             var ctx = showContextSeq.shift();
@@ -272,24 +277,23 @@ Evoque.extend('dialog', (function (self) {
             dialogObj = document.createElement('div');
 
             $.orientationChange(function () {
+                var windowWidth = document.documentElement.clientWidth;
+                var windowHeight = document.documentElement.clientHeight;
                 var $dialog = $(dialogObj);
-                var classList = $dialog.getClassList();
-                if (classList.contains('J-pop-box')) {
-                    var o = $.orientation();
-                    if (originalDirection === mOrientation.vertical)
+                var o = $.orientation();
+                if (o === originalOrientation) {
+                    dialogObj.style.width = originalDialogWidth + 'px';
+                    if (originalDirection === 'center') {
+                        $dialog.removeClass('J-pop-box-t');
+                    }
+                }
+                else {
+                    dialogObj.style.width = originalDialogWidth / originalWindowWidth * windowWidth + 'px';
+                    if (originalDirection === 'center')
                     {
-                        if (o === mOrientation.horizontal) {
-                            $(dialogObj).addClass('J-pop-box-t');
+                        if (dialogObj.clientHeight > windowHeight) {
+                            $dialog.addClass('J-pop-box-t');
                         }
-                        else {
-                            $(dialogObj).removeClass('J-pop-box-t');
-                        }
-                    }
-                    if (o === originalDirection) {
-                        dialogObj.style.width = originalDialogWidth + 'px';
-                    }
-                    else {
-                        dialogObj.style.width = document.documentElement.clientWidth * 0.9 + 'px';
                     }
                 }
             });
@@ -374,6 +378,7 @@ Evoque.extend('dialog', (function (self) {
             var buttonProperty = option.getValueOfProperty('button', defaultOption);
             var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
             var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
+            originalDirection = direction;
             if (!$.isStringEmpty(title)) {
                 titleObj.innerHTML = title;
                 dialogObj.appendChild(titleObj);
@@ -396,11 +401,9 @@ Evoque.extend('dialog', (function (self) {
                 }
                 dialogObj.appendChild(contentObj);
             }
+            $(dialogObj).addClass('J-pop-box');
             if (direction === 'top') {
                 $(dialogObj).addClass('J-pop-box-t');
-            }
-            else {
-                $(dialogObj).addClass('J-pop-box');
             }
             if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
             {
@@ -480,9 +483,15 @@ Evoque.extend('dialog', (function (self) {
 
             document.body.appendChild(dialogObj);
             var w = option.getValueOfProperty('width', defaultOption);
+            if (w === 0) {
+                w = document.documentElement.clientWidth * 0.9;
+            }
             dialogObj.style.width = w + 'px';
             originalDialogWidth = w;
-            originalDirection = $.orientation();
+            originalDialogHeight = dialogObj.clientHeight;
+            originalOrientation = $.orientation();
+            originalWindowWidth = document.documentElement.clientWidth;
+            originalWindowHeight = document.documentElement.clientHeight;
 
         }
 
