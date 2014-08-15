@@ -6,7 +6,7 @@ Evoque.extend('dialog', (function (self) {
         title:'',
         //对话框内容，可以是文本字符串，也可以是要显示的div的id
         content:'',
-        width:document.documentElement.clientWidth * 0.75,
+        width:document.documentElement.clientWidth * 0.9,
         height:100,
         //'ok', 'cancel', 'yes', 'no', 'close' OR multiple buttons: 'yes|no'
         button:'',
@@ -24,7 +24,9 @@ Evoque.extend('dialog', (function (self) {
         autoClose: true,
         //对话框显示出来之后的超时时间，超过指定时间自动关闭
         timeout: 0,
-        onTimeout: function () {}
+        onTimeout: function () {},
+        //弹层的位置:'center', 'top'. default: 'center'
+        direction: 'center'
     };
 
     /**
@@ -200,6 +202,9 @@ Evoque.extend('dialog', (function (self) {
         var showContextSeq = [];
         var showContextExecuting = false;
 
+        var originalDialogWidth = 0;
+        var originalDirection = mOrientation.vertical;
+
         function exeShowContext() {
             var ctx = showContextSeq.shift();
             if ($.isObjectNull(ctx))
@@ -244,7 +249,6 @@ Evoque.extend('dialog', (function (self) {
             bgObj = document.createElement('div');
             bgObj.setAttribute('id', 'm-bgDiv_' + contextGuid);
             $(bgObj).addClass('bg-dialog');
-            bgObj.style.width = sWidth + 'px';
             bgObj.style.height = getbackgroundHeight() + 'px';
             //增加点击背景返回的事件处理器
             $(bgObj).click(function (event) {
@@ -263,10 +267,32 @@ Evoque.extend('dialog', (function (self) {
             bgObjWhite = document.createElement('div');
             bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + contextGuid);
             $(bgObjWhite).addClass('bg-dialog-none');
-            bgObjWhite.style.width = sWidth + 'px';
             bgObjWhite.style.height = getbackgroundHeight() + 'px';
 
             dialogObj = document.createElement('div');
+
+            $.orientationChange(function () {
+                var $dialog = $(dialogObj);
+                var classList = $dialog.getClassList();
+                if (classList.contains('J-pop-box')) {
+                    var o = $.orientation();
+                    if (originalDirection === mOrientation.vertical)
+                    {
+                        if (o === mOrientation.horizontal) {
+                            $(dialogObj).addClass('J-pop-box-t');
+                        }
+                        else {
+                            $(dialogObj).removeClass('J-pop-box-t');
+                        }
+                    }
+                    if (o === originalDirection) {
+                        dialogObj.style.width = originalDialogWidth + 'px';
+                    }
+                    else {
+                        dialogObj.style.width = document.documentElement.clientWidth * 0.9 + 'px';
+                    }
+                }
+            });
 
             titleObj = document.createElement('div');
             $(titleObj).addClass('J-pop-hd');
@@ -347,6 +373,7 @@ Evoque.extend('dialog', (function (self) {
             var content = option.getValueOfProperty('content', defaultOption);
             var buttonProperty = option.getValueOfProperty('button', defaultOption);
             var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
+            var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
             if (!$.isStringEmpty(title)) {
                 titleObj.innerHTML = title;
                 dialogObj.appendChild(titleObj);
@@ -369,7 +396,12 @@ Evoque.extend('dialog', (function (self) {
                 }
                 dialogObj.appendChild(contentObj);
             }
-            $(dialogObj).addClass('J-pop-box');
+            if (direction === 'top') {
+                $(dialogObj).addClass('J-pop-box-t');
+            }
+            else {
+                $(dialogObj).addClass('J-pop-box');
+            }
             if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
             {
                 if (!$.isStringEmpty(buttonProperty))
@@ -449,6 +481,8 @@ Evoque.extend('dialog', (function (self) {
             document.body.appendChild(dialogObj);
             var w = option.getValueOfProperty('width', defaultOption);
             dialogObj.style.width = w + 'px';
+            originalDialogWidth = w;
+            originalDirection = $.orientation();
 
         }
 

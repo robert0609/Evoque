@@ -29,6 +29,17 @@
   border-radius: 3px;
   background-color:#fff;
 }
+.J-pop-box-t{
+    position: absolute;
+    left: 50%;
+    top: 0;
+    -webkit-transform:translateX(-50%);
+    -moz-transform:translateX(-50%);
+    transform:translateX(-50%);
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background-color:#fff;
+}
 .J-pop-hd{
   height: 43px;
   padding:0 15px;
@@ -38,7 +49,7 @@
   border-bottom: 1px solid #ebebeb;
   position: relative;
 }
-.J-pop-box h2{
+.J-pop-hd h2{
   font-size: 16px;
 }
 .J-pop-close{

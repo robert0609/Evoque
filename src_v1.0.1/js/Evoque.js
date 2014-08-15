@@ -28,7 +28,8 @@ var Evoque = (function (self)
         gaode: 3,
         qqbrowser: 4,
         ucbrowser: 5,
-        hmbrowser: 6
+        hmbrowser: 6,
+        baidubrowser: 7
     };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
@@ -63,6 +64,19 @@ var Evoque = (function (self)
             _mApp = mApp.hmbrowser;
         }
     }
+    else if (_agent.indexOf('baidubrowser') > -1)
+    {
+        _mApp = mApp.baidubrowser;
+    }
+
+    /**
+     * 设备方向枚举
+     * @type {Object}
+     */
+    window.mOrientation = {
+        vertical: 0,
+        horizontal: 1
+    };
 
     /**
      * 数据类型字典变量
@@ -128,7 +142,7 @@ var Evoque = (function (self)
     function core_addUnloadHandler(fn, useCapture)
     {
         var evtName = 'unload';
-        if ((_mAgent === mAgent.ios) || (_mAgent === mAgent.android && (_mApp === mApp.qqbrowser || _mApp === mApp.ucbrowser)))
+        if ((_mAgent === mAgent.ios) || (_mAgent === mAgent.android && (_mApp === mApp.qqbrowser || _mApp === mApp.ucbrowser || _mApp === mApp.baidubrowser)))
         {
             evtName = 'pagehide';
         }
@@ -414,6 +428,39 @@ var Evoque = (function (self)
     };
 
     /**
+     * 使用参数替换文字中的占位符,例： "{0} and {1}".format("hello", "world") 输出 hello and world
+     * @return {string}
+     */
+    String.prototype.format = function () {
+        var args = arguments;
+        return this.replace(/\{(\d+)\}/g, function (m, g) {
+            var v = args[parseInt(g)];
+            return v == undefined ? m : v;
+        });
+    };
+
+    /**
+     * 判断数组是否包含指定的元素
+     * @param v
+     * @return {Boolean}
+     */
+    Array.prototype.contains = function (v) {
+        if ($.checkType(this.indexOf) === type.eFunction) {
+            return this.indexOf(v) > -1;
+        }
+        else {
+            var flag = false;
+            $(this).each(function () {
+                if (this === v) {
+                    flag = true;
+                    return false;
+                }
+            });
+            return flag;
+        }
+    };
+
+    /**
      * 获取Evoque包装对象
      * @param parameter 可以是CSS选择器、js变量、DOM对象，也可以是DOMReady事件的回调函数
      * @return {EvoqueClass}
@@ -687,6 +734,29 @@ var Evoque = (function (self)
     $.load = function (fn)
     {
         core_addLoadedHandler(fn, false);
+    };
+
+    /**
+     * 绑定设备重力感应方向变化的事件
+     * @param fn
+     */
+    $.orientationChange = function (fn) {
+        var evtName = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+            window.addEventListener(evtName, fn, false);
+        }
+    };
+
+    /**
+     * 获取设备当前方向
+     */
+    $.orientation = function () {
+        if (window.orientation == 180||window.orientation == 0) {
+            return mOrientation.vertical;
+        }
+        if (window.orientation == 90||window.orientation == -90) {
+            return mOrientation.horizontal;
+        }
     };
 
     /**
