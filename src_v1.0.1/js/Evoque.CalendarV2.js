@@ -380,6 +380,7 @@ Evoque.extend('calendarV2', (function (self) {
         function reselectRange(selVal, event, onBeforeSelect) {
             if (selectDates.length === 0 || selectDates.length > 1)
             {
+                var minus, min, max, loopDate;
                 if ($.checkType(onBeforeSelect) === type.eFunction)
                 {
                     var beforeResult = onBeforeSelect.call(event.currentTarget, event, {

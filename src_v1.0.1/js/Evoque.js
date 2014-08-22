@@ -31,6 +31,14 @@ var Evoque = (function (self)
         hmbrowser: 6,
         baidubrowser: 7
     };
+    /**
+     * 标识当前的移动设备种类
+     * @type {Object}
+     */
+    window.mDevice = {
+        other: 0,
+        mx3: 1
+    };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
     {
@@ -67,6 +75,10 @@ var Evoque = (function (self)
     else if (_agent.indexOf('baidubrowser') > -1)
     {
         _mApp = mApp.baidubrowser;
+    }
+    var _mDevice = mDevice.other;
+    if (_agent.indexOf('m353') > -1) {
+        _mDevice = mDevice.mx3;
     }
 
     /**
@@ -542,6 +554,13 @@ var Evoque = (function (self)
      */
     $.app = function () {
         return _mApp;
+    };
+
+    /**
+     * 获取当前设备的种类
+     */
+    $.device = function () {
+        return _mDevice;
     };
 
     /**
