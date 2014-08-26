@@ -20,6 +20,7 @@
         {
             $.geo.getCurrentLocation({
                 onSuccess: function (obj) {
+                    alert('geo success');
                     curLat = obj.lat;
                     curLng = obj.lng;
                     findGPSAddr(curLat, curLng);

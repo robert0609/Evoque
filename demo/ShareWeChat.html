@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<button name="kind">1</button>
+<button name="kind">2</button>
+
+<script type="text/javascript">
+    var shareContent = 'init';
+    $(function () {
+        $('button[name="kind"]').addEventHandler('click', function () {
+            var val = $(this).text();
+            if (val == 1) {
+                shareContent = '大家好，localhost';
+            }
+            else {
+                shareContent = '大家好，m.tujia.com';
+            }
+            $('#console').text(shareContent);
+        });
+    });
+
+
+    function wxJsBridgeReady(readyCallback) {
+        if (readyCallback && typeof readyCallback == 'function') {
+            var Api = this;
+            var wxReadyFunc = function () {
+                readyCallback(Api);
+            };
+            if (typeof window.WeixinJSBridge == "undefined"){
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', wxReadyFunc, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', wxReadyFunc);
+                    document.attachEvent('onWeixinJSBridgeReady', wxReadyFunc);
+                }
+            }else{
+                wxReadyFunc();
+            }
+        }
+    }
+
+    function weixinShareTimeline(callbacks) {
+        callbacks = callbacks || {};
+        var shareTimeline = function (theData) {
+            WeixinJSBridge.invoke('shareTimeline', {
+                "appid":theData.appId ? theData.appId : '',
+                "img_url":theData.imgUrl,
+                "link":theData.link,
+                "desc":theData.title,
+                "title":theData.desc, // 注意这里要分享出去的内容是desc
+                "img_width":"120",
+                "img_height":"120"
+            }, function (resp) {
+                switch (resp.err_msg) {
+                    // share_timeline:cancel 用户取消
+                    case 'share_timeline:cancel':
+                        callbacks.cancel && callbacks.cancel(resp);
+                        break;
+                    // share_timeline:fail　发送失败
+                    case 'share_timeline:fail':
+                        callbacks.fail && callbacks.fail(resp);
+                        break;
+                    // share_timeline:confirm 发送成功
+                    case 'share_timeline:confirm':
+                    case 'share_timeline:ok':
+                        callbacks.confirm && callbacks.confirm(resp);
+                        break;
+                }
+                // 无论成功失败都会执行的回调
+                callbacks.all && callbacks.all(resp);
+            });
+        };
+        WeixinJSBridge.on('menu:share:timeline', function (argv) {
+            if ($.checkType(callbacks.ready) !== type.eFunction) {
+                return;
+            }
+            var data = callbacks.ready(argv);
+            if ($.isObjectNull(data)) {
+                return;
+            }
+            shareTimeline(data);
+        });
+    }
+
+    wxJsBridgeReady(function () {
+        weixinShareTimeline({
+            // 分享操作开始之前
+            ready : function() {
+                // 你可以在这里对分享的数据进行重组
+                return {
+                    "appId": "", // 服务号可以填写appId
+                    "imgUrl" : 'http://www.baidufe.com/fe/blog/static/img/weixin-qrcode-2.jpg',
+                    "link" : 'http://m.tujia.com',
+                    "desc" : shareContent,
+                    "title" : shareContent
+                };
+            },
+            // 分享被用户自动取消
+            cancel : function(resp) {
+                // 你可以在你的页面上给用户一个小Tip，为什么要取消呢？
+                alert("分享被取消");
+            },
+            // 分享失败了
+            fail : function(resp) {
+                // 分享失败了，是不是可以告诉用户：不要紧，可能是网络问题，一会儿再试试？
+                alert("分享失败");
+            },
+            // 分享成功
+            confirm : function(resp) {
+                // 分享成功了，我们是不是可以做一些分享统计呢？
+                //window.location.href='http://192.168.1.128:8080/wwyj/test.html';
+                alert("分享成功");
+            },
+            // 整个分享过程结束
+            all : function(resp) {
+                // 如果你做的是一个鼓励用户进行分享的产品，在这里是不是可以给用户一些反馈了？
+                alert("分享结束");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

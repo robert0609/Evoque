@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.CardNoInputer.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.CardNoInputer.css" />
+    <script type="text/javascript">
+        $(function () {
+            $('#cardNo').cardNoInputer.create({
+                totalLength: 16,
+                boxLength: 4
+            });
+        });
+    </script>
+</head>
+<body>
+    <input id="cardNo" type="text" placeholder="请输入卡号" />
+    <span id="console"></span>
+</body>
+</html>

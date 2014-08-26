@@ -2,16 +2,18 @@
 <html>
 <head>
     <title>Worker example: Multicore computation</title>
-    <!--<script type="text/javascript" src="worker.js"></script>-->
+    <script type="text/javascript" src="worker_miaosha.js"></script>
+    <!--<script type="text/javascript" src="../src/worker.js"></script>-->
     <!--<script type="text/javascript" src="core.js"></script>-->
 </head>
 <body>
 <p>Result: <output id="result"></output></p>
 <script>
-    var worker = new Worker('worker.js');
+    var worker = new Worker('http://10.2.10.129:4001/src/worker.js');
     worker.onmessage = function (event) {
         document.getElementById('result').textContent = event.data;
     };
+
 </script>
 </body>
 </html>

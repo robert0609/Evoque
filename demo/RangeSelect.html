@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Control.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Control.css" />
     <script type="text/javascript">
@@ -26,15 +26,15 @@
                 }
             });
 
-            $('.range').createRangeSelectFormat({
-                minVal: 5,
+            var rsf = $('.range').createRangeSelectFormat({
+                minVal: 1,
                 maxVal: 5,
                 format: '{0}位住客',
                 //flag: 1: up; -1: down; 0: no click
                 beforeValueChange: function (flag) {},
                 valueChanged: function (flag) {}
             });
-            $('#in8')[0].rangeSelectFormat.setVal(3);
+            //$('#in8')[0].rangeSelectFormat.setVal(3);
 
             $('.date').createRangeSelectDate({
                 //flag: 1: up; -1: down; 0: no click
@@ -42,10 +42,15 @@
                 dateChanged: function (flag) {}
             });
             $('#d1')[0].rangeSelectDate.setDate('2015-1-6'.toDate());
+
+            $('#btn').click(function () {
+                $('#in8')[0].rangeSelectFormat.setMaxVal(3);
+            });
         });
     </script>
 </head>
 <body>
+    <button id="btn">modify</button>
     <form>
         <input type="text" class="range"/>
         <input type="text" class="range"/>

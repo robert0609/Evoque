@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            window.addEventListener('scroll', function () {
+                var t = document.documentElement.scrollTop;
+                if (t == 0)
+                {
+                    t = document.body.scrollTop;
+                }
+                //eDebugger.output(t);
+                console.log(t);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div style="height: 5000px;">
+        <input type="tel">
+    </div>
+</body>
+</html>

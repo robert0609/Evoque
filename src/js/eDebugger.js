@@ -2,9 +2,9 @@ var eDebugger = (function (self)
 {
     var divConsole = document.createElement('div');
     divConsole.id = 'divConsole';
-    divConsole.style.position = 'fixed';
-    divConsole.style.top = 0;
-    divConsole.style.left = 0;
+//    divConsole.style.position = 'fixed';
+//    divConsole.style.top = 0;
+//    divConsole.style.left = 0;
     var deepthDef = 1;
     var template = '{0}&nbsp;@&nbsp;{1}:&nbsp;{2}';
     var cusTabChar = '|&nbsp;&nbsp;&nbsp;';

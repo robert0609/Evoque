@@ -10,33 +10,40 @@
     <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
-    <script type="text/javascript">
-        var video_element;
-
-        $(function () {
-            eDebugger.output('Width: ' + document.documentElement.clientWidth + '; Height: ' + document.documentElement.clientHeight);
-            video_element = $('#video')[0]
-            if (navigator.webkitGetUserMedia) { // opera should use opera.getUserMedia now, chrome use webkitGetUserMedia
-                //navigator.webkitGetUserMedia('video', success, error);
-                alert('webkitGetUserMedia');
-            }
-            if (navigator.getUserMedia) { // opera should use opera.getUserMedia now, chrome use webkitGetUserMedia
-                //navigator.webkitGetUserMedia('video', success, error);
-                alert('getUserMedia');
-            }
-//            var $camera = $('#camera');
-//            $camera.setStyle('width', '300px');
-//            $camera.setStyle('height', '400px');
-        });
-
-        function success(stream) {
-            video_element.src =stream;
-        }
-    </script>
 </head>
 <body>
+<!--<input type="file" id="take-picture" accept="image/*">-->
+
 <video id="video" autoplay="" style="width: 300px; height: 400px;"></video>
 <!--<canvas id="camera"></canvas>-->
 <!--<img id="photo">-->
+
+<script type="text/javascript">
+    eDebugger.output('Width: ' + document.documentElement.clientWidth + '; Height: ' + document.documentElement.clientHeight);
+    var video_element = $('#video')[0];
+    if (navigator.webkitGetUserMedia) { // opera should use opera.getUserMedia now, chrome use webkitGetUserMedia
+        navigator.webkitGetUserMedia({video:true}, success, error);
+        //alert('webkitGetUserMedia');
+    }
+    if (navigator.getUserMedia) { // opera should use opera.getUserMedia now, chrome use webkitGetUserMedia
+        navigator.webkitGetUserMedia({video:true}, success, error);
+        //alert('getUserMedia');
+    }
+    //            var $camera = $('#camera');
+    //            $camera.setStyle('width', '300px');
+    //            $camera.setStyle('height', '400px');
+
+    function success(stream) {
+        //video_element.src = stream;
+        if (window.URL) {
+            video_element.src = window.URL.createObjectURL(stream);
+        } else {
+            video_element.src = stream;
+        }
+        video_element.autoplay = true;
+    }
+
+    function error() {}
+</script>
 </body>
 </html>
