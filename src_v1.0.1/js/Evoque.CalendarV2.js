@@ -84,92 +84,92 @@ Evoque.extend('calendarV2', (function (self) {
             selectDates.push(minDate);
         }
 
+        var calendarContainer = document.createElement('div');
+        var $calendarContainer = $(calendarContainer);
+        $calendarContainer.addClass('ui-calendar');
+        element.appendChild(calendarContainer);
+
         function initTable(displayMonth) {
-            var table = document.createElement('table');
+            var table = document.createElement('div');
             var $table = $(table);
-            $table.addClass('table-calendar');
+            $table.addClass('ui-calendar-month');
             initHead();
             initBody();
-            initFoot();
             loadMonth(displayMonth);
 
             function initHead() {
-                var thead = document.createElement('thead');
-                var theadRow1 = document.createElement('tr');
-                var prev = document.createElement('th');
+                var thead = document.createElement('div');
+                var $thead = $(thead);
+                $thead.addClass('ui-calendar-title');
+                var title = document.createElement('h3');
+                var $title = $(title);
+                var prev = document.createElement('span');
                 var $prev = $(prev);
-                var next = document.createElement('th');
+                var next = document.createElement('span');
                 var $next = $(next);
                 if (mode === 'switch')
                 {
-                    $prev.addClass('prev');
+                    $prev.addClass('ui-calendar-l');
                     $prev.text('←');
                     $prev.click(function () {
-                        var title = $($table.getChild('thead>tr>th')[1]);
-                        var curY = Number(title.getAttr('curY'));
-                        var curM = Number(title.getAttr('curM'));
+                        var curY = Number($title.getAttr('curY'));
+                        var curM = Number($title.getAttr('curM'));
                         if (curY == minYear && curM == minMonth) {
                             return;
                         }
-                        var $nowDisplay = $(element).getChild('table[curYM="' + curY + '-' + curM + '"]');
+                        var $nowDisplay = $(element).getChild('div.ui-calendar-month[curYM="' + curY + '-' + curM + '"]');
                         $nowDisplay.hide();
-                        var $toDisplay = $(element).getChild('table[curYM="' + curY + '-' + (curM - 1).toString() + '"]');
+                        var $toDisplay = $(element).getChild('div.ui-calendar-month[curYM="' + curY + '-' + (curM - 1).toString() + '"]');
                         if ($toDisplay.length === 0)
                         {
                             $toDisplay = initTable(new Date(curY, curM - 1, 1));
-                            element.insertBefore($toDisplay[0], $nowDisplay[0]);
+                            calendarContainer.insertBefore($toDisplay[0], $nowDisplay[0]);
                         }
                         $toDisplay.show();
                     });
-                    $next.addClass('next');
+                    $next.addClass('ui-calendar-r');
                     $next.text('→');
                     $next.click(function () {
-                        var title = $($table.getChild('thead>tr>th')[1]);
-                        var curY = Number(title.getAttr('curY'));
-                        var curM = Number(title.getAttr('curM'));
+                        var curY = Number($title.getAttr('curY'));
+                        var curM = Number($title.getAttr('curM'));
                         if (curY == maxYear && curM == maxMonth) {
                             return;
                         }
-                        var $nowDisplay = $(element).getChild('table[curYM="' + curY + '-' + curM + '"]');
+                        var $nowDisplay = $(element).getChild('div.ui-calendar-month[curYM="' + curY + '-' + curM + '"]');
                         $nowDisplay.hide();
-                        var $toDisplay = $(element).getChild('table[curYM="' + curY + '-' + (curM + 1).toString() + '"]');
+                        var $toDisplay = $(element).getChild('div.ui-calendar-month[curYM="' + curY + '-' + (curM + 1).toString() + '"]');
                         if ($toDisplay.length === 0)
                         {
                             $toDisplay = initTable(new Date(curY, curM + 1, 1));
-                            element.appendChild($toDisplay[0]);
+                            calendarContainer.appendChild($toDisplay[0]);
                         }
                         $toDisplay.show();
                     });
                 }
-                var title = document.createElement('th');
-                var $title = $(title);
-                $title.addClass('switch');
-                $title.setAttr('colspan', '5');
-                theadRow1.appendChild(prev);
-                theadRow1.appendChild(title);
-                theadRow1.appendChild(next);
+                thead.appendChild(title);
+                thead.appendChild(prev);
+                thead.appendChild(next);
 
-                var theadRow2 = document.createElement('tr');
+                var theadRow2 = document.createElement('ul');
+                $(theadRow2).addClass('ui-calendar-week');
                 var weekArray = [ '日', '一', '二', '三', '四', '五', '六' ];
-                $(weekArray).each(function () {
-                    var th = document.createElement('th');
+                $(weekArray).each(function (i) {
+                    var th = document.createElement('li');
                     var $th = $(th);
-                    $th.addClass('dow');
+                    if (i === 0 || i === 6) {
+                        $th.addClass('h-light');
+                    }
                     $th.text(this);
                     theadRow2.appendChild(th);
                 });
 
-                thead.appendChild(theadRow1);
-                thead.appendChild(theadRow2);
                 table.appendChild(thead);
+                table.appendChild(theadRow2);
             }
             function initBody() {
-                var tbody = document.createElement('tbody');
+                var tbody = document.createElement('ul');
+                $(tbody).addClass('ui-calendar-day');
                 table.appendChild(tbody);
-            }
-            function initFoot() {
-                var tfoot = document.createElement('tfoot');
-                table.appendChild(tfoot);
             }
 
             function loadMonth(dateDisplay) {
@@ -179,7 +179,7 @@ Evoque.extend('calendarV2', (function (self) {
                 $table.setAttr('curYM', year + '-' + month);
 
                 var monthStr = month + 1;
-                var title = $($table.getChild('thead>tr>th')[1]);
+                var title = $($table.getChild('div.ui-calendar-title>h3')[0]);
                 title.text(year + '年' + monthStr + '月');
                 title.setAttr('curY', year);
                 title.setAttr('curM', month);
@@ -190,26 +190,24 @@ Evoque.extend('calendarV2', (function (self) {
                 var loopDate = new Date(year, month, datIndex);
                 var endDate = new Date(year, month + 1, 1);
 
-                var $tbody = $table.getChild('tbody');
+                var $tbody = $table.getChild('ul.ui-calendar-day');
                 $tbody.clearChild();
                 var body = $tbody[0];
-                var bodyRow = null;
                 while (true) {
                     if (loopDate.getDay() == 0) {
                         if (loopDate >= endDate) {
                             break;
                         }
-                        bodyRow = document.createElement('tr');
-                        body.appendChild(bodyRow);
                     }
-                    bodyRow.appendChild(genDayTd(loopDate));
+                    body.appendChild(genDayTd(loopDate));
                     datIndex += 1;
                     loopDate = new Date(year, month, datIndex);
                 }
 
                 function genDayTd(date) {
-                    var td = document.createElement('td');
+                    var td = document.createElement('li');
                     var $td = $(td);
+                    $td.addClass('line2');
                     if (Number(date.getFullYear()) === year && Number(date.getMonth()) === month) {
                         if (date - minDate < 0 || date - maxDate > 0)
                         {
@@ -227,7 +225,6 @@ Evoque.extend('calendarV2', (function (self) {
                             }
                             else
                             {
-                                $td.addClass('day');
                                 $td.text(date.getDate());
                             }
                             $td.setAttr('curD', date.getDate());
@@ -314,11 +311,11 @@ Evoque.extend('calendarV2', (function (self) {
             }
 
             function setPrevNext() {
-                var title = $($table.getChild('thead>tr>th')[1]);
+                var title = $($table.getChild('div.ui-calendar-title>h3')[0]);
                 var curY = Number(title.getAttr('curY'));
                 var curM = Number(title.getAttr('curM'));
-                var prev = $($table.getChild('thead>tr>th')[0]);
-                var next = $($table.getChild('thead>tr>th')[2]);
+                var prev = $($table.getChild('div.ui-calendar-title>span.ui-calendar-l')[0]);
+                var next = $($table.getChild('div.ui-calendar-title>span.ui-calendar-r')[0]);
                 if (curY == minYear && curM == minMonth) {
                     prev.addClass('disable');
                 }
@@ -340,13 +337,14 @@ Evoque.extend('calendarV2', (function (self) {
 
             return $table;
         }
-        element.appendChild(initTable(new Date(minYear, minMonth, 1))[0]);
+
+        calendarContainer.appendChild(initTable(new Date(minYear, minMonth, 1))[0]);
         if (mode === 'waterfall')
         {
             for (var i = 1; i < 6; ++i)
             {
                 var d = new Date(minYear, minMonth + i, 1);
-                element.appendChild(initTable(d)[0]);
+                calendarContainer.appendChild(initTable(d)[0]);
             }
         }
 
@@ -354,12 +352,11 @@ Evoque.extend('calendarV2', (function (self) {
             var y = date.getFullYear();
             var m = date.getMonth();
             var d = date.getDate();
-            return $(element).getChild('table[curYM="' + y + '-' + m + '"] td[curD="' + d + '"]');
+            return $(element).getChild('div.ui-calendar-month[curYM="' + y + '-' + m + '"] li[curD="' + d + '"]');
         }
 
         function select($td) {
-            $td.clearClass();
-            $td.addClass('active');
+            $td.addClass('select');
         }
 
         function unselect($td) {
