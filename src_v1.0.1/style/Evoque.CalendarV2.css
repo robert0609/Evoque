@@ -1,21 +1,3 @@
-#calendarPage{overflow-y:auto;-webkit-overflow-scrolling:touch}
-.date-month{padding:15px;border:1px solid #f3f3f3;-webkit-border-radius:3px;border-radius:3px}
-.holtel-num-box{padding:10px 15px 0}
-.holtel-num{padding:10px 0;background-color:#e5e5e5;-webkit-border-radius:3px;border-radius:3px;text-align:center}
-.holtel-num .tc{display:inline-block;overflow:hidden;vertical-align:top}
-.holtel-num .time,.holtel-num .days,.holtel-num .button{float:left}
-.holtel-num .time{text-align:left;line-height:16px}
-.holtel-num .time span{margin-left:6px;display:inline-block;min-width:4em}
-.holtel-num .days{margin:0 15px;padding:0 12px;line-height:30px;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;background-color:#fff}
-.holtel-num .days em{margin:0 5px;color:#f60}
-.holtel-num .button{width:75px;line-height:32px;color:#fff;-webkit-border-radius:3px;border-radius:3px;background-color:#f60}
-.holtel-num .disable{background-color:#aaa}
-.calendar-booking{position:fixed;bottom:0;left:0;width:100%;line-height:40px;text-align:center;border-top:1px solid #cbcaca;background-color:#fff}
-.calendar-booking>span{display:inline-block;position:relative;padding-left:32px}
-.calendar-booking>span:after{content:"";position:absolute;left:0;top:9px;width:20px;height:20px}
-.calendar-booking>.able:after{border:1px solid #cbcaca}
-.calendar-booking>.unable:after{border:1px solid #ebebeb;background-color:#ebebeb}
-.calendar-booking>.unable{margin-left:25px;color:#999}
 .ui-calendar{padding:0 10px}
 .ui-calendar .h-light{color:#f60}
 .ui-calendar-month{margin:10px 0;font-size:12px;color:#666;border:1px solid #ccc;background-color:#fff;overflow:hidden}
@@ -42,4 +24,3 @@
 .ui-calendar-month .checkin>span{color:#fff}
 .ui-calendar-month li:nth-child(7n){border-right:3px solid #fff}
 .ui-calendar-month li:nth-child(7n + 1){border-left:5px solid #fff}
-#CssGaga{content:"140825165938,zho,326"}
