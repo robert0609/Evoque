@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../src_v1.0.1/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        $(function () {
+            window.addEventListener('storage', function (e) {
+                $(document).dialog.message(JSON.stringify({
+                    key:e.key,
+                    oldValue:e.oldValue,
+                    newValue:e.newValue,
+                    url:e.url
+                }));
+            });
+        });
+
+        function getSession() {
+            $(document).dialog.message(sessionStorage.getItem('username'));
+        }
+        function setSession() {
+            sessionStorage.setItem('username', '2');
+            //sessionStorage.username = { id: 123, name: 'yangxu' };//这样存储是不行的，storage会自动把object toString()处理
+        }
+        function getLocal() {
+            $(document).dialog.message(localStorage.getItem('globalname'));
+        }
+        function setLocal() {
+            localStorage.setItem('globalname', '2222');
+        }
+        function delLocal() {
+            localStorage.removeItem('globalname');
+        }
+    </script>
+</head>
+<body>
+    <button onclick="getSession();">从SessionStorage中获取key为username的数据</button><br>
+    <button onclick="setSession();">设置SessionStorage中Key为username的数据</button><br>
+    <button onclick="getLocal();">从LocalStorage中获取key为username的数据</button><br>
+    <button onclick="setLocal();">设置LocalStorage中Key为username的数据</button><br>
+
+    <button onclick="delLocal();">从LocalStorage中删除key为username的数据</button>
+</body>
+</html>

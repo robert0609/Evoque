@@ -30,9 +30,10 @@
         }, false);
 
         var sd = new Date();
-        function redirect()
+        function redirect(e)
         {
-            location.href = './demo/ApplicationCache.html';
+            //location.href = './demo/ApplicationCache.html';
+            $.cancelDefault(e);
         }
 
         function onhref() {
@@ -45,7 +46,7 @@
 <body>
     <div id="ua"></div>
     <ul>
-        <li><a href="javascript:void(0);" onclick="redirect();">ApplicationCache</a></li>
+        <li><a href="./demo/App.html" onclick="redirect();">ApplicationCache</a></li>
         <li><a href="./demo/App.html">App</a></li>
         <li><a href="./demo/Ajax.html">Ajax</a></li>
         <li><a href="./demo/Button.html">Button</a></li>
@@ -60,18 +61,16 @@
         <li><a href="./demo/Delegate.html">Delegate</a></li>
         <li><a href="./demo/FileUpload.html">FileUpload</a></li>
         <li><a href="./demo/Folder.html">Folder</a></li>
-        <li><a href="http://10.2.10.18:2040/findaround/">Findaround</a></li>
         <li><a href="./demo/Geo.html">Geo</a></li>
-        <li><a href="http://m.tujia.com/o?code=GaoDe&unittypeid=3077&start=2014-2-14&end=2014-2-15">gaode</a></li>
         <li><a href="./demo/History.html">History</a></li>
         <li><a href="./demo/HistorySimple.html">HistorySimple</a></li>
         <li><a href="./demo/ImageLoader.html">ImageLoader</a></li>
-        <li><a href="./demo/iScroll4.html">iScroll4</a></li>
         <li><a href="./demo/IETest.html">IETest</a></li>
         <li><a href="./demo/JSONTest.html">JSONTest</a></li>
         <li><a href="./demo/Knockout.html">Knockout</a></li>
         <li><a href="./demo/LanunchApp.html">LanunchApp</a></li>
         <li><a href="./demo/Loader.html">Loader</a></li>
+        <li><a href="./demo/Storage.html">LocalStorage</a></li>
         <li><a href="./demo/Location.html">Location</a></li>
         <li><a href="./demo/Orientation.html">Orientation</a></li>
         <li><a href="./demo/Performance.html">Performance</a></li>
@@ -80,8 +79,6 @@
         <li><a href="./demo/Sliderbar.html">Sliderbar</a></li>
         <li><a href="./demo/Scroll.html">Scroll</a></li>
         <li><a href="./demo/Swipe.html">Swipe</a></li>
-        <li><a href="http://10.2.10.18:2040/sanya_gongyu/shotel/">shotel</a></li>
-        <li><a href="http://go.tujia.com/1054/?code=MobileClientShare&mref=share&id=8666&unitid=8666">share</a></li>
         <li><a href="./demo/TouchEvent.html">TouchEvent</a></li>
         <li><a href="./demo/TouchClickEventFlow.html">TouchClickEventFlow</a></li>
         <li><a href="./demo/TestUnload.html">TestUnload</a></li>

@@ -4,37 +4,48 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
-    <script type="text/javascript" src="../src/js/json2.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Uploader.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         var maxWidth = 800;
         var maxHeight = 600;
 
         function uploadFile()
         {
-            /*var files = $('#fileSelect')[0].files;
-            var parameter = {};
+            var files = $('#fileSelect')[0].files;
+            var formData = new FormData();
             for (var i = 0; i < files.length; ++i)
             {
-                parameter['file_' + i] = files[i];
+                formData.append('file_' + i, files[i]);
             }
-            $.ajax.post({
-                url : '/Upload/Index',
-                // json
-                parameter : parameter,
+            $.uploader.exec({
+                url : 'http://10.2.10.129:4002/upload/index',
+                form: formData,
                 // 'text'(default), 'json', 'html'
                 returnType : 'json',
+                crossOrigin: true,
                 onSuccess : function (returnObj) {
                     $.dialog.alert('Upload Success!');
                 },
                 onFail : function () {
                     $.dialog.alert('Upload failed!');
+                },
+                onProgess: function (progressEvent) {
+                    if (progressEvent.lengthComputable) {
+                        var percentComplete = progressEvent.loaded / progressEvent.total;
+                        $('#uploadprogress')[0].value = percentComplete * 100;
+                    }
                 }
-            });*/
+            });
+
+
+
+
+
+
             var file = $('#fileSelect')[0].files[0];
 
             var reader = new FileReader();

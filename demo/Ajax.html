@@ -4,57 +4,86 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
-    <script type="text/javascript" src="../src/js/json2.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Dialog.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Ajax.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cookie.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         $(function () {
-            $.ajax.post({
-                url: 'http://10.2.3.18:2040/H5/A_AjaxLogin',
-                // json
-                parameter: {
-                    username: '18610567084',
-                    pwd: '123456',
-                    verifycode: '',
-                    userExpiresHours: false
-                },
-                // 'text'(default), 'json'
-                returnType: 'json',
-                onSuccess: function (returnObj)
-                {
-                    if (returnObj.IsSuccess)
-                    {
-                        $.dialog.alert('登录成功!');
-                    }
-                    else
-                    {
-                        $.dialog.alert(returnObj.Message);
-                    }
-                },
-                onFail: function (e)
-                {
-                    if (e.type === 'error')
-                    {
-                        $.dialog.alert('登录发生错误!');
-                    }
-                    else if (e.type === 'timeout')
-                    {
-                        $.dialog.alert('登录超时!');
-                    }
-                    else
-                    {
-                        $.dialog.alert('登录失败!');
-                    }
-                },
-                timeOut: 1
-            });
         });
+
+        function getData() {
+            $.ajax.get({
+                url : 'http://appcache.evoque.me/api/ajaxdata',
+                returnType : 'json',
+                crossOrigin: true,
+                onSuccess : function (returnObj) {
+                    $.dialog.alert(JSON.stringify(returnObj));
+                },
+                onFail : function (e) {
+                    $.dialog.alert(e.type);
+                }
+            });
+        }
+        function postData() {
+            $.ajax.post({
+                url : 'http://appcache.evoque.me/api/ajaxdata',
+                parameter: {
+                    Id: '10001',
+                    Name: 'Test'
+                },
+                crossOrigin: true,
+                onSuccess : function (returnObj) {
+                    $.dialog.alert(returnObj);
+                },
+                onFail : function (e) {
+                    //$.dialog.alert(e.type);
+                }
+            });
+        }
+        function getDataWithAuth() {
+            $.ajax.get({
+                url : 'http://appcache.evoque.me/api/ajaxcookie/username',
+                crossOrigin: true,
+                withCredentials: true,
+                onSuccess : function (returnObj) {
+                    var cookieValue = $.cookie.get('CookieId');
+                    if ($.isStringEmpty(cookieValue)) {
+                        $.dialog.alert('empty');
+                    }
+                    else {
+                        $.dialog.alert(cookieValue);
+                    }
+                },
+                onFail : function (e) {
+                    $.dialog.alert(e.type);
+                }
+            });
+        }
+        function postDataWithAuth() {
+            $.cookie.set('CookieId', 'password', {
+                domain: 'evoque.me'
+            })
+            $.ajax.post({
+                url : 'http://appcache.evoque.me/api/ajaxcookie',
+                crossOrigin: true,
+                withCredentials: true,
+                onSuccess : function (returnObj) {
+                    $.dialog.alert(returnObj);
+                },
+                onFail : function (e) {
+                    $.dialog.alert(e.type);
+                }
+            });
+        }
     </script>
 </head>
 <body>
-
+    <button onclick="getData();">跨域Get</button><br>
+    <button onclick="postData();">跨域Post</button><br>
+    <button onclick="getDataWithAuth();">跨域Get，带Cookie</button><br>
+    <button onclick="postDataWithAuth();">跨域Post，带Cookie</button><br>
 </body>
 </html>
