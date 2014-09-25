@@ -608,7 +608,8 @@ Evoque.control = (function (self)
         pointLevels: [ 1, 2, 3, 4, 5 ],
         initPoint: 0,
         description: [],
-        readonly: false
+        readonly: false,
+        onPointChanged: function (arg) {}
     };
 
     self.rate = function (option, element)
@@ -651,6 +652,8 @@ Evoque.control = (function (self)
         var initPoint = option.getValueOfProperty('initPoint', defaultOption_Rate);
         var description = option.getValueOfProperty('description', defaultOption_Rate);
         var readonly = option.getValueOfProperty('readonly', defaultOption_Rate);
+        var onPointChanged = option.getValueOfProperty('onPointChanged', defaultOption_Rate);
+        var currentPointValue = '';
 
         var div = document.createElement('div');
         var $div = $(div);
@@ -708,6 +711,32 @@ Evoque.control = (function (self)
 
         ele[0].parentElement.replaceChild(div, ele[0]);
 
+        var returnObj = {
+            reset: resetInitPoint,
+            setPoint: function (point) {
+                var index = -1;
+                for (var i = 0; i < pointLevels.length; ++i)
+                {
+                    if (pointLevels[i] === point)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index > -1) {
+                    setPointIndex.call($span.getChild('i[idx="' + index + '"]')[0]);
+                }
+            },
+            getPoint: function () {
+                var $checked = $span.getChild('.rateBtn>.checked');
+                if ($checked.length < 1)
+                {
+                    return null;
+                }
+                return $checked[$checked.length - 1].innerHTML;
+            }
+        };
+
         function resetInitPoint(isInit)
         {
             if (initPointValid)
@@ -729,6 +758,12 @@ Evoque.control = (function (self)
                 {
                     $hid.setVal('');
                 }
+                if (currentPointValue !== '') {
+                    if ($.checkType(onPointChanged) === type.eFunction) {
+                        onPointChanged.call(returnObj, { oldPoint: Number(currentPointValue), newPoint: NaN });
+                    }
+                }
+                currentPointValue = this.innerText;
                 $desSpan.html('');
             }
         }
@@ -759,6 +794,12 @@ Evoque.control = (function (self)
             {
                 $hid.setVal(this.innerHTML);
             }
+            if (currentPointValue !== this.innerText) {
+                if ($.checkType(onPointChanged) === type.eFunction) {
+                    onPointChanged.call(returnObj, { oldPoint: currentPointValue === '' ? NaN : Number(currentPointValue), newPoint: Number(this.innerText) });
+                }
+            }
+            currentPointValue = this.innerText;
             $desSpan.html('');
             if (!$.isStringEmpty(description[clickIdx]))
             {
@@ -766,29 +807,7 @@ Evoque.control = (function (self)
             }
         }
 
-        return {
-            reset: resetInitPoint,
-            setPoint: function (point) {
-                var index = -1;
-                for (var i = 0; i < pointLevels.length; ++i)
-                {
-                    if (pointLevels[i] === point)
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-                setPointIndex.call($span.getChild('i[idx="' + index + '"]')[0]);
-            },
-            getPoint: function () {
-                var $checked = $span.getChild('.rateBtn>.checked');
-                if ($checked.length < 1)
-                {
-                    return null;
-                }
-                return $checked[$checked.length - 1].innerHTML;
-            }
-        };
+        return returnObj;
     };
 
     //API

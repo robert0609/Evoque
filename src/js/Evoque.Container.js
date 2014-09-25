@@ -86,6 +86,7 @@ $.container = (function (self)
                 }
             }
             innerDisplay.call(this, divId, parameter);
+            window.scrollTo(0, 0);
             if (enableHistory)
             {
                 if (startDivId === divId)
