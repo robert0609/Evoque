@@ -31,6 +31,11 @@ Evoque.extend('dialog', (function (self) {
         layoutVersion: 'preset'
     };
 
+    var showSource = {
+        messageBox: 0,
+        modalDialog: 1
+    };
+
     /**
      * 弹出2秒后自动消失的文本框，关联在全局dialog对象上
      * @param message
@@ -43,7 +48,8 @@ Evoque.extend('dialog', (function (self) {
         }
         ctx.show({
             content: message,
-            onDialogClosed: onDialogClosed
+            onDialogClosed: onDialogClosed,
+            __source: showSource.messageBox
         });
     };
 
@@ -62,7 +68,25 @@ Evoque.extend('dialog', (function (self) {
             content: message,
             button: 'no|yes',
             onClickYes: onclickyes,
-            autoClose: false
+            autoClose: false,
+            __source: showSource.messageBox
+        });
+    };
+
+    /**
+     * 弹出带有ok按钮的消息框
+     * @param message
+     */
+    self.message = function (message) {
+        var ctx = getDialogContext.call(self.evoqueTarget);
+        if ($.isObjectNull(ctx)) {
+            return;
+        }
+        ctx.show({
+            content: message,
+            button: 'ok',
+            autoClose: false,
+            __source: showSource.messageBox
         });
     };
 
@@ -89,7 +113,8 @@ Evoque.extend('dialog', (function (self) {
                     content: '抱歉，你的网络不太好，请稍后重新刷新页面!'
                 });
             },
-            layoutVersion: 'plain'
+            layoutVersion: 'plain',
+            __source: showSource.messageBox
         }, callback);
     };
 
@@ -103,6 +128,7 @@ Evoque.extend('dialog', (function (self) {
         if ($.isObjectNull(ctx)) {
             return;
         }
+        option.__source = showSource.messageBox;
         ctx.show(option);
     };
 
@@ -116,6 +142,7 @@ Evoque.extend('dialog', (function (self) {
         if ($.isObjectNull(ctx)) {
             return;
         }
+        option.__source = showSource.modalDialog;
         ctx.show(option);
     };
 
@@ -375,6 +402,7 @@ Evoque.extend('dialog', (function (self) {
         function innerShow(option) {
             init();
 
+            var showSrc = option[0].__source;
             dialogObj.style.opacity = 1;
             var title = option.getValueOfProperty('title', defaultOption);
             var content = option.getValueOfProperty('content', defaultOption);
@@ -406,17 +434,26 @@ Evoque.extend('dialog', (function (self) {
                 else
                 {
                     $(contentObj).html(content);
-                    $(contentObj).addClass('J-pop-bd');
+                    if (showSrc === showSource.modalDialog) {
+                        $(contentObj).addClass('J-pop-bd-l');
+                    }
+                    else {
+                        $(contentObj).addClass('J-pop-bd');
+                    }
                     if ($.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
                         $(dialogObj).addClass('J-pop-box-b');
                     }
                 }
-                dialogObj.appendChild(contentObj);
             }
             else
             {
-                throw 'Content of dialog can not be null!';
+                $(contentObj).html('');
+                $(contentObj).addClass('J-pop-bd');
+                if ($.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
+                    $(dialogObj).addClass('J-pop-box-b');
+                }
             }
+            dialogObj.appendChild(contentObj);
             $(dialogObj).addClass('J-pop-box');
             if (direction === 'top') {
                 $(dialogObj).addClass('J-pop-box-t');

@@ -179,6 +179,10 @@ $.extend('ajax', (function (self) {
                 formData = new FormData(formEle[0]);
             }
         }
+        else if ($.isObject(form) && form instanceof FormData)
+        {
+            formData = form;
+        }
         if ($.isObjectNull(formData))
         {
             formData = new FormData();

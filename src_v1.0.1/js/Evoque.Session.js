@@ -73,3 +73,73 @@ $.extend('session', (function (self) {
 
     return self;
 }({})));
+$.extend('storage', (function (self) {
+    function createFunction(fn)
+    {
+        return function () {
+            return fn.apply(self, arguments);
+        };
+    }
+
+    /**
+     * 判断是否包含指定Key的数据
+     * @type {*}
+     */
+    self.containsKey = createFunction(function (key) {
+        if ($.isStringEmpty(localStorage.getItem(key)))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    });
+
+    /**
+     * 获取指定Key的字符串数据
+     * @type {*}
+     */
+    self.getString = createFunction(function (key) {
+        return localStorage.getItem(key);
+    });
+
+    /**
+     * 设置指定Key的字符串数据
+     * @type {*}
+     */
+    self.setString = createFunction(function (key, val) {
+        localStorage.setItem(key, val);
+    });
+
+    /**
+     * 获取指定Key的Json数据
+     * @type {*}
+     */
+    self.getJson = createFunction(function (key) {
+        var val = localStorage.getItem(key);
+        if ($.isStringEmpty(val))
+        {
+            return null;
+        }
+        return JSON.parse(val);
+    });
+
+    /**
+     * 设置指定Key的Json数据
+     * @type {*}
+     */
+    self.setJson = createFunction(function (key, val) {
+        localStorage.setItem(key, JSON.stringify(val));
+    });
+
+    /**
+     * 移除指定Key的数据
+     * @type {*}
+     */
+    self.remove = createFunction(function (key) {
+        localStorage.removeItem(key);
+    });
+
+    return self;
+}({})));
