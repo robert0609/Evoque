@@ -7,7 +7,9 @@ $.container = (function (self)
         onShow: function () {},
         onHide: function () {},
         //同一个页面最多只能有一个container开启history操控
-        enableHistory: false
+        enableHistory: false,
+        //不同的div切换的特效: 'none'、'bottom2top'，default: 'none'
+        switchEffect: 'none'
     };
 
     self.create = function (option)
@@ -21,6 +23,10 @@ $.container = (function (self)
         var onShowMtd = option.getValueOfProperty('onShow', defaultOption);
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);
         var enableHistory = option.getValueOfProperty('enableHistory', defaultOption);
+        var switchEffect = option.getValueOfProperty('switchEffect', defaultOption);
+        if (![ 'none', 'bottom2top' ].contains(switchEffect)) {
+            switchEffect = 'none';
+        }
         if ($.checkType(divIdList) !== type.eArray || divIdList.length < 1)
         {
             throw 'Parameter is error!';
@@ -30,15 +36,17 @@ $.container = (function (self)
         {
             startDivId = divIdList[0];
         }
-        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory);
+        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory, switchEffect);
         if (!$.isStringEmpty(startDivId))
         {
+            obj.disableSwitchEffect();
             obj.display(startDivId);
+            obj.enableSwitchEffect();
         }
         return obj;
     };
 
-    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory)
+    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory, switchEffect)
     {
         var onShowIsFn = $.checkType(onShow) === type.eFunction;
         var onHideIsFn = $.checkType(onHide) === type.eFunction;
@@ -98,6 +106,14 @@ $.container = (function (self)
                     history.pushState({ toShowId: divId, remainHideDivInput: parameter.remainHideDivInput }, document.title, genHref());
                 }
             }
+        };
+
+        var originalSwitchEffect = switchEffect;
+        this.disableSwitchEffect = function () {
+            switchEffect = 'none';
+        };
+        this.enableSwitchEffect = function () {
+            switchEffect = originalSwitchEffect;
         };
 
         function genHref() {
@@ -180,10 +196,33 @@ $.container = (function (self)
             {
                 currentDisplayId = toShowId;
                 this.currentDisplay = toShowDiv;
-                show(toShowDiv);
-                if (toShowDiv.length > 0 && onShowIsFn)
-                {
-                    onShow.call(toShowDiv[0]);
+                //如果开启特效的情况
+                if (switchEffect === 'bottom2top') {
+                    toShowDiv.addClass('bottom-top');
+                    var windowHeight = document.documentElement.clientHeight;
+                    var top1 = windowHeight;
+                    var top2 = top1 - 44;
+                    toShowDiv.setStyle('top', top1 + 'px');
+                    show(toShowDiv);
+                    window.setTimeout(function () {
+                        toShowDiv.setStyle('webkitTransform', 'translateY(-' + top2 + 'px)');
+                        window.setTimeout(function () {
+                            if (toShowDiv.length > 0 && onShowIsFn)
+                            {
+                                toShowDiv[0].style.removeProperty('top');
+                                toShowDiv[0].style.removeProperty('-webkit-transform');
+                                toShowDiv.removeClass('bottom-top');
+                                onShow.call(toShowDiv[0]);
+                            }
+                        }, 400);
+                    }, 10);
+                }
+                else {
+                    show(toShowDiv);
+                    if (toShowDiv.length > 0 && onShowIsFn)
+                    {
+                        onShow.call(toShowDiv[0]);
+                    }
                 }
             }
         }

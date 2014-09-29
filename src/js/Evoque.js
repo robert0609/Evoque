@@ -162,6 +162,27 @@ var Evoque = (function (self)
         return this.replace(/[^\x00-\xff]/gi, "--").length;
     };
 
+    /**
+     * 判断数组是否包含指定的元素
+     * @param v
+     * @return {Boolean}
+     */
+    Array.prototype.contains = function (v) {
+        if ($.checkType(this.indexOf) === type.eFunction) {
+            return this.indexOf(v) > -1;
+        }
+        else {
+            var flag = false;
+            $(this).each(function () {
+                if (this === v) {
+                    flag = true;
+                    return false;
+                }
+            });
+            return flag;
+        }
+    };
+
     window.$ = function (parameter)
     {
         var list = [];

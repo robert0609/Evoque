@@ -1,0 +1,14 @@
+.bottom-top{
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    -webkit-transform:translateZ(0);
+    transform:translateZ(0);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition:all .4s;
+    transition:all .4s;
+    z-index: 9999;
+}
