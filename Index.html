@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <script type="text/javascript" src="src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="src/js/eDebugger.js"></script>
-    <script type="text/javascript" src="test.js"></script>
     <script type="text/javascript">
         window.addEventListener('load', function () {
             /*if (window.devicePixelRatio)
@@ -24,8 +23,40 @@
             //alert(navigator.geolocation.getCurrentPosition);
 
             //document.getElementById('ua').innerHTML = 'devicePixelRatio: ' + window.devicePixelRatio;
-            document.getElementById('ua').innerHTML = 0.3 / 0.1;
+            //document.getElementById('ua').innerHTML = 0.3 / 0.1;
             //$('#ua>em').html('6'.padLeft(2));
+
+            var o = testObj();
+            console.debug(o.value);
+            o.value = 3;
+            o.fn = function () {
+                var x = 2;
+            };
+            console.debug(o.value);
+            var pa = Object.getOwnPropertyDescriptor(o, 'value');
+            console.debug(pa);
+            for (var pn in o) {
+                pa = Object.getOwnPropertyDescriptor(o, pn);
+                console.debug(pa);
+            }
+//            var o1 = Object.create(o);
+//            pa = Object.getOwnPropertyDescriptor(o1, 'name');
+//            console.debug(pa);
+
+//            var a = { name: 'a' };
+//            var b = { name: 'a' };
+//            var c = { name: 'c' };
+//            var arr = [ a, b, c ];
+//            console.debug(arr.contains(a));
+//            console.debug(arr.indexOf(a));
+
+            //console.debug($.checkType([]));
+
+//            var buffer = new ArrayBuffer(32);
+//            var int32Array = new Int32Array(buffer, 4, 2);
+//            var ff = int32Array.buffer;
+
+
 
         }, false);
 
@@ -40,10 +71,42 @@
             $('#testa').removeClass('c2');
         }
 
+        function testObj() {
+            var _val = 0;
+
+            return {
+                get value() {
+                    return _val;
+                },
+                set value(v) {
+                    _val = v;
+                },
+                name: 'evoque'
+            }
+        }
+
+        function outputHeight() {
+            var $con = $('#con');
+            var $d1 = $('#d1');
+            var $d2 = $('#d2');
+            console.debug('Con\'s height:' + $con[0].clientHeight);
+            console.debug('D1\'s height:' + $d1[0].clientHeight);
+            console.debug('D2\'s height:' + $d2[0].clientHeight);
+        }
     </script>
     <title>H5Demo</title>
 </head>
 <body>
+<!--<button onclick="outputHeight();">output</button>
+<button onclick="$('#d1').show();">show d1</button>
+<button onclick="$('#d1').hide();">hide d1</button>
+<button onclick="$('#d2').show();">show d2</button>
+<button onclick="$('#d2').hide();">hide d2</button>
+<div id="con">
+    <div id="d1" style="height: 300px; display: none;">dadva</div>
+    <div id="d2" style="height: 200px; display: block;">123241</div>
+</div>-->
+
     <div id="ua"></div>
     <ul>
         <li><a href="./demo/App.html" onclick="redirect();">ApplicationCache</a></li>
@@ -52,13 +115,15 @@
         <li><a href="./demo/Button.html">Button</a></li>
         <li><a href="./demo/Calendar.html">Calendar</a></li>
         <li><a href="./demo/CalendarV2.html">CalendarV2</a></li>
+        <li><a href="./demo/Camera.html">Camera</a></li>
         <li><a href="./demo/CardNo.html">CardNo</a></li>
         <li><a href="./demo/Container.html">Container</a></li>
-        <li><a href="./demo/Camera.html">Camera</a></li>
+        <li><a href="./demo/CustomEvent.html">CustomEvent</a></li>
         <li><a href="./demo/DateTimePicker.html">DateTimePicker</a></li>
+        <li><a href="./demo/Delegate.html">Delegate</a></li>
         <li><a href="./demo/Dialog.html">Dialog</a></li>
         <li><a href="./demo/DockForm.html">DockForm</a></li>
-        <li><a href="./demo/Delegate.html">Delegate</a></li>
+        <li><a href="./demo/Drag.html">Drag</a></li>
         <li><a href="./demo/FileUpload.html">FileUpload</a></li>
         <li><a href="./demo/Folder.html">Folder</a></li>
         <li><a href="./demo/Geo.html">Geo</a></li>

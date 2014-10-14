@@ -6,6 +6,7 @@
     <title></title>
     <script type="text/javascript" src="../src/js/Evoque.js"></script>
     <script type="text/javascript" src="../src/js/Evoque.Container.js"></script>
+    <link rel="stylesheet" href="../src/style/Evoque.Container.css">
     <script type="text/javascript">
 
         var container;
@@ -14,12 +15,12 @@
         {
             container = $.container.create({
                 divIdList: ['d1', 'd2'],
+                startDivId: 'd1',
                 onShow: function () {},
                 onHide: function () {},
-                enableHistory: true
+                enableHistory: true,
+                switchEffect: 'bottom2top'
             });
-
-            container.display('d2', { toShowDivIsFirst: true });
         });
         function click1()
         {
@@ -30,10 +31,18 @@
             container.display('d2');
         }
     </script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-    <a href="javascript:click1()">display d1</a>
-    <a href="javascript:click2()">display d2</a>
+    <div style="height: 44px;">
+        <a href="javascript:click1()">display d1</a>
+        <a href="javascript:click2()">display d2</a>
+    </div>
     <div id="d1">
         <select>
             <option value="volvo">Volvo</option>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="File1.js"></script>
+    <script type="text/javascript" src="File2.js"></script>
+    <script type="text/javascript">
+        var obj = (function (self) {
+            self.method3 = function () {
+                console.debug('module');
+            };
+            return self;
+        }(obj || {}));
+        obj.method4 = function () {
+            console.debug('method4');
+        };
+    </script>
+    <script type="text/javascript">
+        $(function ()
+        {
+            obj.method1();
+            obj.method2();
+            obj.method3();
+            obj.method4();
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

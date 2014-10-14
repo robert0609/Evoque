@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        $(function () {
+            var $div1 = $('#div1');
+            var $div2 = $('#div2');
+
+            var dragging = null;
+            var ox = 0, oy = 0;
+            var cx = 0, cy = 0;
+            var ol = 0, ot = 0;
+            $div1.addEventHandler('dragstart', function (e) {
+                //eDebugger.output('dragstart event');
+                cx = e.clientX;
+                cy = e.clientY;
+                dragging = this;
+                ol = dragging.offsetLeft;
+                ot = dragging.offsetTop;
+            });
+            $div1.addEventHandler('drag', function (e) {
+                //eDebugger.output('drag event');
+                dragging.style.left = (ol + e.clientX - cx) + 'px';
+                dragging.style.top = (ot + e.clientY - cy) + 'px';
+            });
+            $div2.addEventHandler('dragenter', function (e) {
+                //eDebugger.output('dragenter event');
+            });
+            $div2.addEventHandler('dragleave', function (e) {
+                //eDebugger.output('dragleave event');
+            });
+            $div2.addEventHandler('dragover', function (e) {
+                //eDebugger.output('dragover event');
+                $.cancelDefault(e);
+                e.dataTransfer.dropEffect = 'move';
+            });
+            $div1.addEventHandler('drop', function (e) {
+                //eDebugger.output('drop event');
+            });
+            $div1.addEventHandler('dragend', function (e) {
+                //eDebugger.output('dragend event');
+                console.debug(dragging.offsetLeft + ',' + dragging.offsetTop);
+                dragging.style.left = (ol + e.clientX - cx) + 'px';
+                dragging.style.top = (ot + e.clientY - cy) + 'px';
+                dragging = null;
+                console.debug($div1[0].offsetLeft + ',' + $div1[0].offsetTop);
+            });
+        });
+    </script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        #div1 {
+            position: absolute;
+            left: 200px;
+            top: 100px;
+            width: 200px;
+            height: 200px;
+            /*border-color: red;*/
+            /*border-width: 2px;*/
+            /*border-style: solid;*/
+            background-color: red;
+            z-index: 200;
+        }
+
+        #div2 {
+            position: absolute;
+            left: 600px;
+            top: 100px;
+            width: 600px;
+            height: 400px;
+            /*border-color: green;*/
+            /*border-width: 2px;*/
+            /*border-style: solid;*/
+            background-color: green;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="console"></div>
+    <div id="div1" draggable="true"></div>
+    <div id="div2"></div>
+</body>
+</html>

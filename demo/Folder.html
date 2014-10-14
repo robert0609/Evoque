@@ -6,11 +6,22 @@
     <title></title>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Folder.js"></script>
+    <style>
+        .folder-title {
+            background-color: green;
+        }
+        .folder-content {
+            background-color: blue;
+            margin: 3px;
+        }
+    </style>
     <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Folder.css" />
     <script type="text/javascript">
         $(function ()
         {
-            $('#folder').createFolder();
+            $('#folder').createFolder({
+                status: 'fold'
+            });
             $('#folder1').createFolder({
                 mode: 'once'
             });
@@ -18,12 +29,24 @@
                 mode: 'disable'
             });
         });
+
+        function setHeight() {
+            $('div').html('<ul><li>aaaa</li><li>bbbb</li><li>cccc</li><li>dddd</li><li>eeee</li></ul><ul><li>aaaa</li><li>bbbb</li><li>cccc</li><li>dddd</li><li>eeee</li></ul>');
+            var height = 0;
+            $('div').getChild().each(function () {
+                height += this.clientHeight;
+            });
+            $('div').setStyle('height', height + 'px');
+        }
     </script>
 </head>
 <body>
+<!--<button onclick="setHeight();">Click me</button>-->
+<!--<div class="folder-content folder-content-unfold" style="background-color: #adff2f; height: 0px;">-->
+<!--</div>-->
 <div style="height: 400px;">
-    <button onclick="$('#folder').openFolder();">open</button>
-    <button onclick="$('#folder').closeFolder();">close</button>
+    <button onclick="$('#folder1').openFolder();">open</button>
+    <button onclick="$('#folder1').closeFolder();">close</button>
 </div>
 <div id="folder">
 <div class="folder-title">normal</div>

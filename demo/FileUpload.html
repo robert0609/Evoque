@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Ajax.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Uploader.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.ImageCompressor.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         var maxWidth = 800;
@@ -16,116 +18,84 @@
         function uploadFile()
         {
             var files = $('#fileSelect')[0].files;
-            var formData = new FormData();
-            for (var i = 0; i < files.length; ++i)
-            {
-                formData.append('file_' + i, files[i]);
-            }
-            $.uploader.exec({
-                url : 'http://10.2.10.129:4002/upload/index',
-                form: formData,
-                // 'text'(default), 'json', 'html'
-                returnType : 'json',
-                crossOrigin: true,
-                onSuccess : function (returnObj) {
-                    $.dialog.alert('Upload Success!');
-                },
-                onFail : function () {
-                    $.dialog.alert('Upload failed!');
-                },
-                onProgess: function (progressEvent) {
-                    if (progressEvent.lengthComputable) {
-                        var percentComplete = progressEvent.loaded / progressEvent.total;
-                        $('#uploadprogress')[0].value = percentComplete * 100;
+            $.imageCompressor.exec({
+                srcImgList: files,
+                ratio: 0.5,
+                onCompleted: function (data) {
+                    if (data.result.length > 0) {
+                        var imageSrc = data.result[0];
+                        $('#ret')[0].src = imageSrc;
+                        var image64 = imageSrc.substr(imageSrc.indexOf(',') + 1);
+
+                        /*var bo = b64toBlob(data.result[0].substr(23), 'image/jpeg');
+                        var formData = new FormData();
+                        formData.append('file_0', bo);*/
+                        $.uploader.exec({
+                            //url : 'http://10.2.10.129:4002/upload/index1',
+                            url : 'http://10.2.10.18:2006/MobileFileUpload.ashx',
+                            parameter : {
+                                subfolder: 'comment',
+                                returnImageSize: 'true',
+                                filename: 'test.jpg',
+                                h5data: image64
+                            },
+                            // 'text'(default), 'json', 'html'
+                            returnType : 'json',
+                            crossOrigin: true,
+                            onSuccess : function (returnObj) {
+                                console.debug(returnObj);
+                            },
+                            onFail : function () {
+                                console.debug('Upload failed!');
+                            },
+                            onProgess: function (progressEvent) {
+                                if (progressEvent.lengthComputable) {
+                                    var percentComplete = progressEvent.loaded / progressEvent.total;
+                                    $('#uploadprogress')[0].value = percentComplete * 100;
+                                }
+                            }
+                        });
                     }
                 }
             });
+            function b64toBlob(b64Data, contentType, sliceSize) {
+                contentType = contentType || '';
+                sliceSize = sliceSize || 512;
 
+                var byteCharacters = atob(b64Data);
+                var byteArrays = [];
 
+                for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                    var slice = byteCharacters.slice(offset, offset + sliceSize);
 
-
-
-
-            var file = $('#fileSelect')[0].files[0];
-
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var img = new Image();
-                img.onload = function (e) {
-                    var w = e.target.width;
-                    var h = e.target.height;
-                    var ww = w, hh = h;
-                    if (w > maxWidth)
-                    {
-                        ww = maxWidth;
-                        hh = ww * h / w;
-                        if (hh > maxHeight)
-                        {
-                            hh = maxHeight;
-                            ww = hh * w / h;
-                        }
+                    var byteNumbers = new Array(slice.length);
+                    for (var i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
                     }
-                    else
-                    {
-                        if (h > maxHeight)
-                        {
-                            hh = maxHeight;
-                            ww = hh * w / h;
-                        }
-                        else
-                        {
-                            ww = w;
-                            hh = h;
-                        }
-                    }
-                    ww = Math.round(ww);
-                    hh = Math.round(hh);
-                    e.target.style.width = ww + 'px';
-                    e.target.style.height = hh + 'px';
 
-                    var cvs = $('#imgUp')[0];
-                    cvs.width = maxWidth;
-                    cvs.height = maxHeight;
-                    var ctx = cvs.getContext("2d");
-                    // canvas清屏
-                    ctx.clearRect(0, 0, cvs.width, cvs.height);
-                    ctx.strokeStyle = 'red';
-                    ctx.strokeRect(0, 0, maxWidth, maxHeight);
-                    var x = 0, y = 0;
-                    if (ww < maxWidth)
-                    {
-                        x = (maxWidth - ww) / 2;
-                    }
-                    if (hh < maxHeight)
-                    {
-                        y = (maxHeight - hh) / 2;
-                    }
-                    alert(ww / w);
-                    alert(hh / h);
-                    ctx.scale(ww / w, 1);
-                    ctx.drawImage(e.target, x, Math.round(y * h / hh));
+                    var byteArray = new Uint8Array(byteNumbers);
 
-                    var imgData =cvs.toDataURL("image/jpeg", 0.5);
-                    $('#ret').setStyle('width', '300px');
-                    $('#ret').setStyle('height', '400px');
-                    $('#ret')[0].src = imgData;
+                    byteArrays.push(byteArray);
+                }
 
-                };
-                img.src = e.target.result;
-            };
+                var blob = new Blob(byteArrays, {type: contentType});
+                return blob;
+            }
 
-            reader.readAsDataURL(file);
         }
     </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-    <p><input id="fileSelect" type="file" accept="image/*"></p>
+    <p><input id="fileSelect" type="file" accept="image/*" style="width: 120px; height: 30px;"></p>
     <p>
-        <input id="upload" type="button" value="上传" onclick="uploadFile()">
+        <input id="upload" type="button" value="上传" style="width: 120px; height: 30px;" onclick="uploadFile()">
         <progress id="uploadprogress" min="0" max="100" value="0">0</progress>
-    </p>
-    <p>
-        <canvas id="imgUp"></canvas>
     </p>
     <img id="ret">
 </body>

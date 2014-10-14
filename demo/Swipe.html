@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="EvoqueEnableTapEvent" content="true" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
@@ -12,6 +13,9 @@
     <title></title>
     <script type="text/javascript">
         $(function () {
+            $(document.body).tap(function () {
+                $.dialog.alert('tap');
+            });
             if ($.hasTouchEvent()) {
                 $(document.body).swipeUp(function () {
                     $.dialog.alert('swipeUp');
@@ -19,11 +23,17 @@
                 $(document.body).swipeDown(function () {
                     $.dialog.alert('swipeDown');
                 });
+                $(document.body).swipeLeft(function () {
+                    $.dialog.alert('swipeLeft');
+                });
+                $(document.body).swipeRight(function () {
+                    $.dialog.alert('swipeRight');
+                });
             }
         });
     </script>
 </head>
 <body style="height: 1000px;">
-
+    <div style="height: 400px; top: 300px; background-color: green;"></div>
 </body>
 </html>

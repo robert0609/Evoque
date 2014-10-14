@@ -1,0 +1,26 @@
+@charset "utf-8";
+html{width:100%;min-width:320px;height:100%;font-size:14px;color:#333;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background:#fff}
+body{min-height:100%;position:relative}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{margin:0;padding:0}
+body,button,input,select,textarea{font:400 14px/1.5 Arial,"Lucida Grande",Verdana,"Microsoft YaHei",hei}
+table{border-collapse:collapse;border-spacing:0}
+th{text-align:inherit}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:500}
+ol,ul{list-style:none}
+.hotel-slidercontainer{
+    position: relative;
+    overflow: hidden;
+}
+.hotel-slidercontainer ul{
+    position: absolute;
+    left: 0;
+    top:0;
+}
+.hotel-slidercontainer li{
+    float: left;
+    text-align: center;
+}
+.hotel-slidercontainer li img{
+    width: 90%;
+    height: 90%;
+}

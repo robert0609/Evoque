@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <script type="text/javascript">
+        $(function () {
+            document.addEventListener('myevent', function (e) {
+                console.debug('capture document trigger myevent!');
+                //$.cancelEventFlow(e);
+            }, true);
+            $('#d1')[0].addEventListener('myevent', function (e) {
+                console.debug('capture trigger myevent!');
+                //e.stopImmediatePropagation();
+            }, true);
+            $('#d1')[0].addEventListener('myevent', function (e) {
+                console.debug('bubble trigger myevent!');
+            });
+            document.addEventListener('myevent', function (e) {
+                console.debug('bubble document trigger myevent!');
+            });
+
+
+
+//            document.addEventListener('click', function (e) {
+//                console.debug('capture document trigger click!');
+//            }, true);
+//            $('#d1')[0].addEventListener('click', function (e) {
+//                console.debug('capture trigger click!');
+//            }, true);
+            $('#d1').click(function () {
+                //console.debug('bubble trigger click!');
+                var myEvent = document.createEvent('CustomEvent');
+                myEvent.initCustomEvent('myevent', true, false, {name:'XXXX'});
+
+                this.dispatchEvent(myEvent);
+            });
+//            $('#d1')[0].addEventListener('click', function (e) {
+//                console.debug('bubble trigger click!');
+//            });
+//            document.addEventListener('click', function (e) {
+//                console.debug('bubble document trigger click!');
+//            });
+
+
+
+        });
+    </script>
+</head>
+<body>
+    <div id="d1" style="height: 400px;">sdfafafdafdadfggafnkja lkjioankj hfnjahvidj fvjahjv ma</div>
+</body>
+</html>

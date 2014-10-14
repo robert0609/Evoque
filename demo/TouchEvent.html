@@ -20,7 +20,7 @@
 //            $('.touchable').click(function () {
 //                $.dialog.alert('tap');
 //            });
-            $('.touchable').addEventHandler('touchstart', function (ev) {
+            /*$('.touchable').addEventHandler('touchstart', function (ev) {
                 var msg = '';
                 msg += 'Last: ' + ev.changedTouches.length + '<br>';
                 if (ev.changedTouches.length > 0)
@@ -64,7 +64,7 @@
                     msg += 'pageX:' + ev.touches[0].pageX + '; pageY:' + ev.touches[0].pageY + '<br>';
                 }
                 eDebugger.output(msg);
-            });
+            });*/
 
             $('.touchable').addEventHandler('touchend', function (ev) {
                 var msg = '';
