@@ -1643,17 +1643,9 @@ var Evoque = (function (self)
         {
             return;
         }
-        var evtListName = _customEvents[evt];
-        if ($.isStringEmpty(evtListName) || $.checkType(ele[evtListName]) !== type.eArray)
-        {
-            return;
-        }
-        $(ele[evtListName]).each(function () {
-            if ($.checkType(this) === type.eFunction)
-            {
-                this.call(ele, arg);
-            }
-        });
+        var customEvent = document.createEvent('CustomEvent');
+        customEvent.initCustomEvent(evt, true, false, arg);
+        ele.dispatchEvent(customEvent);
     }
 
     function innerBindCustomEvent(ele, evt, callback) {
@@ -1669,11 +1661,12 @@ var Evoque = (function (self)
         }
         if ($.checkType(ele) === type.eElement && $.checkType(callback) === type.eFunction)
         {
-            if ($.checkType(ele[evtListName]) !== type.eArray)
+            ele.addEventListener(evt, callback);
+            if ($.checkType(ele[evtListName]) !== type.eNumber)
             {
-                ele[evtListName] = [];
+                ele[evtListName] = 0;
             }
-            ele[evtListName].push(callback);
+            ele[evtListName] += 1;
         }
     }
 
@@ -1686,22 +1679,13 @@ var Evoque = (function (self)
         }
         if ($.checkType(ele) === type.eElement && $.checkType(callback) === type.eFunction)
         {
-            if ($.checkType(ele[evtListName]) !== type.eArray)
+            ele.removeEventListener(evt, callback);
+            if ($.checkType(ele[evtListName]) !== type.eNumber)
             {
-                ele[evtListName] = [];
+                ele[evtListName] = 0;
             }
-            var idx = -1;
-            for (var i = 0; i < ele[evtListName].length; ++i)
-            {
-                if (ele[evtListName][i] === callback)
-                {
-                    idx = i;
-                    break;
-                }
-            }
-            if (idx > -1)
-            {
-                ele[evtListName].splice(idx, 1);
+            if (ele[evtListName] > 0) {
+                ele[evtListName] -= 1;
             }
         }
     }
@@ -1918,7 +1902,7 @@ var Evoque = (function (self)
         function innerIsBindedTapEvent(ele)
         {
             var tapEvtListName = _customEvents['tap'];
-            if ($.checkType(ele[tapEvtListName]) === type.eArray && ele[tapEvtListName].length > 0)
+            if ($.checkType(ele[tapEvtListName]) === type.eNumber && ele[tapEvtListName] > 0)
             {
                 return true;
             }
