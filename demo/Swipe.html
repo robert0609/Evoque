@@ -29,6 +29,9 @@
                 $(document.body).swipeRight(function () {
                     $.dialog.alert('swipeRight');
                 });
+                $(document.body).drag(function (e) {
+                    console.debug(e);
+                });
             }
         });
     </script>

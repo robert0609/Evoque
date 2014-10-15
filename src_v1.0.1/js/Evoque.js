@@ -1697,13 +1697,15 @@ var Evoque = (function (self)
             swipeUp: 'swipeUp',
             swipeDown: 'swipeDown',
             swipeLeft: 'swipeLeft',
-            swipeRight: 'swipeRight'
+            swipeRight: 'swipeRight',
+            drag: 'drag'
         };
         innerDeclareCustomEvent(touchEventType.tap);
         innerDeclareCustomEvent(touchEventType.swipeUp);
         innerDeclareCustomEvent(touchEventType.swipeDown);
         innerDeclareCustomEvent(touchEventType.swipeLeft);
         innerDeclareCustomEvent(touchEventType.swipeRight);
+        innerDeclareCustomEvent(touchEventType.drag);
 
         //触屏事件
         /**
@@ -1741,6 +1743,13 @@ var Evoque = (function (self)
         self.swipeRight = function (callback) {
             this.addEventHandler(touchEventType.swipeRight, callback);
         };
+        /**
+         * 绑定手指的拖动事件
+         * @param callback
+         */
+        self.drag = function (callback) {
+            this.addEventHandler(touchEventType.drag, callback);
+        };
 
         var _bg = document.createElement('div');
         _bg.style.width = document.documentElement.clientWidth + 'px';
@@ -1774,6 +1783,7 @@ var Evoque = (function (self)
                 var touchState = new TouchStateClass(e.touches[0].identifier);
                 touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
                 touchStateDictionary[e.touches[0].identifier] = touchState;
+                $.cancelDefault(e);
             });
             $ele.addEventHandler('touchmove', function (e) {
                 if (e.touches.length !== 1)
@@ -1782,6 +1792,11 @@ var Evoque = (function (self)
                 }
                 var touchState = touchStateDictionary[e.touches[0].identifier];
                 touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
+                var evtTyp = touchState.touchType();
+                var that = this;
+                $(evtTyp).each(function () {
+                    innerDispatchCustomEvent(that, this.name, this.arg);
+                });
             });
             $ele.addEventHandler('touchend', function (e) {
                 if (e.changedTouches.length !== 1 || e.touches.length !== 0)
@@ -1799,9 +1814,8 @@ var Evoque = (function (self)
                     setTimeout(function () {document.body.removeChild(_bg);}, 350);
                 }
                 $(evtTyp).each(function () {
-                    innerDispatchCustomEvent(that, this);
+                    innerDispatchCustomEvent(that, this.name, this.arg);
                 });
-                $.cancelDefault(e);
             });
 
             ele.__isBindTouchEvent = true;
@@ -1817,6 +1831,8 @@ var Evoque = (function (self)
                 this.isSameDirection = true;
                 this.rangeX = 0;
                 this.rangeY = 0;
+                this.moveBetweenPointX = 0;
+                this.moveBetweenPointY = 0;
 
                 this.addTouchPoint = function (point) {
                     if (this.touchPointList.length > 0)
@@ -1828,8 +1844,10 @@ var Evoque = (function (self)
                         this.rangeY = Math.max(this.rangeY, ry);
 
                         var lp = this.touchPointList[this.touchPointList.length - 1];
-                        var dx = point.x - lp.x == 0 ? 0 : (point.x - lp.x > 0 ? 1 : -1);
-                        var dy = point.y - lp.y == 0 ? 0 : (point.y - lp.y > 0 ? 1 : -1);
+                        this.moveBetweenPointX = point.x - lp.x;
+                        this.moveBetweenPointY = point.y - lp.y;
+                        var dx = this.moveBetweenPointX == 0 ? 0 : (this.moveBetweenPointX > 0 ? 1 : -1);
+                        var dy = this.moveBetweenPointY == 0 ? 0 : (this.moveBetweenPointY > 0 ? 1 : -1);
                         if (this.touchPointList.length >= 2)
                         {
                             var sameX = this.directionX == 0 || dx == 0 ? true : (this.directionX == dx);
@@ -1852,6 +1870,17 @@ var Evoque = (function (self)
                     var types = [];
                     if ($.checkType(this.touchEndTime) !== type.eDate)
                     {
+                        if (this.touchPointList.length > 0)
+                        {
+                            //drag
+                            types.push({
+                                name: touchEventType.drag,
+                                arg: {
+                                    moveX: this.moveBetweenPointX,
+                                    moveY: this.moveBetweenPointY
+                                }
+                            });
+                        }
                         return types;
                     }
                     var sp = this.touchPointList[0];
@@ -1859,7 +1888,7 @@ var Evoque = (function (self)
                     //tap
                     if (touchSpan < 750 && this.rangeX < 4 && this.rangeY < 4)
                     {
-                        types.push(touchEventType.tap);
+                        types.push({ name: touchEventType.tap });
                         return types;
                     }
                     //swipe
@@ -1869,22 +1898,22 @@ var Evoque = (function (self)
                         {
                             if (this.directionX > 0)
                             {
-                                types.push(touchEventType.swipeRight);
+                                types.push({ name: touchEventType.swipeRight });
                             }
                             else if (this.directionX < 0)
                             {
-                                types.push(touchEventType.swipeLeft);
+                                types.push({ name: touchEventType.swipeLeft });
                             }
                         }
                         if (this.rangeY > 30)
                         {
                             if (this.directionY > 0)
                             {
-                                types.push(touchEventType.swipeDown);
+                                types.push({ name: touchEventType.swipeDown });
                             }
                             else if (this.directionY < 0)
                             {
-                                types.push(touchEventType.swipeUp);
+                                types.push({ name: touchEventType.swipeUp });
                             }
                         }
                     }
