@@ -14,16 +14,26 @@
     <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Carousel.css" />
     <script type="text/javascript">
         $(function () {
-            $('div').carousel.create();
+            $('div').carousel.create({
+                loop: false
+            });
         });
     </script>
 </head>
 <body>
+    <button>test</button>
     <div>
         <ul>
-            <li style="background-color: red;"><img src="http://staticfile.tujia.com/upload/landlordunit/day_130823/thumb/201308230521019762_200_150.jpg"></li>
-            <li style="background-color: blue;"><img src="http://staticfile.tujia.com/upload/landlordunit/day_140118/thumb/201401180150594247_200_150.jpg"></li>
-            <li style="background-color: green;"><img src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: red;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_130823/thumb/201308230521019762_200_150.jpg"></li>
+            <li style="background-color: blue;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140118/thumb/201401180150594247_200_150.jpg"></li>
+            <li style="background-color: green;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: black;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: #808080;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: yellow;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: #8b4513;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: white;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: #ff69b4;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
+            <li style="background-color: #add8e6;"><img data-src="http://staticfile.tujia.com/upload/landlordunit/day_140114/thumb/201401140535161706_200_150.jpg"></li>
         </ul>
     </div>
 </body>

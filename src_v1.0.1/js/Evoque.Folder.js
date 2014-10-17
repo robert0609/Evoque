@@ -29,7 +29,10 @@ Evoque.extend('folder', (function (self) {
         var caller = self.evoqueTarget;
         caller.each(function () {
             var folder = this;
-            folder.__innerFolder = new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
+            if ($.isObjectNull(this.__innerFolder))
+            {
+                folder.__innerFolder = new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
+            }
         });
     };
 
@@ -39,7 +42,14 @@ Evoque.extend('folder', (function (self) {
         var $title = $folder.getChild('.' + titleClass);
         var $content = $folder.getChild('.' + contentClass);
 
-        if (mode !== 'normal')
+        if (mode === 'normal')
+        {
+            var clsList = $title.getClassList();
+            if (clsList.contains('folder-title-unfold')) {
+                status = 'unfold';
+            }
+        }
+        else
         {
             status = 'fold';
         }
