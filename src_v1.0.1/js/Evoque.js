@@ -29,7 +29,11 @@ var Evoque = (function (self)
         qqbrowser: 4,
         ucbrowser: 5,
         hmbrowser: 6,
-        baidubrowser: 7
+        baidubrowser: 7,
+        safaribrowser: 8,
+        _360browser: 9,
+        operabrowser: 10,
+        chromebrowser: 11
     };
     /**
      * 标识当前的移动设备种类
@@ -75,6 +79,22 @@ var Evoque = (function (self)
     else if (_agent.indexOf('baidubrowser') > -1)
     {
         _mApp = mApp.baidubrowser;
+    }
+    else if (_agent.indexOf('safari') > -1)
+    {
+        _mApp = mApp.safaribrowser;
+    }
+    else if (_agent.indexOf('opera') > -1)
+    {
+        _mApp = mApp.operabrowser;
+    }
+    else if (_agent.indexOf('chrome') > -1)
+    {
+        _mApp = mApp.chromebrowser;
+    }
+    else if (_agent.indexOf('360') > -1)
+    {
+        _mApp = mApp._360browser;
     }
     var _mDevice = mDevice.other;
     if (_agent.indexOf('m353') > -1) {
@@ -473,6 +493,23 @@ var Evoque = (function (self)
     };
 
     /**
+     * 数值想减，如果是浮点型数字则转换成整型进行想减
+     * @param n
+     */
+    Number.prototype.subtract = function (n) {
+        var chkThis = $.checkFloat(this);
+        var chkN = $.checkFloat(n);
+        if (!chkN.isNumber) {
+            return NaN;
+        }
+        if (!chkThis.isFloat && !chkN.isFloat) {
+            return this - n;
+        }
+        var coefficient = Math.pow(10, Math.max(chkThis.pointRightCount, chkN.pointRightCount));
+        return (this * coefficient - n * coefficient) / coefficient;
+    };
+
+    /**
      * 获取Evoque包装对象
      * @param parameter 可以是CSS选择器、js变量、DOM对象，也可以是DOMReady事件的回调函数
      * @return {EvoqueClass}
@@ -607,6 +644,30 @@ var Evoque = (function (self)
             throw 'Parameter is not an object!';
         }
         return obj === null;
+    };
+
+    /**
+     * 判断数字是否是浮点型，并返回小数位数等信息
+     */
+    $.checkFloat = function (n) {
+        var ret = {
+            isNumber: false,
+            isFloat: false,
+            pointRightCount: 0
+        };
+        if (isNaN(n)) {
+            return ret;
+        }
+        ret.isNumber = true;
+        var strN = n.toString();
+        var pInt = parseInt(strN);
+        var pFloat = parseFloat(strN);
+        if (pInt === pFloat) {
+            return ret;
+        }
+        ret.isFloat = true;
+        ret.pointRightCount = strN.length - 1 - strN.indexOf('.');
+        return ret;
     };
 
     /**
