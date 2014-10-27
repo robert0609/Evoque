@@ -98,6 +98,8 @@ $.extend('imageCompressor', (function (self) {
         var left = (windowWidth - scaleSize.width) / 2;
         var top = (windowHeight - scaleSize.height) / 2;
         var ctx1 = canvas1.getContext("2d");
+        ctx1.fillStyle = 'rgba(255,255,255,1)';
+        ctx1.fillRect(0,0,windowWidth,windowHeight);
         ctx1.drawImage(canvas, left, top);
 
         var imgData = canvas1.toDataURL("image/jpeg", ratio);
