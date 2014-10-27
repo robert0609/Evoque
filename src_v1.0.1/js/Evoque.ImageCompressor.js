@@ -91,18 +91,7 @@ $.extend('imageCompressor', (function (self) {
         var r = scaleSize.width / srcImg.width;
         ctx.scale(r, r);
         ctx.drawImage(srcImg, 0, 0);
-        //填充余白
-        var canvas1 = document.createElement('canvas');
-        canvas1.width = windowWidth;
-        canvas1.height = windowHeight;
-        var left = (windowWidth - scaleSize.width) / 2;
-        var top = (windowHeight - scaleSize.height) / 2;
-        var ctx1 = canvas1.getContext("2d");
-        ctx1.fillStyle = 'rgba(255,255,255,1)';
-        ctx1.fillRect(0,0,windowWidth,windowHeight);
-        ctx1.drawImage(canvas, left, top);
-
-        var imgData = canvas1.toDataURL("image/jpeg", ratio);
+        var imgData = canvas.toDataURL("image/jpeg", ratio);
         if ($.checkType(onResult) === type.eFunction) {
             onResult.call(that, { resultImageData: imgData, imageIndex: index });
         }
