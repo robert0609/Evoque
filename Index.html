@@ -26,22 +26,30 @@
             //document.getElementById('ua').innerHTML = 0.3 / 0.1;
             //$('#ua>em').html('6'.padLeft(2));
 
-            var o = testObj();
-            console.debug(o.value);
-            o.value = 3;
-            o.fn = function () {
-                var x = 2;
-            };
-            console.debug(o.value);
-            var pa = Object.getOwnPropertyDescriptor(o, 'value');
-            console.debug(pa);
-            for (var pn in o) {
-                pa = Object.getOwnPropertyDescriptor(o, pn);
-                console.debug(pa);
-            }
-//            var o1 = Object.create(o);
+            //var o = testObj();
+//            console.debug(o.value);
+//            o.value = 3;
+//            o.fn = function () {
+//                var x = 2;
+//            };
+//            console.debug(o.value);
+//            var pa = Object.getOwnPropertyDescriptor(o, 'value');
+//            console.debug(pa);
+//            for (var pn in o) {
+//                pa = Object.getOwnPropertyDescriptor(o, pn);
+//                console.debug(pa);
+//            }
+//            var o1 = Object.create(o, {
+//                p1: {
+//                    value: 555
+//                }
+//            });
 //            pa = Object.getOwnPropertyDescriptor(o1, 'name');
 //            console.debug(pa);
+//            pa = Object.getOwnPropertyDescriptor(o1, 'p1');
+//            console.debug(pa);
+
+            //o1.method1();
 
 //            var a = { name: 'a' };
 //            var b = { name: 'a' };
@@ -56,7 +64,8 @@
 //            var int32Array = new Int32Array(buffer, 4, 2);
 //            var ff = int32Array.buffer;
 
-
+            //console.debug((1960.88 * 100 - 427.09 * 100) / 100);
+            console.debug(1960.88.subtract(427.09));
 
         }, false);
 
@@ -73,6 +82,9 @@
 
         function testObj() {
             var _val = 0;
+            function outputThis() {
+                console.debug(this);
+            }
 
             return {
                 get value() {
@@ -81,9 +93,14 @@
                 set value(v) {
                     _val = v;
                 },
-                name: 'evoque'
+                name: 'evoque',
+                method1: function () {
+                    console.debug(this);
+                    outputThis();
+                }
             }
         }
+
 
         function outputHeight() {
             var $con = $('#con');
@@ -144,6 +161,7 @@
         <li><a href="./demo/RangeSelect.html">RangeSelect</a></li>
         <li><a href="./demo/Sliderbar.html">Sliderbar</a></li>
         <li><a href="./demo/Scroll.html">Scroll</a></li>
+        <li><a href="./demo/ScrollBox.html">ScrollBox</a></li>
         <li><a href="./demo/Swipe.html">Swipe</a></li>
         <li><a href="./demo/TouchEvent.html">TouchEvent</a></li>
         <li><a href="./demo/TouchClickEventFlow.html">TouchClickEventFlow</a></li>

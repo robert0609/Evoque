@@ -29,7 +29,7 @@
         }
         function postData() {
             $.ajax.post({
-                url : 'http://appcache.evoque.me/api/ajaxdata',
+                url : 'http://appcache.evoque.me/AjaxMvcData/PostData',
                 parameter: {
                     Id: '10001',
                     Name: 'Test'
@@ -64,7 +64,7 @@
         }
         function postDataWithAuth() {
             $.cookie.set('CookieId', 'password', {
-                domain: 'evoque.me'
+                domain: '.evoque.me'
             })
             $.ajax.post({
                 url : 'http://appcache.evoque.me/api/ajaxcookie',
