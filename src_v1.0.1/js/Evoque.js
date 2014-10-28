@@ -1866,7 +1866,7 @@ var Evoque = (function (self)
                 }
                 var touchState = touchStateDictionary[e.changedTouches[0].identifier];
                 touchState.addTouchPoint(new PointClass(e.changedTouches[0].clientX, e.changedTouches[0].clientY));
-                touchState.touchEndTime = new Date();
+                touchState.over();
                 var evtTyp = touchState.touchType();
                 var that = this;
                 if (_mAgent === mAgent.android)
@@ -1884,11 +1884,11 @@ var Evoque = (function (self)
             function TouchStateClass(identifier)
             {
                 var identifier = identifier;
-                this.touchStartTime = new Date();
+                this.touchStartTime = null;
                 this.touchEndTime = null;
                 this.touchPointList = [];
-                this.directionX = 0;
-                this.directionY = 0;
+                this.directionX;
+                this.directionY;
                 this.isSameDirection = true;
                 this.rangeX = 0;
                 this.rangeY = 0;
@@ -1911,20 +1911,29 @@ var Evoque = (function (self)
                         var dy = this.moveBetweenPointY == 0 ? 0 : (this.moveBetweenPointY > 0 ? 1 : -1);
                         if (this.touchPointList.length >= 2)
                         {
-                            var sameX = this.directionX == 0 || dx == 0 ? true : (this.directionX == dx);
-                            var sameY = this.directionY == 0 || dy == 0 ? true : (this.directionY == dy);
+                            var sameX = dx == 0 ? true : (this.directionX == dx);
+                            var sameY = dy == 0 ? true : (this.directionY == dy);
                             this.isSameDirection = sameX && sameY;
                         }
-                        if (dx != 0)
+                        if ($.checkType(this.directionX) === type.eUndefined)
                         {
                             this.directionX = dx;
                         }
-                        if (dy != 0)
+                        if ($.checkType(this.directionY) === type.eUndefined)
                         {
                             this.directionY = dy;
                         }
                     }
+                    else {
+                        this.touchStartTime = point.timestamp;
+                    }
                     this.touchPointList.push(point);
+                };
+
+                this.over = function () {
+                    if (this.touchPointList.length > 0) {
+                        this.touchEndTime = this.touchPointList[this.touchPointList.length - 1].timestamp;
+                    }
                 };
 
                 this.touchType = function () {
@@ -1951,6 +1960,13 @@ var Evoque = (function (self)
                     {
                         types.push({ name: touchEventType.tap });
                         return types;
+                    }
+                    if (this.touchPointList.length > 2) {
+                        var lp2 = this.touchPointList[this.touchPointList.length - 2];
+                        var lp3 = this.touchPointList[this.touchPointList.length - 3];
+                        if (Math.abs(lp2.x - lp3.x) < 4 && Math.abs(lp2.y - lp3.y) < 4) {
+                            this.isSameDirection = false;
+                        }
                     }
                     //swipe
                     if (this.isSameDirection)
@@ -1986,6 +2002,7 @@ var Evoque = (function (self)
             {
                 this.x = x;
                 this.y = y;
+                this.timestamp = new Date();
             }
         }
 
