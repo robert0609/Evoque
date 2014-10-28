@@ -34,15 +34,16 @@ $.extend('cookie', (function (self) {
 
     function getCookie(key)
     {
-        var arrCookie=document.cookie.split('; ');
-        for(var i = 0; i < arrCookie.length; i++){
+        var arrCookie = document.cookie.split('; ');
+        for (var i = 0; i < arrCookie.length; i++)
+        {
             var arr = arrCookie[i].split("=");
-            if(arr[0] == key)
+            if (arr[0] == key)
             {
                 return arr[1];
             }
         }
-        return null;
+        return '';
     }
 
     function setCookie(key, val, option)
