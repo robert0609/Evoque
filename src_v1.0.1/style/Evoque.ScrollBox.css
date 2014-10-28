@@ -1,0 +1,9 @@
+.scroll-frame{
+    position: relative;
+    overflow: hidden;
+}
+.scroll-content{
+    position: absolute;
+    left: 0;
+    top:0;
+}
