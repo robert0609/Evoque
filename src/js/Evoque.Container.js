@@ -8,7 +8,7 @@ $.container = (function (self)
         onHide: function () {},
         //同一个页面最多只能有一个container开启history操控
         enableHistory: false,
-        //不同的div切换的特效: 'none'、'bottom2top'，default: 'none'
+        //不同的div切换的特效: 'none'、'bottom2top'、'right2left'.default: 'none'
         switchEffect: 'none'
     };
 
@@ -24,7 +24,7 @@ $.container = (function (self)
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);
         var enableHistory = option.getValueOfProperty('enableHistory', defaultOption);
         var switchEffect = option.getValueOfProperty('switchEffect', defaultOption);
-        if (![ 'none', 'bottom2top' ].contains(switchEffect)) {
+        if (![ 'none', 'bottom2top', 'right2left' ].contains(switchEffect)) {
             switchEffect = 'none';
         }
         if ($.checkType(divIdList) !== type.eArray || divIdList.length < 1)
@@ -161,6 +161,7 @@ $.container = (function (self)
 
         function innerDisplay(divId, parameter, isBack)
         {
+            var that = this;
             var backFlag = false;
             if ($.checkType(isBack) === type.eBoolean && isBack)
             {
@@ -180,14 +181,52 @@ $.container = (function (self)
                     {
                         var toHideDiv = this.currentDisplay;
                         lastTop[toHideDiv.id] = document.body.scrollTop;
-                        hide(toHideDiv, parameter.remainHideDivInput);
                         currentDisplayId = '';
                         this.currentDisplay = null;
-                        if (toHideDiv.length > 0 && onHideIsFn)
-                        {
-                            //**
-                            parameter.backMode = backFlag;
-                            onHide.call(toHideDiv[0], parameter);
+                        if (backFlag && switchEffect === 'bottom2top') {
+                            toHideDiv.addClass('top-bottom');
+                            var windowHeight = document.documentElement.clientHeight;
+                            var top1 = windowHeight;
+                            //去除header的高度
+                            var top2 = top1 - 44;
+                            toHideDiv.setStyle('top', '44px');
+                            window.setTimeout(function () {
+                                toHideDiv.setStyle('webkitTransform', 'translateY(' + top2 + 'px)');
+                                window.setTimeout(function () {
+                                    hide(toHideDiv, parameter.remainHideDivInput);
+                                    if (toHideDiv.length > 0 && onHideIsFn) {
+                                        toHideDiv[0].style.removeProperty('-webkit-transform');
+                                        toHideDiv.removeClass('top-bottom');
+                                        parameter.backMode = backFlag;
+                                        onHide.call(toHideDiv[0], parameter);
+                                    }
+                                }, 400);
+                            }, 10);
+                        }
+                        else if (backFlag && switchEffect === 'right2left') {
+                            toHideDiv.addClass('left-right');
+                            toHideDiv.setStyle('top', '44px');
+                            window.setTimeout(function () {
+                                toHideDiv.setStyle('webkitTransform', 'translateX(100%)');
+                                window.setTimeout(function () {
+                                    hide(toHideDiv, parameter.remainHideDivInput);
+                                    if (toHideDiv.length > 0 && onHideIsFn) {
+                                        toHideDiv[0].style.removeProperty('top');
+                                        toHideDiv[0].style.removeProperty('-webkit-transform');
+                                        toHideDiv.removeClass('left-right');
+                                        parameter.backMode = backFlag;
+                                        onHide.call(toHideDiv[0], parameter);
+                                    }
+                                }, 400);
+                            }, 10);
+                        }
+                        else {
+                            hide(toHideDiv, parameter.remainHideDivInput);
+                            if (toHideDiv.length > 0 && onHideIsFn)
+                            {
+                                parameter.backMode = backFlag;
+                                onHide.call(toHideDiv[0], parameter);
+                            }
                         }
                     }
                 }
@@ -197,23 +236,43 @@ $.container = (function (self)
                 currentDisplayId = toShowId;
                 this.currentDisplay = toShowDiv;
                 //如果开启特效的情况
-                if (switchEffect === 'bottom2top') {
+                if (!backFlag && switchEffect === 'bottom2top') {
                     toShowDiv.addClass('bottom-top');
                     var windowHeight = document.documentElement.clientHeight;
                     var top1 = windowHeight;
+                    //去除header的高度
                     var top2 = top1 - 44;
                     toShowDiv.setStyle('top', top1 + 'px');
                     show(toShowDiv);
+                    if (toShowDiv.length > 0 && onShowIsFn)
+                    {
+                        onShow.call(toShowDiv[0]);
+                    }
                     window.setTimeout(function () {
                         toShowDiv.setStyle('webkitTransform', 'translateY(-' + top2 + 'px)');
                         window.setTimeout(function () {
-                            if (toShowDiv.length > 0 && onShowIsFn)
-                            {
-                                toShowDiv[0].style.removeProperty('top');
-                                toShowDiv[0].style.removeProperty('-webkit-transform');
-                                toShowDiv.removeClass('bottom-top');
-                                onShow.call(toShowDiv[0]);
-                            }
+                            toShowDiv[0].style.removeProperty('top');
+                            toShowDiv[0].style.removeProperty('-webkit-transform');
+                            toShowDiv.removeClass('bottom-top');
+                        }, 400);
+                    }, 10);
+                }
+                else if (!backFlag && switchEffect === 'right2left') {
+                    toShowDiv.addClass('right-left');
+                    //toShowDiv.setStyle('top', '44px');
+                    //toShowDiv.setStyle('left', windowWidth + 'px');
+                    show(toShowDiv);
+                    if (toShowDiv.length > 0 && onShowIsFn)
+                    {
+                        onShow.call(toShowDiv[0]);
+                    }
+                    window.setTimeout(function () {
+                        toShowDiv.setStyle('webkitTransform', 'translateX(0px)');
+                        window.setTimeout(function () {
+                            //toShowDiv[0].style.removeProperty('left');
+                            //toShowDiv[0].style.removeProperty('top');
+                            toShowDiv[0].style.removeProperty('-webkit-transform');
+                            toShowDiv.removeClass('right-left');
                         }, 400);
                     }, 10);
                 }
