@@ -151,6 +151,10 @@ $.extend('ajax', (function (self) {
         var ret = '';
         for (var p in parameter)
         {
+            if ($.checkType(parameter[p]) === type.eUndefined)
+            {
+                continue;
+            }
             ret += p;
             ret += '=';
             ret += encodeURIComponent(parameter[p].toString());
@@ -189,6 +193,10 @@ $.extend('ajax', (function (self) {
         }
         for (var p in parameter)
         {
+            if ($.checkType(parameter[p]) === type.eUndefined)
+            {
+                continue;
+            }
             formData.append(p, parameter[p]);
         }
         return formData;
