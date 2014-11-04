@@ -1,4 +1,4 @@
-//Dependency: Evoque.js, Evoque.Ajax.js
+//Dependency: Evoque.js, Evoque.Ajax.js, Evoque.Dialog.js
 Evoque.loader = (function (self)
 {
     var defaultOption = {
@@ -11,7 +11,8 @@ Evoque.loader = (function (self)
         onFail : function () {},
         timeOut : 30,
         // 'append', 'replace'
-        loadMode: 'append'
+        loadMode: 'append',
+        delayReplace: false
     };
 
     var loadExFlag = 'LoadException:';
@@ -43,7 +44,8 @@ Evoque.loader = (function (self)
         var onFail = option.getValueOfProperty('onFail', defaultOption);
         var timeout = option.getValueOfProperty('timeOut', defaultOption);
         var loadMode = option.getValueOfProperty('loadMode', defaultOption).toLowerCase();
-        element.__innerLoader.loadSomething(url, query, onSuccess, onFail, timeout, loadMode);
+        var delayReplace = option.getValueOfProperty('delayReplace', defaultOption);
+        element.__innerLoader.loadSomething(url, query, onSuccess, onFail, timeout, loadMode, delayReplace);
     };
 
     function loaderClass(element, loadingElementId)
@@ -57,22 +59,32 @@ Evoque.loader = (function (self)
         var parent = element.previousElementSibling;
         element.style.textAlign = 'center';
 
-        this.loadSomething = function (url, query, onsuccess, onfail, timeout, loadMode)
+        this.loadSomething = function (url, query, onsuccess, onfail, timeout, loadMode, delayReplace)
         {
-            if (loadMode === 'replace')
-            {
-                parent.innerHTML = '';
+            if (loadMode === 'replace' && delayReplace) {
+                $.dialog.showLoading(loadingElementId);
             }
-            element.innerHTML = loadingElement;
-            $(element).show();
+            else {
+                if (loadMode === 'replace')
+                {
+                    parent.innerHTML = '';
+                }
+                element.innerHTML = loadingElement;
+                $(element).show();
+            }
             $.ajax.get({
                 url : url,
                 parameter : query,
                 //returnType : 'html',
                 onSuccess: function (returnObj)
                 {
-                    $(element).hide();
-                    element.innerHTML = '';
+                    if (loadMode === 'replace' && delayReplace) {
+                        $.dialog.closeCurrentDialog();
+                    }
+                    else {
+                        $(element).hide();
+                        element.innerHTML = '';
+                    }
                     if (returnObj.trim().substr(0, 14) === loadExFlag)
                     {
                         onfail.call(window, { type: returnObj.trim().substr(14) });
@@ -92,8 +104,13 @@ Evoque.loader = (function (self)
                 },
                 onFail: function (e)
                 {
-                    $(element).hide();
-                    element.innerHTML = '';
+                    if (loadMode === 'replace' && delayReplace) {
+                        $.dialog.closeCurrentDialog();
+                    }
+                    else {
+                        $(element).hide();
+                        element.innerHTML = '';
+                    }
                     onfail.call(window, e);
                 },
                 timeOut: timeout
