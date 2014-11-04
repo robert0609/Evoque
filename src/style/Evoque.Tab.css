@@ -3,7 +3,7 @@
     display:-webkit-box;
     display:box;
 }
-.mtab-title>div{
+.mtab-title>*{
     -webkit-box-flex:1;
     box-flex:1;
     padding:.3em;

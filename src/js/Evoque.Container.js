@@ -169,6 +169,7 @@ $.container = (function (self)
             }
             var toShowId = divId;
             var toShowDiv = null;
+            var toHideDiv = null;
             for (var i = 0; i < ids.length; ++i)
             {
                 if (ids[i] == toShowId)
@@ -179,55 +180,80 @@ $.container = (function (self)
                 {
                     if (!$.isStringEmpty(currentDisplayId) && ids[i] === currentDisplayId)
                     {
-                        var toHideDiv = this.currentDisplay;
-                        lastTop[toHideDiv.id] = document.body.scrollTop;
-                        currentDisplayId = '';
-                        this.currentDisplay = null;
-                        if (backFlag && switchEffect === 'bottom2top') {
-                            toHideDiv.addClass('top-bottom');
-                            var windowHeight = document.documentElement.clientHeight;
-                            var top1 = windowHeight;
-                            //去除header的高度
-                            var top2 = top1 - 44;
-                            toHideDiv.setStyle('top', '44px');
-                            window.setTimeout(function () {
-                                toHideDiv.setStyle('webkitTransform', 'translateY(' + top2 + 'px)');
-                                window.setTimeout(function () {
-                                    hide(toHideDiv, parameter.remainHideDivInput);
-                                    if (toHideDiv.length > 0 && onHideIsFn) {
-                                        toHideDiv[0].style.removeProperty('-webkit-transform');
-                                        toHideDiv.removeClass('top-bottom');
-                                        parameter.backMode = backFlag;
-                                        onHide.call(toHideDiv[0], parameter);
-                                    }
-                                }, 400);
-                            }, 10);
-                        }
-                        else if (backFlag && switchEffect === 'right2left') {
-                            toHideDiv.addClass('left-right');
-                            toHideDiv.setStyle('top', '44px');
-                            window.setTimeout(function () {
-                                toHideDiv.setStyle('webkitTransform', 'translateX(100%)');
-                                window.setTimeout(function () {
-                                    hide(toHideDiv, parameter.remainHideDivInput);
-                                    if (toHideDiv.length > 0 && onHideIsFn) {
-                                        toHideDiv[0].style.removeProperty('top');
-                                        toHideDiv[0].style.removeProperty('-webkit-transform');
-                                        toHideDiv.removeClass('left-right');
-                                        parameter.backMode = backFlag;
-                                        onHide.call(toHideDiv[0], parameter);
-                                    }
-                                }, 400);
-                            }, 10);
-                        }
-                        else {
+                        toHideDiv = this.currentDisplay;
+                    }
+                }
+            }
+            if (toHideDiv != null) {
+                lastTop[toHideDiv.id] = document.body.scrollTop;
+                currentDisplayId = '';
+                this.currentDisplay = null;
+                if (backFlag && switchEffect === 'bottom2top') {
+                    toHideDiv.addClass('top-bottom');
+                    var windowHeight = document.documentElement.clientHeight;
+                    var top1 = windowHeight;
+                    //去除header的高度
+                    var top2 = top1 - 44;
+                    toHideDiv.setStyle('top', '44px');
+                    window.setTimeout(function () {
+                        toHideDiv.setStyle('webkitTransform', 'translateY(' + top2 + 'px)');
+                        window.setTimeout(function () {
                             hide(toHideDiv, parameter.remainHideDivInput);
-                            if (toHideDiv.length > 0 && onHideIsFn)
-                            {
+                            if (toHideDiv.length > 0 && onHideIsFn) {
+                                toHideDiv[0].style.removeProperty('-webkit-transform');
+                                toHideDiv.removeClass('top-bottom');
                                 parameter.backMode = backFlag;
                                 onHide.call(toHideDiv[0], parameter);
                             }
-                        }
+                            //有特效并且是后退的情况下，在此时显示要显示的div
+                            if (toShowDiv != null)
+                            {
+                                currentDisplayId = toShowId;
+                                that.currentDisplay = toShowDiv;
+                                show(toShowDiv);
+                                if (toShowDiv.length > 0 && onShowIsFn)
+                                {
+                                    onShow.call(toShowDiv[0]);
+                                }
+                            }
+                        }, 400);
+                    }, 10);
+                }
+                else if (backFlag && switchEffect === 'right2left') {
+                    toHideDiv.addClass('left-right');
+                    //toHideDiv.setStyle('top', '44px');
+                    var windowWidth = document.documentElement.clientWidth;
+                    window.setTimeout(function () {
+                        toHideDiv.setStyle('webkitTransform', 'translateX(' + windowWidth + 'px)');
+                        window.setTimeout(function () {
+                            hide(toHideDiv, parameter.remainHideDivInput);
+                            if (toHideDiv.length > 0 && onHideIsFn) {
+                                //toHideDiv[0].style.removeProperty('top');
+                                toHideDiv[0].style.removeProperty('-webkit-transform');
+                                toHideDiv.removeClass('left-right');
+                                parameter.backMode = backFlag;
+                                onHide.call(toHideDiv[0], parameter);
+                            }
+                            //有特效并且是后退的情况下，在此时显示要显示的div
+                            if (toShowDiv != null)
+                            {
+                                currentDisplayId = toShowId;
+                                that.currentDisplay = toShowDiv;
+                                show(toShowDiv);
+                                if (toShowDiv.length > 0 && onShowIsFn)
+                                {
+                                    onShow.call(toShowDiv[0]);
+                                }
+                            }
+                        }, 400);
+                    }, 10);
+                }
+                else {
+                    hide(toHideDiv, parameter.remainHideDivInput);
+                    if (toHideDiv.length > 0 && onHideIsFn)
+                    {
+                        parameter.backMode = backFlag;
+                        onHide.call(toHideDiv[0], parameter);
                     }
                 }
             }
@@ -236,45 +262,51 @@ $.container = (function (self)
                 currentDisplayId = toShowId;
                 this.currentDisplay = toShowDiv;
                 //如果开启特效的情况
-                if (!backFlag && switchEffect === 'bottom2top') {
-                    toShowDiv.addClass('bottom-top');
-                    var windowHeight = document.documentElement.clientHeight;
-                    var top1 = windowHeight;
-                    //去除header的高度
-                    var top2 = top1 - 44;
-                    toShowDiv.setStyle('top', top1 + 'px');
-                    show(toShowDiv);
-                    if (toShowDiv.length > 0 && onShowIsFn)
-                    {
-                        onShow.call(toShowDiv[0]);
+                if (switchEffect !== 'none') {
+                    if (!backFlag) {
+                        if (switchEffect === 'bottom2top') {
+                            toShowDiv.addClass('bottom-top');
+                            var windowHeight = document.documentElement.clientHeight;
+                            var top1 = windowHeight;
+                            //去除header的高度
+                            var top2 = top1 - 44;
+                            toShowDiv.setStyle('top', top1 + 'px');
+                            show(toShowDiv);
+                            if (toShowDiv.length > 0 && onShowIsFn)
+                            {
+                                onShow.call(toShowDiv[0]);
+                            }
+                            window.setTimeout(function () {
+                                toShowDiv.setStyle('webkitTransform', 'translateY(-' + top2 + 'px)');
+                                window.setTimeout(function () {
+                                    toShowDiv[0].style.removeProperty('top');
+                                    toShowDiv[0].style.removeProperty('-webkit-transform');
+                                    toShowDiv.removeClass('bottom-top');
+                                }, 400);
+                            }, 10);
+                        }
+                        else if (switchEffect === 'right2left') {
+                            toShowDiv.addClass('right-left');
+                            //toShowDiv.setStyle('top', '44px');
+                            //toShowDiv.setStyle('left', windowWidth + 'px');
+                            var windowWidth = document.documentElement.clientWidth;
+                            toShowDiv.setStyle('width', windowWidth + 'px');
+                            show(toShowDiv);
+                            if (toShowDiv.length > 0 && onShowIsFn)
+                            {
+                                onShow.call(toShowDiv[0]);
+                            }
+                            window.setTimeout(function () {
+                                toShowDiv.setStyle('webkitTransform', 'translateX(0px)');
+                                window.setTimeout(function () {
+                                    //toShowDiv[0].style.removeProperty('left');
+                                    //toShowDiv[0].style.removeProperty('top');
+                                    toShowDiv[0].style.removeProperty('-webkit-transform');
+                                    toShowDiv.removeClass('right-left');
+                                }, 400);
+                            }, 10);
+                        }
                     }
-                    window.setTimeout(function () {
-                        toShowDiv.setStyle('webkitTransform', 'translateY(-' + top2 + 'px)');
-                        window.setTimeout(function () {
-                            toShowDiv[0].style.removeProperty('top');
-                            toShowDiv[0].style.removeProperty('-webkit-transform');
-                            toShowDiv.removeClass('bottom-top');
-                        }, 400);
-                    }, 10);
-                }
-                else if (!backFlag && switchEffect === 'right2left') {
-                    toShowDiv.addClass('right-left');
-                    //toShowDiv.setStyle('top', '44px');
-                    //toShowDiv.setStyle('left', windowWidth + 'px');
-                    show(toShowDiv);
-                    if (toShowDiv.length > 0 && onShowIsFn)
-                    {
-                        onShow.call(toShowDiv[0]);
-                    }
-                    window.setTimeout(function () {
-                        toShowDiv.setStyle('webkitTransform', 'translateX(0px)');
-                        window.setTimeout(function () {
-                            //toShowDiv[0].style.removeProperty('left');
-                            //toShowDiv[0].style.removeProperty('top');
-                            toShowDiv[0].style.removeProperty('-webkit-transform');
-                            toShowDiv.removeClass('right-left');
-                        }, 400);
-                    }, 10);
                 }
                 else {
                     show(toShowDiv);
