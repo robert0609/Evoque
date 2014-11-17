@@ -284,7 +284,6 @@ Evoque.extend('dialog', (function (self) {
             bgObj = document.createElement('div');
             bgObj.setAttribute('id', 'm-bgDiv_' + contextGuid);
             $(bgObj).addClass('bg-dialog');
-            bgObj.style.height = getbackgroundHeight() + 'px';
             //增加点击背景返回的事件处理器
             $(bgObj).click(function (event) {
                 var result;
@@ -302,7 +301,6 @@ Evoque.extend('dialog', (function (self) {
             bgObjWhite = document.createElement('div');
             bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + contextGuid);
             $(bgObjWhite).addClass('bg-dialog-none');
-            bgObjWhite.style.height = getbackgroundHeight() + 'px';
 
             dialogObj = document.createElement('div');
 
@@ -530,6 +528,10 @@ Evoque.extend('dialog', (function (self) {
                     }
                 }
             }
+
+            bgObj.style.height = getbackgroundHeight() + 'px';
+            bgObjWhite.style.height = getbackgroundHeight() + 'px';
+
             onQuiting = option.getValueOfProperty('onQuiting', defaultOption);
             onDialogShowed = option.getValueOfProperty('onDialogShowed', defaultOption);
             onDialogClosed = option.getValueOfProperty('onDialogClosed', defaultOption);

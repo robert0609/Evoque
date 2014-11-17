@@ -505,8 +505,9 @@ var Evoque = (function (self)
         if (!chkThis.isFloat && !chkN.isFloat) {
             return this - n;
         }
-        var coefficient = Math.pow(10, Math.max(chkThis.pointRightCount, chkN.pointRightCount));
-        return (this * coefficient - n * coefficient) / coefficient;
+        var fixedNum = Math.max(chkThis.pointRightCount, chkN.pointRightCount);
+        var coefficient = Math.pow(10, fixedNum);
+        return Number(((this * coefficient - n * coefficient) / coefficient).toFixed(fixedNum));
     };
 
     /**

@@ -23,6 +23,24 @@ Evoque.extend('scrollBox', (function (self) {
         });
     };
 
+    self.recreate = function (option) {
+        option = option || {};
+        option = $(option);
+        var caller = self.evoqueTarget;
+        var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
+        if (direction !== 'vertical' && direction !== 'horizontal') {
+            direction = 'vertical';
+        }
+
+        caller.each(function () {
+            var thisCache = $(this).cache();
+            if (thisCache.containsKey('scrollBox')) {
+                thisCache.del('scrollBox');
+            }
+            thisCache.push('scrollBox', new scrollBoxClass(this, direction));
+        });
+    };
+
     function scrollBoxClass(element, direction) {
         var $frame = $(element);
         var $content = $(element.firstElementChild);
