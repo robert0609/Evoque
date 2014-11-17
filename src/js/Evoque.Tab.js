@@ -1,4 +1,4 @@
-//Dependency: Evoque.js, Evoque.ScrollBox.js
+//Dependency: Evoque.js
 Evoque.tab = (function (self)
 {
     var titleClass = 'mtab-title';
@@ -41,8 +41,22 @@ Evoque.tab = (function (self)
             {
                 throw 'Parameter is error!';
             }
+            var $tabObj = $('#' + tabId);
+            if ($tabObj.length === 0) {
+                throw 'Parameter is error!';
+            }
+            tabId = $tabObj[0];
         }
-        return new tabClass(tabId, option.getValueOfProperty('defaultTabIndex', defaultOption), orientation, verticalContentHeight, option.getValueOfProperty('onTabSwitched', defaultOption));
+        if ($.isObjectNull(tabId.__tabControl)) {
+            tabId.__tabControl = new tabClass(tabId, option.getValueOfProperty('defaultTabIndex', defaultOption), orientation, verticalContentHeight, option.getValueOfProperty('onTabSwitched', defaultOption));
+        }
+    };
+
+    self.resetScrollBox = function (tabDivElement) {
+        if ($.isObjectNull(tabDivElement.__tabControl)) {
+            return;
+        }
+        tabDivElement.__tabControl.resetScrollBox();
     };
 
     function tabClass(tabDivElement, defaultTabIndex, orientation, verticalContentHeight, onTabSwitched)
@@ -76,6 +90,11 @@ Evoque.tab = (function (self)
             var idx = title.getAttribute(indexAttrName);
             var content = contentArray[i];
             tabList[idx] = new tcPairClass(idx, title, content);
+        }
+
+        if (orientation === 'vertical' && verticalContentHeight > 0) {
+            tabDivObj.getChild('*[data-guid="' + guid + '"]>.' + titleClass).setStyle('height', verticalContentHeight + 'px');
+            contentArray.setStyle('height', verticalContentHeight + 'px');
         }
 
         function tcPairClass(index, title, content)
@@ -114,10 +133,6 @@ Evoque.tab = (function (self)
             var $content = $(tabList[tabIndex].Content);
             $content.show();
 
-            if (orientation === 'vertical' && verticalContentHeight > 0) {
-                $content.setStyle('height', verticalContentHeight + 'px');
-                $content.scrollBox.create();
-            }
             if ($.checkType(tabSwitchedHandler) === type.eFunction)
             {
                 tabSwitchedHandler.call(tabList[tabIndex].Content, {
@@ -138,6 +153,19 @@ Evoque.tab = (function (self)
         {
             switchTo(Number(titleArray.getAttr(indexAttrName)));
         }
+
+        return {
+            resetScrollBox: function () {
+                /*if ($.checkType(currentIndex) !== type.eNumber) {
+                    return;
+                }
+                var $content = $(tabList[currentIndex].Content);
+                if (orientation === 'vertical' && verticalContentHeight > 0) {
+                    $content.setStyle('height', verticalContentHeight + 'px');
+                    $content.scrollBox.recreate();
+                }*/
+            }
+        };
     }
 
     //API
@@ -146,6 +174,12 @@ Evoque.tab = (function (self)
         option = option || {};
         this.each(function () {
             self.create(option, this);
+        });
+    };
+
+    Evoque.resetScrollBoxOfTab = function () {
+        this.each(function () {
+            self.resetScrollBox(this);
         });
     };
 
