@@ -4,7 +4,29 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <script type="text/javascript" src="src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <link rel="stylesheet" type="text/css" href="src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript" src="src/js/eDebugger.js"></script>
+    <script type="text/javascript">
+        function newClass() {
+            this.p1 = 'p1value';
+            console.debug(this);
+
+            return {
+                f1: function () {
+                    console.debug(this.p1);
+                },
+                p2: 'p2value'
+            };
+        }
+
+        $(function () {
+            var obj = new newClass();
+            console.debug(obj);
+            obj.f1();
+        });
+    </script>
     <script type="text/javascript">
         window.addEventListener('load', function () {
             /*if (window.devicePixelRatio)
@@ -19,7 +41,7 @@
                     'document_body_clientHeight': document.body.clientHeight
                 });
             }*/
-            //document.getElementById('ua').innerHTML = window.navigator.userAgent;
+            document.getElementById('ua').innerHTML = window.navigator.userAgent;
             //alert(navigator.geolocation.getCurrentPosition);
 
             //document.getElementById('ua').innerHTML = 'devicePixelRatio: ' + window.devicePixelRatio;
@@ -65,7 +87,7 @@
 //            var ff = int32Array.buffer;
 
             //console.debug((1960.88 * 100 - 427.09 * 100) / 100);
-            console.debug(1960.88.subtract(427.09));
+            //console.debug(1960.88.subtract(427.09));
 
         }, false);
 
