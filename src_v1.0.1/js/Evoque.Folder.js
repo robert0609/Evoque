@@ -169,7 +169,8 @@ Evoque.extend('folder', (function (self) {
         function setContentUnfoldHeight() {
             var maxHeight = 0;
             $content.getChild().each(function () {
-                maxHeight += this.clientHeight;
+                //TODO:为何这样的高度就会将border的宽度包含进来了？
+                maxHeight += this.getBoundingClientRect().height;
             });
             if (maxHeight === 0) {
                 maxHeight = 1;

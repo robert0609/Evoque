@@ -883,7 +883,7 @@ var Evoque = (function (self)
      * @param destinationX 目的地X坐标
      * @param destinationY 目的地Y坐标
      */
-    $.scrollTo = function (destinationX, destinationY) {
+    $.scrollTo = function (destinationX, destinationY, scrollComplete) {
         var bodyW = document.body.scrollWidth;
         var winW = document.documentElement.clientWidth;
         var maxScrollWidth = 0;
@@ -945,6 +945,9 @@ var Evoque = (function (self)
             if (reachedX && reachedY)
             {
                 window.clearInterval(intervalId);
+                if ($.checkType(scrollComplete) === type.eFunction) {
+                    scrollComplete.call();
+                }
                 return;
             }
             //设置速度

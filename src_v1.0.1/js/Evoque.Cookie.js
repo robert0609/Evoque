@@ -51,7 +51,7 @@ $.extend('cookie', (function (self) {
         //获取当前时间
         var date = new Date();
         var originalVal = getCookie(key);
-        if (originalVal != null)
+        if (originalVal != null && originalVal != '')
         {
             //将date设置为过去的时间
             date.setTime(date.getTime() - 10000);
@@ -84,7 +84,8 @@ $.extend('cookie', (function (self) {
             else {
                 strCookie += '; path=' + path;
             }
-            if (!$.isStringEmpty(domain)) {
+            if (!$.isStringEmpty(domain) && domain.toLowerCase() !== 'localhost')
+            {
                 strCookie += '; domain=' + domain;
             }
             document.cookie = strCookie;
