@@ -1,4 +1,4 @@
-//Dependency: Evoque.js
+//Dependency: Evoque.js, exif.js
 $.extend('imageCompressor', (function (self) {
     var defaultOption = {
         //需要压缩的图片文件数组，每个元素为File对象或者Image标签对象
@@ -83,18 +83,45 @@ $.extend('imageCompressor', (function (self) {
 
     function compress(srcImg, ratio, index, onResult) {
         var that = this;
-        var canvas = document.createElement('canvas');
-        var scaleSize = getScaledSize(srcImg.width, srcImg.height);
-        canvas.width = scaleSize.width;
-        canvas.height = scaleSize.height;
-        var ctx = canvas.getContext("2d");
-        var r = scaleSize.width / srcImg.width;
-        ctx.scale(r, r);
-        ctx.drawImage(srcImg, 0, 0);
-        var imgData = canvas.toDataURL("image/jpeg", ratio);
-        if ($.checkType(onResult) === type.eFunction) {
-            onResult.call(that, { resultImageData: imgData, imageIndex: index });
-        }
+        //判断img方向
+        EXIF.getData(srcImg, function() {
+            var o = EXIF.getTag(srcImg, 'Orientation');
+            var scaleSize = null;
+            if (o === 5 || o === 6 || o === 7 || o === 8)
+            {
+                scaleSize = getScaledSize(srcImg.height, srcImg.width);
+            }
+            else
+            {
+                scaleSize = getScaledSize(srcImg.width, srcImg.height);
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = scaleSize.width;
+            canvas.height = scaleSize.height;
+            var ctx = canvas.getContext("2d");
+            var r = scaleSize.width / srcImg.width;
+            ctx.scale(r, r);
+            if (o === 3 || o === 4)
+            {
+                ctx.rotate(Math.PI);
+                ctx.translate(0 - srcImg.width, 0 - srcImg.height);
+            }
+            else if (o === 5 || o === 6)
+            {
+                ctx.rotate(Math.PI / 2);
+                ctx.translate(0, 0 - srcImg.height);
+            }
+            else if (o === 7 || o === 8)
+            {
+                ctx.rotate(0 - Math.PI / 2);
+                ctx.translate(0 - srcImg.width, 0);
+            }
+            ctx.drawImage(srcImg, 0, 0);
+            var imgData = canvas.toDataURL("image/jpeg", ratio);
+            if ($.checkType(onResult) === type.eFunction) {
+                onResult.call(that, { resultImageData: imgData, imageIndex: index });
+            }
+        });
     }
 
     function getScaledSize(w, h) {

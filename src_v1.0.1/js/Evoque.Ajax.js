@@ -1,4 +1,4 @@
-﻿//Dependency: Evoque.js, json2.js
+﻿//Dependency: Evoque.js, json2.js, Evoque.Cache.js
 $.extend('ajax', (function (self) {
     var defaultOption = {
         // 'get'(default), 'post'
@@ -17,6 +17,14 @@ $.extend('ajax', (function (self) {
         crossOrigin: false,
         withCredentials: false
     };
+
+    var _cacheInstance = null;
+    function getAjaxCache() {
+        if ($.isObjectNull(_cacheInstance)) {
+            _cacheInstance = $.cache.create();
+        }
+        return _cacheInstance;
+    }
 
     self.request = function (option)
     {
@@ -38,6 +46,14 @@ $.extend('ajax', (function (self) {
         checkOption(option);
         option = $(option);
         var xmlhttp = new XMLHttpRequest();
+        var fnResult = {
+            abort: function () {
+                if ($.isObjectNull(xmlhttp)) {
+                    return;
+                }
+                xmlhttp.abort();
+            }
+        };
         var urlTemp = option.getValueOfProperty('url', defaultOption);
         var spliter = '';
         if (urlTemp.indexOf('?') > -1)
@@ -68,13 +84,15 @@ $.extend('ajax', (function (self) {
         {
             if ($.app() === mApp.hmbrowser)
             {
-                return;
+                return fnResult;
             }
             xmlhttp.timeoutId = setTimeout(function () {
                 xmlhttp.abort();
                 xmlhttp.ontimeout();
             }, xmlhttp.timeout);
         }
+
+        return fnResult;
     };
 
     self.post = function (option)
@@ -83,6 +101,14 @@ $.extend('ajax', (function (self) {
         option = $(option);
         var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
         var xmlhttp = new XMLHttpRequest();
+        var fnResult = {
+            abort: function () {
+                if ($.isObjectNull(xmlhttp)) {
+                    return;
+                }
+                xmlhttp.abort();
+            }
+        };
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
         if (crossOrigin) {
             var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
@@ -119,13 +145,14 @@ $.extend('ajax', (function (self) {
         {
             if ($.app() === mApp.hmbrowser)
             {
-                return;
+                return fnResult;
             }
             xmlhttp.timeoutId = setTimeout(function () {
                 xmlhttp.abort();
                 xmlhttp.ontimeout();
             }, xmlhttp.timeout);
         }
+        return fnResult;
     };
 
     self.postCrossOrigin = function (option) {
@@ -277,6 +304,14 @@ $.extend('ajax', (function (self) {
             {
                 isFailed = true;
                 onFail({ type: 'timeout' });
+            }
+            xmlhttp = null;
+        };
+        xmlhttp.onabort = function () {
+            if (!isFailed)
+            {
+                isFailed = true;
+                onFail({ type: 'abort' });
             }
             xmlhttp = null;
         };
