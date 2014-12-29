@@ -1,4 +1,4 @@
-//Dependency: Evoque.js, Evoque.Cache.js
+//Dependency: Evoque.js
 $.extend('lazyLoader', (function (self) {
     var defaultOption = {};
 
