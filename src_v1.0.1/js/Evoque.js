@@ -889,14 +889,14 @@ var Evoque = (function (self)
         var maxScrollWidth = 0;
         if (bodyW > winW)
         {
-            maxScrollWidth = bodyW - winW;;
+            maxScrollWidth = bodyW - winW;
         }
         var bodyH = document.body.scrollHeight;
         var winH = document.documentElement.clientHeight;
         var maxScrollHeight = 0;
         if (bodyH > winH)
         {
-            maxScrollHeight = bodyH - winH;;
+            maxScrollHeight = bodyH - winH;
         }
         destinationX = Math.min(destinationX, maxScrollWidth);
         destinationY = Math.min(destinationY, maxScrollHeight);

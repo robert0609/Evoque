@@ -1,4 +1,4 @@
-//Dependency: Evoque.js
+ï»¿//Dependency: Evoque.js
 Evoque.extend('folder', (function (self) {
     var titleClass = 'folder-title';
     var contentClass = 'folder-content';
@@ -169,7 +169,7 @@ Evoque.extend('folder', (function (self) {
         function setContentUnfoldHeight() {
             var maxHeight = 0;
             $content.getChild().each(function () {
-                //TODO:ÎªºÎÕâÑùµÄ¸ß¶È¾Í»á½«borderµÄ¿í¶È°üº¬½øÀ´ÁË£¿
+                //TODO:ä¸ºä½•è¿™æ ·çš„é«˜åº¦å°±ä¼šå°†borderçš„å®½åº¦åŒ…å«è¿›æ¥äº†ï¼Ÿ
                 maxHeight += this.getBoundingClientRect().height;
             });
             if (maxHeight === 0) {
