@@ -34,6 +34,8 @@ $.extend('lazyLoader', (function (self) {
             var scrollTop = getCurrentScrollTop();
             var winHeight = document.documentElement.clientHeight;
             var scrollBottom = scrollTop + winHeight;
+            var viewportTop = scrollTop - winHeight / 2;
+            var viewportBottom = scrollBottom + winHeight / 2;
             for (var i = 0; i < lazyImgList.length; ++i) {
                 var obj = lazyImgList[i];
                 if (obj.isHide || obj.isLoaded) {
@@ -45,7 +47,7 @@ $.extend('lazyLoader', (function (self) {
                     obj.currentBottom = scrollTop + rec.bottom;
                 }
                 //判断是否该元素滚动到可视范围
-                if (scrollTop <= obj.currentBottom && scrollBottom >= obj.currentTop) {
+                if (viewportTop <= obj.currentBottom && viewportBottom >= obj.currentTop) {
                     obj.imgObj.setAttr('src', obj.imgObj.getAttr(imgSrcAttrName));
                     obj.isLoaded = true;
                 }
@@ -60,6 +62,10 @@ $.extend('lazyLoader', (function (self) {
             }
             return scrollTop;
         }
+    };
+
+    self.append = function (dom) {
+
     };
 
     $.load(function () {
