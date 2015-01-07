@@ -10,28 +10,33 @@ $.extend('lazyLoader', (function (self) {
         option = option || {};
         option = $(option);
 
-        var $lazyImgList = $('img[' + imgSrcAttrName + ']');
         var lazyImgList = [];
-        var scrollTop = getCurrentScrollTop();
-        $lazyImgList.each(function () {
-            var obj = {
-                imgObj: $(this),
-                isHide: $(this).isHide(),
-                isLoaded: false,
-                currentTop: -1,
-                currentBottom: -1
-            };
-            if (!obj.isHide) {
-                var rec = this.getBoundingClientRect();
-                obj.currentTop = scrollTop + rec.top;
-                obj.currentBottom = scrollTop + rec.bottom;
-            }
-            lazyImgList.push(obj);
-            this.__lazyImgListFlag = true;
-        });
+        initLazyImgList();
 
         window.addEventListener('scroll', loadImage);
         loadImage();
+
+        function initLazyImgList() {
+            lazyImgList = [];
+            var scrollTop = getCurrentScrollTop();
+            var $lazyImgList = $('img[' + imgSrcAttrName + ']');
+            $lazyImgList.each(function () {
+                var obj = {
+                    imgObj: $(this),
+                    isHide: $(this).isHide(),
+                    isLoaded: false,
+                    currentTop: -1,
+                    currentBottom: -1
+                };
+                if (!obj.isHide) {
+                    var rec = this.getBoundingClientRect();
+                    obj.currentTop = scrollTop + rec.top;
+                    obj.currentBottom = scrollTop + rec.bottom;
+                }
+                lazyImgList.push(obj);
+                this.__lazyImgListFlag = true;
+            });
+        }
 
         function loadImage() {
             var scrollTop = getCurrentScrollTop();
@@ -68,7 +73,8 @@ $.extend('lazyLoader', (function (self) {
 
         return {
             load: loadImage,
-            append: function (dom) {
+            reset: initLazyImgList,
+            update: function (dom) {
                 var $appendLazyImgList = null;
                 if ($.checkType(dom) === type.eElement) {
                     $appendLazyImgList = $(dom).getChild('img[' + imgSrcAttrName + ']');
@@ -76,6 +82,7 @@ $.extend('lazyLoader', (function (self) {
                 else {
                     $appendLazyImgList = $('img[' + imgSrcAttrName + ']');
                 }
+                var scrollTop = getCurrentScrollTop();
                 $appendLazyImgList.each(function () {
                     if ($.checkType(this.__lazyImgListFlag) === type.eBoolean && this.__lazyImgListFlag) {
                         return;
@@ -99,19 +106,15 @@ $.extend('lazyLoader', (function (self) {
         };
     };
 
-    self.load = function () {
-        if ($.isObjectNull(loaderInstance)) {
-            return;
-        }
-        loaderInstance.load();
-    };
-
-    self.append = function (dom) {
-        if ($.isObjectNull(loaderInstance)) {
-            return;
-        }
-        loaderInstance.append(dom);
-    };
+    $(['load', 'reset', 'update']).each(function () {
+        var that = this;
+        self[that] = function () {
+            if ($.isObjectNull(loaderInstance)) {
+                return;
+            }
+            return loaderInstance[that].apply(loaderInstance, arguments);
+        };
+    });
 
     $.load(function () {
         loaderInstance = $.lazyLoader.init();

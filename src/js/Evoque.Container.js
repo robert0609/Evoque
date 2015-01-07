@@ -9,7 +9,8 @@ $.container = (function (self)
         //同一个页面最多只能有一个container开启history操控
         enableHistory: false,
         //不同的div切换的特效: 'none'、'bottom2top'、'right2left'.default: 'none'
-        switchEffect: 'none'
+        switchEffect: 'none',
+        autoTop: true
     };
 
     self.create = function (option)
@@ -24,6 +25,7 @@ $.container = (function (self)
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);
         var enableHistory = option.getValueOfProperty('enableHistory', defaultOption);
         var switchEffect = option.getValueOfProperty('switchEffect', defaultOption);
+        var autoTop = option.getValueOfProperty('autoTop', defaultOption);
         if (![ 'none', 'bottom2top', 'right2left' ].contains(switchEffect)) {
             switchEffect = 'none';
         }
@@ -36,7 +38,7 @@ $.container = (function (self)
         {
             startDivId = divIdList[0];
         }
-        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory, switchEffect);
+        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory, switchEffect, autoTop);
         if (!$.isStringEmpty(startDivId))
         {
             obj.disableSwitchEffect();
@@ -46,7 +48,7 @@ $.container = (function (self)
         return obj;
     };
 
-    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory, switchEffect)
+    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory, switchEffect, autoTop)
     {
         var onShowIsFn = $.checkType(onShow) === type.eFunction;
         var onHideIsFn = $.checkType(onHide) === type.eFunction;
@@ -79,7 +81,10 @@ $.container = (function (self)
                     parameter.remainHideDivInput = e.state.remainHideDivInput;
                 }
                 innerDisplay.call(that, e.state.toShowId, parameter, true);
-                window.scrollTo(0, 0);
+                if (autoTop)
+                {
+                    window.scrollTo(0, 0);
+                }
             });
         }
 
@@ -94,7 +99,10 @@ $.container = (function (self)
                 }
             }
             innerDisplay.call(this, divId, parameter);
-            window.scrollTo(0, 0);
+            if (autoTop)
+            {
+                window.scrollTo(0, 0);
+            }
             if (enableHistory)
             {
                 if (startDivId === divId)

@@ -1,8 +1,6 @@
 //Dependency: Evoque.js, Evoque.Ajax.js, Evoque.Dialog.js
-Evoque.loader = (function (self)
-{
+Evoque.extend('loader', (function (self) {
     var defaultOption = {
-        elementId: '',
         loadingElementId: '',
         url:'',
         // json
@@ -17,21 +15,13 @@ Evoque.loader = (function (self)
 
     var loadExFlag = 'LoadException:';
 
-    self.load = function (option, element) {
-        if ($.isObjectNull(option))
-        {
-            throw 'Parameter is null!';
-        }
+    self.load = function (option) {
+        option = option || {};
         option = $(option);
-        if ($.checkType(element) !== type.eElement)
-        {
-            var id = option.getValueOfProperty('elementId', defaultOption);
-            if ($.isStringEmpty(id))
-            {
-                throw 'Parameter is error!';
-            }
-            element = document.getElementById(id);
+        if (self.evoqueTarget.length === 0) {
+            return;
         }
+        var element = self.evoqueTarget[0];
         var loading = option.getValueOfProperty('loadingElementId', defaultOption);
 
         if ($.isObjectNull(element.__innerLoader) || !element.__innerLoader instanceof loaderClass)
@@ -61,6 +51,9 @@ Evoque.loader = (function (self)
 
         this.loadSomething = function (url, query, onsuccess, onfail, timeout, loadMode, delayReplace)
         {
+            //判断是否引用了延迟加载插件
+            var lazyLoaderEnable = !$.isObjectNull($.lazyLoader);
+
             if (loadMode === 'replace' && delayReplace) {
                 $.dialog.showLoading(loadingElementId);
             }
@@ -94,10 +87,26 @@ Evoque.loader = (function (self)
                         if (loadMode === 'replace')
                         {
                             parent.innerHTML = returnObj;
+                            if (lazyLoaderEnable) {
+                                $.lazyLoader.reset();
+                                $.lazyLoader.load();
+                            }
                         }
                         else
                         {
-                            parent.innerHTML += returnObj;
+                            if (lazyLoaderEnable) {
+                                var docFrag = document.createElement('div');
+                                docFrag.innerHTML = returnObj;
+                                var $docFrag = $(docFrag);
+                                $docFrag.getChild().each(function () {
+                                    parent.appendChild(this);
+                                    $.lazyLoader.update(this);
+                                });
+                                $.lazyLoader.load();
+                            }
+                            else {
+                                parent.innerHTML += returnObj;
+                            }
                         }
                         onsuccess.call(window);
                     }
@@ -121,13 +130,8 @@ Evoque.loader = (function (self)
     //API
     Evoque.load = function (option)
     {
-        option = option || {};
-        if (this.length < 1)
-        {
-            return;
-        }
-        self.load(option, this[0]);
+        return this.loader.load(option);
     };
 
     return self;
-}(Evoque.loader || {}));
+}({})));
