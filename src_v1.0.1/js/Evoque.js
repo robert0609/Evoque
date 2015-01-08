@@ -1597,7 +1597,7 @@ var Evoque = (function (self)
      * @param callback 处理回调
      * @param useCapture 捕获模式开关
      */
-    self.addEventHandler = function (evtName, callback, useCapture) {
+    self.addEventHandler = function (evtName, callback, option) {
         if (_hasTouchEvent)
         {
             if ($.enableTapEvent() && evtName == 'click')
@@ -1609,10 +1609,8 @@ var Evoque = (function (self)
                 evtName = 'click';
             }
         }
-        if ($.checkType(useCapture) !== type.eBoolean)
-        {
-            useCapture = false;
-        }
+        //判断处理option参数
+        var o = handleEventOption(option);
         this.each(function ()
         {
             if ($.checkType(this) === type.eElement)
@@ -1625,7 +1623,15 @@ var Evoque = (function (self)
                 {
                     //DOM标准
                     if (this.addEventListener && $.checkType(callback) === type.eFunction) {
-                        this.addEventListener(evtName, callback, useCapture);
+                        if (o.useEventPrefix) {
+                            var evtNames = generatePrefixEvent(evtName);
+                            for (var i = 0; i < evtNames.length; ++i) {
+                                this.addEventListener(evtNames[i], callback, o.useCapture);
+                            }
+                        }
+                        else {
+                            this.addEventListener(evtName, callback, o.useCapture);
+                        }
                     }
                 }
             }
@@ -1638,7 +1644,7 @@ var Evoque = (function (self)
      * @param callback 处理回调
      * @param useCapture 捕获模式开关
      */
-    self.removeEventHandler = function (evtName, callback, useCapture) {
+    self.removeEventHandler = function (evtName, callback, option) {
         if (_hasTouchEvent)
         {
             if ($.enableTapEvent() && evtName == 'click')
@@ -1650,10 +1656,8 @@ var Evoque = (function (self)
                 evtName = 'click';
             }
         }
-        if ($.checkType(useCapture) !== type.eBoolean)
-        {
-            useCapture = false;
-        }
+        //判断处理option参数
+        var o = handleEventOption(option);
         this.each(function ()
         {
             if ($.checkType(this) === type.eElement)
@@ -1666,12 +1670,63 @@ var Evoque = (function (self)
                 {
                     //DOM标准
                     if (this.removeEventListener && $.checkType(callback) === type.eFunction) {
-                        this.removeEventListener(evtName, callback, useCapture);
+                        if (o.useEventPrefix) {
+                            var evtNames = generatePrefixEvent(evtName);
+                            for (var i = 0; i < evtNames.length; ++i) {
+                                this.removeEventListener(evtNames[i], callback, o.useCapture);
+                            }
+                        }
+                        else {
+                            this.removeEventListener(evtName, callback, o.useCapture);
+                        }
                     }
                 }
             }
         });
     };
+
+    function handleEventOption(option) {
+        var useCapture = false;
+        var useEventPrefix = false;
+        switch ($.checkType(option)) {
+            case type.eBoolean:
+                useCapture = option;
+                break;
+            case type.eObject:
+                if ($.checkType(option.useCapture) === type.eBoolean) {
+                    useCapture = option.useCapture;
+                }
+                if ($.checkType(option.useEventPrefix) === type.eBoolean) {
+                    useEventPrefix = option.useEventPrefix;
+                }
+                break;
+            default:
+                break;
+        }
+        return {
+            useCapture: useCapture,
+            useEventPrefix: useEventPrefix
+        };
+    }
+    function generatePrefixEvent(evtName) {
+        if ($.isStringEmpty(evtName)) {
+            return [evtName];
+        }
+        //对于动画的CSS事件，单独特殊处理下，全部转成小写字母
+        var retEvt = [];
+        if (evtName === 'animationStart' || evtName === 'animationIteration' || evtName === 'animationEnd') {
+            retEvt.push(evtName.toLowerCase());
+        }
+        else {
+            retEvt.push(evtName);
+        }
+        var pfx = ['webkit', 'moz', 'MS'];
+        var convertEvtName = evtName.substr(0, 1).toUpperCase() + evtName.substr(1);
+        for (var i = 0; i < pfx.length; ++i) {
+            retEvt.push(pfx[i] + convertEvtName);
+        }
+        return retEvt;
+    }
 
     /**
      * 声明自定义事件
