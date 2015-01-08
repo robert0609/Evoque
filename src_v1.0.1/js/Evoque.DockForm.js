@@ -2,7 +2,9 @@
 Evoque.extend('dockForm', (function (self) {
     var defaultOption = {
         // top|bottom|left|right. default: bottom
-        direction: 'bottom'
+        direction: 'bottom',
+        onShow: function () {},
+        onHide: function () {}
     };
 
     var dockFormInstances = {};
@@ -24,7 +26,9 @@ Evoque.extend('dockForm', (function (self) {
             {
                 dockFormInstances[dir] = new dockFormClass(dir);
             }
-            dockFormInstances[dir].show(element);
+            var onShow = option.getValueOfProperty('onShow', defaultOption);
+            var onHide = option.getValueOfProperty('onHide', defaultOption);
+            dockFormInstances[dir].show(element, onShow, onHide);
         }
     };
 
@@ -48,7 +52,8 @@ Evoque.extend('dockForm', (function (self) {
         var maxHeight = Math.floor(docHeight * 0.9);
 
         var div = document.createElement('div');
-        $(div).addClass('dockform-dg-div');
+        var $div = $(div);
+        $div.addClass('dockform-dg-div');
         div.style[direction] = '0';
         switch (direction)
         {
@@ -62,6 +67,13 @@ Evoque.extend('dockForm', (function (self) {
                 div.style.width = docWidth + 'px';
                 break;
         }
+        var animationEndCallback = null;
+        $div.addEventHandler('animationEnd', function () {
+            if ($.checkType(animationEndCallback) === type.eFunction) {
+                animationEndCallback.call(div);
+            }
+        }, { useEventPrefix: true });
+        var formHideCallback = null;
 
         var bgObj = document.createElement('div');
         $(bgObj).addClass('dockform-bg-div');
@@ -88,11 +100,14 @@ Evoque.extend('dockForm', (function (self) {
         this.currentShowElement = null;
         var showFlag = false;
 
-        this.show = function (element) {
+        this.show = function (element, onShow, onHide) {
             if (showFlag)
             {
                 this.hide();
             }
+            animationEndCallback = onShow;
+            formHideCallback = onHide;
+
             parentCache = element.parentElement;
             this.currentShowElement = element;
             div.appendChild(element);
@@ -100,7 +115,7 @@ Evoque.extend('dockForm', (function (self) {
             document.body.appendChild(bgObj);
             document.body.appendChild(div);
             setDivSize();
-            $(div).addClass('bottomTop');
+            $div.addClass('bottomTop');
             showFlag = true;
 
             return this;
@@ -131,7 +146,7 @@ Evoque.extend('dockForm', (function (self) {
             {
                 return;
             }
-            $(div).removeClass('bottomTop');
+            $div.removeClass('bottomTop');
             document.body.removeChild(div);
             var element = this.currentShowElement;
             $(element).hide();
@@ -140,6 +155,12 @@ Evoque.extend('dockForm', (function (self) {
             parentCache = null;
             this.currentShowElement = null;
             showFlag = false;
+
+            if ($.checkType(formHideCallback) === type.eFunction) {
+                formHideCallback.call(div);
+            }
+            animationEndCallback = null;
+            formHideCallback = null;
         };
     }
 
