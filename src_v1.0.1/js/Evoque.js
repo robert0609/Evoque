@@ -1595,7 +1595,7 @@ var Evoque = (function (self)
      * 绑定Html元素的事件处理回调
      * @param evtName 事件名
      * @param callback 处理回调
-     * @param useCapture 捕获模式开关
+     * @param option 一些参数:{ useCapture: false, useEventPrefix: false }. useCapture:捕获模式开关, useEventPrefix:是否对事件名称加上不同浏览器的前缀
      */
     self.addEventHandler = function (evtName, callback, option) {
         if (_hasTouchEvent)
@@ -1642,7 +1642,7 @@ var Evoque = (function (self)
      * 移除Html元素的事件处理回调
      * @param evtName 事件名
      * @param callback 处理回调
-     * @param useCapture 捕获模式开关
+     * @param option 一些参数:{ useCapture: false, useEventPrefix: false }. useCapture:捕获模式开关, useEventPrefix:是否对事件名称加上不同浏览器的前缀
      */
     self.removeEventHandler = function (evtName, callback, option) {
         if (_hasTouchEvent)
@@ -1712,14 +1712,7 @@ var Evoque = (function (self)
         if ($.isStringEmpty(evtName)) {
             return [evtName];
         }
-        //对于动画的CSS事件，单独特殊处理下，全部转成小写字母
-        var retEvt = [];
-        if (evtName === 'animationStart' || evtName === 'animationIteration' || evtName === 'animationEnd') {
-            retEvt.push(evtName.toLowerCase());
-        }
-        else {
-            retEvt.push(evtName);
-        }
+        var retEvt = [evtName.toLowerCase()];
         var pfx = ['webkit', 'moz', 'MS'];
         var convertEvtName = evtName.substr(0, 1).toUpperCase() + evtName.substr(1);
         for (var i = 0; i < pfx.length; ++i) {
