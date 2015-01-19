@@ -10,6 +10,7 @@ $.container = (function (self)
         enableHistory: false,
         //不同的div切换的特效: 'none'、'bottom2top'、'right2left'.default: 'none'
         switchEffect: 'none',
+        getFinalScrollAxis: function () { return 44; },
         autoTop: true
     };
 
@@ -26,6 +27,7 @@ $.container = (function (self)
         var enableHistory = option.getValueOfProperty('enableHistory', defaultOption);
         var switchEffect = option.getValueOfProperty('switchEffect', defaultOption);
         var autoTop = option.getValueOfProperty('autoTop', defaultOption);
+        var getFinalScrollAxis = option.getValueOfProperty('getFinalScrollAxis', defaultOption);
         if (![ 'none', 'bottom2top', 'right2left' ].contains(switchEffect)) {
             switchEffect = 'none';
         }
@@ -38,7 +40,7 @@ $.container = (function (self)
         {
             startDivId = divIdList[0];
         }
-        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory, switchEffect, autoTop);
+        var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory, switchEffect, autoTop, getFinalScrollAxis);
         if (!$.isStringEmpty(startDivId))
         {
             obj.disableSwitchEffect();
@@ -48,7 +50,7 @@ $.container = (function (self)
         return obj;
     };
 
-    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory, switchEffect, autoTop)
+    function containerClass(divIdList, startDivId, onShow, onHide, enableHistory, switchEffect, autoTop, getFinalScrollAxis)
     {
         var onShowIsFn = $.checkType(onShow) === type.eFunction;
         var onHideIsFn = $.checkType(onHide) === type.eFunction;
@@ -97,7 +99,7 @@ $.container = (function (self)
                     parameter.remainHideDivInput = option.remainHideDivInput;
                 }
             }
-            innerDisplay.call(this, divId, parameter, false, isOptionNull ? undefined : option.switchEffect);
+            innerDisplay.call(this, divId, parameter, false, isOptionNull ? undefined : option.switchEffect, isOptionNull ? undefined : option.getFinalScrollAxis);
             if (autoTop)
             {
                 window.scrollTo(0, 0);
@@ -134,6 +136,15 @@ $.container = (function (self)
                 effect = divSpecialEffect[divId];
             }
             return effect;
+        }
+
+        var divSpecialFinalAxis = {};
+        function getFinalAxisCallback(divId) {
+            var cb = getFinalScrollAxis;
+            if ($.checkType(divSpecialFinalAxis[divId]) === type.eFunction) {
+                cb = divSpecialFinalAxis[divId];
+            }
+            return cb;
         }
 
         function genHref() {
@@ -179,10 +190,15 @@ $.container = (function (self)
             return str;
         }
 
-        function innerDisplay(divId, parameter, isBack, effect)
+        function innerDisplay(divId, parameter, isBack, effect, getFinalAxis)
         {
-            if (!isBack && !$.isStringEmpty(effect) && [ 'bottom2top', 'right2left' ].contains(effect)) {
-                divSpecialEffect[divId] = effect;
+            if (!isBack) {
+                if (!$.isStringEmpty(effect) && [ 'bottom2top', 'right2left' ].contains(effect)) {
+                    divSpecialEffect[divId] = effect;
+                }
+                if ($.checkType(getFinalAxis) === type.eFunction) {
+                    divSpecialFinalAxis[divId] = getFinalAxis;
+                }
             }
             var that = this;
             var backFlag = false;
@@ -208,9 +224,12 @@ $.container = (function (self)
                 }
             }
             var finalEffect = '';
+            var finalAxisCallback = null;
             if (toHideDiv != null) {
                 finalEffect = getEffect(toHideDiv[0].id);
                 delete divSpecialEffect[toHideDiv[0].id];
+                finalAxisCallback = getFinalAxisCallback(toHideDiv[0].id);
+                delete divSpecialFinalAxis[toHideDiv[0].id];
 
                 currentDisplayId = '';
                 this.currentDisplay = null;
@@ -219,8 +238,9 @@ $.container = (function (self)
                     var windowHeight = document.documentElement.clientHeight;
                     var top1 = windowHeight;
                     //去除header的高度
-                    var top2 = top1 - 44;
-                    toHideDiv.setStyle('top', '44px');
+                    var headerTop = finalAxisCallback();
+                    var top2 = top1 - headerTop;
+                    toHideDiv.setStyle('top', headerTop + 'px');
                     window.setTimeout(function () {
                         toHideDiv.setStyle('webkitTransform', 'translateY(' + top2 + 'px)');
                         window.setTimeout(function () {
@@ -285,6 +305,7 @@ $.container = (function (self)
             }
             if (toShowDiv != null) {
                 finalEffect = getEffect(toShowId);
+                finalAxisCallback = getFinalAxisCallback(toShowId);
 
                 currentDisplayId = toShowId;
                 this.currentDisplay = toShowDiv;
@@ -296,7 +317,7 @@ $.container = (function (self)
                             var windowHeight = document.documentElement.clientHeight;
                             var top1 = windowHeight;
                             //去除header的高度
-                            var top2 = top1 - 44;
+                            var top2 = top1 - finalAxisCallback();
                             toShowDiv.setStyle('top', top1 + 'px');
                             show(toShowDiv);
                             if (toShowDiv.length > 0 && onShowIsFn)
