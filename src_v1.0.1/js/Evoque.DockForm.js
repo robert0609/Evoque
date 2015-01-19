@@ -83,6 +83,8 @@ Evoque.extend('dockForm', (function (self) {
         $(bgObj).addEventHandler('click', function () {
             that.hide();
         });
+        //TODO: 发现在弹出的层中绑定的触摸事件，第一次弹出有效，以后的弹出无效，加上以下这句代码，该现象不存在，原因不明。
+        document.addEventListener('touchstart', function () {});
 
         function getbackgroundHeight()
         {

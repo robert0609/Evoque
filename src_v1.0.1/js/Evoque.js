@@ -511,6 +511,26 @@ var Evoque = (function (self)
     };
 
     /**
+     * 判断某个Element是否满足指定的css选择器
+     * @param cssSelector
+     */
+    Element.prototype.matchSelector = function (cssSelector) {
+        if (this.matchesSelector) {
+            return this.matchesSelector(cssSelector);
+        }
+        var element = this;
+        var ret = false;
+        $(['webkit', 'moz', 'ms', 'o']).each(function () {
+            var mtdName = this + 'MatchesSelector';
+            if (element[mtdName]) {
+                ret = element[mtdName](cssSelector);
+                return false;
+            }
+        });
+        return ret;
+    };
+
+    /**
      * 获取Evoque包装对象
      * @param parameter 可以是CSS选择器、js变量、DOM对象，也可以是DOMReady事件的回调函数
      * @return {EvoqueClass}

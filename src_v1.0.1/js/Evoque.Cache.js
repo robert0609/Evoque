@@ -79,6 +79,7 @@ $.extend('cache', (function (self) {
                 {
                     __seqStorer.splice(idx, 1);
                     __dataStorer[key] = undefined;
+                    delete __dataStorer[key];
                 }
             }
         };

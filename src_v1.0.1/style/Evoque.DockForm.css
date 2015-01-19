@@ -9,7 +9,6 @@
     z-index: 5000;
 }
 .dockform-dg-div{
-    overflow: auto;
     position: fixed;
     margin: 0;
     padding: 0;
