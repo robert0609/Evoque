@@ -65,8 +65,6 @@ $.container = (function (self)
         var currentDisplayId = '';
         this.currentDisplay = null;
 
-        var lastTop = {};
-
         if (enableHistory)
         {
             var that = this;
@@ -91,14 +89,15 @@ $.container = (function (self)
         this.display = function(divId, option)
         {
             var parameter = createOption();
-            if (!$.isObjectNull(option))
+            var isOptionNull = $.isObjectNull(option);
+            if (!isOptionNull)
             {
                 if ($.checkType(option.remainHideDivInput) === type.eBoolean)
                 {
                     parameter.remainHideDivInput = option.remainHideDivInput;
                 }
             }
-            innerDisplay.call(this, divId, parameter);
+            innerDisplay.call(this, divId, parameter, false, isOptionNull ? undefined : option.switchEffect);
             if (autoTop)
             {
                 window.scrollTo(0, 0);
@@ -123,6 +122,19 @@ $.container = (function (self)
         this.enableSwitchEffect = function () {
             switchEffect = originalSwitchEffect;
         };
+
+        /**
+         * 针对同一个容器下的层，有些层想呈现特殊的切换效果，与其他层不同，那么这个特殊效果通过innerDisplay的effect参数传入，缓存在这里
+         * @type {Object: { string, string }}
+         */
+        var divSpecialEffect = {};
+        function getEffect(divId) {
+            var effect = switchEffect;
+            if (!$.isStringEmpty(divSpecialEffect[divId])) {
+                effect = divSpecialEffect[divId];
+            }
+            return effect;
+        }
 
         function genHref() {
             var stamp = (new Date()).getTime();
@@ -167,8 +179,11 @@ $.container = (function (self)
             return str;
         }
 
-        function innerDisplay(divId, parameter, isBack)
+        function innerDisplay(divId, parameter, isBack, effect)
         {
+            if (!isBack && !$.isStringEmpty(effect) && [ 'bottom2top', 'right2left' ].contains(effect)) {
+                divSpecialEffect[divId] = effect;
+            }
             var that = this;
             var backFlag = false;
             if ($.checkType(isBack) === type.eBoolean && isBack)
@@ -192,11 +207,14 @@ $.container = (function (self)
                     }
                 }
             }
+            var finalEffect = '';
             if (toHideDiv != null) {
-                lastTop[toHideDiv.id] = document.body.scrollTop;
+                finalEffect = getEffect(toHideDiv[0].id);
+                delete divSpecialEffect[toHideDiv[0].id];
+
                 currentDisplayId = '';
                 this.currentDisplay = null;
-                if (backFlag && switchEffect === 'bottom2top') {
+                if (backFlag && finalEffect === 'bottom2top') {
                     toHideDiv.addClass('top-bottom');
                     var windowHeight = document.documentElement.clientHeight;
                     var top1 = windowHeight;
@@ -227,7 +245,7 @@ $.container = (function (self)
                         }, 400);
                     }, 10);
                 }
-                else if (backFlag && switchEffect === 'right2left') {
+                else if (backFlag && finalEffect === 'right2left') {
                     toHideDiv.addClass('left-right');
                     //toHideDiv.setStyle('top', '44px');
                     var windowWidth = document.documentElement.clientWidth;
@@ -265,14 +283,15 @@ $.container = (function (self)
                     }
                 }
             }
-            if (toShowDiv != null)
-            {
+            if (toShowDiv != null) {
+                finalEffect = getEffect(toShowId);
+
                 currentDisplayId = toShowId;
                 this.currentDisplay = toShowDiv;
                 //如果开启特效的情况
-                if (switchEffect !== 'none') {
+                if (finalEffect !== 'none') {
                     if (!backFlag) {
-                        if (switchEffect === 'bottom2top') {
+                        if (finalEffect === 'bottom2top') {
                             toShowDiv.addClass('bottom-top');
                             var windowHeight = document.documentElement.clientHeight;
                             var top1 = windowHeight;
@@ -293,7 +312,7 @@ $.container = (function (self)
                                 }, 400);
                             }, 10);
                         }
-                        else if (switchEffect === 'right2left') {
+                        else if (finalEffect === 'right2left') {
                             toShowDiv.addClass('right-left');
                             //toShowDiv.setStyle('top', '44px');
                             //toShowDiv.setStyle('left', windowWidth + 'px');
