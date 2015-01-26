@@ -114,7 +114,26 @@ var TujiaJSBridge = (function (own) {
         return wholeOutputFuncName;
     }
 
-    function requestApp(action, parameter, resultCallback) {
+    function createExceptionFunc(onlyKey, exceptionCallback) {
+        var cb = exceptionCallback;
+        if (!isFunction(cb)) {
+            return '';
+        }
+
+        var exceptionFuncName = 'exception' + onlyKey;
+        var wholeExceptionFuncName = funcPrefix + exceptionFuncName;
+
+        var exceptionFunc = function (jsonStr) {
+            delete own[exceptionFuncName];
+            cb.call(window, { result: JSON.parse(jsonStr) });
+        };
+
+        own[exceptionFuncName] = exceptionFunc;
+
+        return wholeExceptionFuncName;
+    }
+
+    function requestApp(action, parameter, resultCallback, exceptionCallback) {
         var onlyKey = guid(16, 16);
         var bundleParam = { action: action };
         if (parameter instanceof Object && parameter != null) {
@@ -122,9 +141,11 @@ var TujiaJSBridge = (function (own) {
         }
 
         var outputFuncName = createOutputFunc(onlyKey, resultCallback);
+        var exceptionFuncName = createExceptionFunc(onlyKey, exceptionCallback);
         //针对android平台不能直接获得js函数返回值的情况，进行处理
         if (isFunction(own.androidInput)) {
             bundleParam.output = outputFuncName;
+            bundleParam.exception = exceptionFuncName;
             own.androidInput.call(window, JSON.stringify(bundleParam));
         }
         else {
@@ -132,45 +153,54 @@ var TujiaJSBridge = (function (own) {
             if (outputFuncName !== '') {
                 url += '&output=' + outputFuncName;
             }
+            url += '&exception=' + exceptionFuncName;
             iframe.src = url;
         }
     }
 
     /**
      * js调用app
-     * @param option: { action: xx, parameter: { xx: xx }, resultCallback: function (json) {} }
+     * @param option: { action: xx, parameter: { xx: xx }, resultCallback: function (json) {}, exceptionCallback: function (json) {} }
      */
     own.callApp = function (option) {
         option = option || {};
         if (isStringEmpty(option.action)) {
             throw 'Action can not be null!';
         }
-        requestApp(option.action, option.parameter, option.resultCallback);
+        requestApp(option.action, option.parameter, option.resultCallback, option.exceptionCallback);
     };
 
     /**
      * app调用js
-     * @param option: { action: xx, parameter: { xx: xx }, resultAction: xx }
+     * @param option: { action: xx, parameter: { xx: xx }, resultAction: xx, exceptionAction: xx }
      */
-    own.callJs = function (option) {
-        option = option || {};
+    own.callJs = function (optionJsonStr) {
+        if (isStringEmpty(optionJsonStr)) {
+            return;
+        }
+        var option = JSON.parse(optionJsonStr);
         var action = option.action;
         if (isStringEmpty(action)) {
             return;
         }
         var p = option.parameter;
         var ra = option.resultAction;
+        var ea = option.exceptionAction;
 
         if (isFunction(own[action])) {
-            own[action].apply(window, {
+            own[action].call(window, {
                 parameter: p,
                 resultCallback: function (json) {
                     if (isStringEmpty(ra)) {
                         return;
                     }
-                    own.callApp({ action: ra, parameterCallback: function () {
-                        return json;
-                    } });
+                    own.callApp({ action: ra, parameter: json });
+                },
+                exceptionCallback: function (json) {
+                    if (isStringEmpty(ea)) {
+                        return;
+                    }
+                    own.callApp({ action: ea, parameter: json });
                 }
             });
         }
