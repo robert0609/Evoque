@@ -224,3 +224,17 @@ var TujiaJSBridge = (function (own) {
 
     return own;
 }(TujiaJSBridge || {}));
+
+var tujiaJSBridgeEvent;
+if (document.createEvent) {
+    tujiaJSBridgeEvent = document.createEvent('CustomEvent');
+    tujiaJSBridgeEvent.initCustomEvent('TujiaBridgeReady', true, false, { bridge: TujiaJSBridge });
+}
+else {
+    tujiaJSBridgeEvent = new CustomEvent('TujiaBridgeReady', {
+        detail: { bridge: TujiaJSBridge },
+        bubbles: true,
+        cancelable: false
+    });
+}
+document.dispatchEvent(tujiaJSBridgeEvent);
