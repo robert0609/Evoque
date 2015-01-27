@@ -76,10 +76,18 @@ var TujiaJSBridge = (function (own) {
         }
     }
 
-    var iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = tjProtocol;
-    document.documentElement.appendChild(iframe);
+    var frameAppend = false;
+    var iframe = null;
+    function appendFrame() {
+        if (frameAppend || isFunction(own.androidInput)) {
+            return;
+        }
+        iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = tjProtocol;
+        document.documentElement.appendChild(iframe);
+        frameAppend = true;
+    }
 
     function createInputFunc(onlyKey, bundleParam) {
         var inputFuncName = 'input' + onlyKey;
@@ -144,16 +152,24 @@ var TujiaJSBridge = (function (own) {
         var exceptionFuncName = createExceptionFunc(onlyKey, exceptionCallback);
         //针对android平台不能直接获得js函数返回值的情况，进行处理
         if (isFunction(own.androidInput)) {
-            bundleParam.output = outputFuncName;
-            bundleParam.exception = exceptionFuncName;
-            own.androidInput.call(window, JSON.stringify(bundleParam));
+            if (outputFuncName !== '') {
+                bundleParam.output = outputFuncName;
+            }
+            if (exceptionFuncName !== '') {
+                bundleParam.exception = exceptionFuncName;
+            }
+            own.androidInput(JSON.stringify(bundleParam));
         }
         else {
+            appendFrame();
+
             var url = tjProtocol + '?input=' + createInputFunc(onlyKey, bundleParam);
             if (outputFuncName !== '') {
                 url += '&output=' + outputFuncName;
             }
-            url += '&exception=' + exceptionFuncName;
+            if (exceptionFuncName !== '') {
+                url += '&exception=' + exceptionFuncName;
+            }
             iframe.src = url;
         }
     }
