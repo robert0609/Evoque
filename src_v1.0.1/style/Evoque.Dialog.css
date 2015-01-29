@@ -1,3 +1,5 @@
+.notscroll{overflow:hidden}
+.notscroll body{height:100%;overflow:hidden}
 /* 遮罩 黑色半透明 */
 .bg-dialog{
   position: absolute;
