@@ -409,6 +409,12 @@ Evoque.extend('dialog', (function (self) {
         function innerShow(option) {
             init();
 
+            //为了屏蔽双滚动条，即背景页面也能滚动的问题，增加此代码
+            if (!document.documentElement.classList.contains('notscroll'))
+            {
+                document.documentElement.classList.add('notscroll');
+            }
+
             var showSrc = option[0].__source;
             dialogObj.style.opacity = 1;
             var title = option.getValueOfProperty('title', defaultOption);
@@ -630,6 +636,13 @@ Evoque.extend('dialog', (function (self) {
                     onDialogClosed.call(window);
                 }
             }
+
+            //为了屏蔽双滚动条，即背景页面也能滚动的问题，增加此代码
+            if (document.documentElement.classList.contains('notscroll'))
+            {
+                document.documentElement.classList.remove('notscroll');
+            }
+
             //弹出消息序列中下一个消息框
             exeShowContext();
         }
