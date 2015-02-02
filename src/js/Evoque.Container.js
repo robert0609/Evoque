@@ -319,6 +319,8 @@ $.container = (function (self)
                             //去除header的高度
                             var top2 = top1 - finalAxisCallback();
                             toShowDiv.setStyle('top', top1 + 'px');
+                            //暴力解决上到下动画的宽度坍缩问题
+                            toShowDiv.setStyle('width', document.documentElement.clientWidth + 'px');
                             show(toShowDiv);
                             if (toShowDiv.length > 0 && onShowIsFn)
                             {
