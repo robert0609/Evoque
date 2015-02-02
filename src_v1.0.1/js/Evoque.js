@@ -127,6 +127,7 @@ var Evoque = (function (self)
         eError: 'error',
         eNode: 'node',
         eElement: 'element',
+        eDocument: 'document',
         eArraylist: 'arraylist',
         eObject: 'object'
     };
@@ -561,6 +562,7 @@ var Evoque = (function (self)
             case type.eNumber:
             case type.eBoolean:
             case type.eElement:
+            case type.eDocument:
             case type.eNode:
             case type.eRegExp:
             case type.eDate:
@@ -751,6 +753,10 @@ var Evoque = (function (self)
         else if (obj instanceof Element)
         {
             return type.eElement;
+        }
+        else if (obj instanceof Document)
+        {
+            return type.eDocument;
         }
         else if (obj instanceof Node)
         {
@@ -1633,7 +1639,8 @@ var Evoque = (function (self)
         var o = handleEventOption(option);
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            var thisType = $.checkType(this);
+            if (thisType === type.eElement || thisType === type.eDocument)
             {
                 if (_customEvents.hasOwnProperty(evtName))
                 {
@@ -1680,7 +1687,8 @@ var Evoque = (function (self)
         var o = handleEventOption(option);
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            var thisType = $.checkType(this);
+            if (thisType === type.eElement || thisType === type.eDocument)
             {
                 if (_customEvents.hasOwnProperty(evtName))
                 {
@@ -1732,7 +1740,7 @@ var Evoque = (function (self)
         if ($.isStringEmpty(evtName)) {
             return [evtName];
         }
-        var retEvt = [evtName.toLowerCase()];
+        var retEvt = [evtName, evtName.toLowerCase()];
         var pfx = ['webkit', 'moz', 'MS'];
         var convertEvtName = evtName.substr(0, 1).toUpperCase() + evtName.substr(1);
         for (var i = 0; i < pfx.length; ++i) {

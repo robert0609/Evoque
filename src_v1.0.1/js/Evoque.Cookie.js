@@ -32,6 +32,15 @@ $.extend('cookie', (function (self) {
         setCookie(key, val, option);
     };
 
+    self.remove = function (key) {
+        var date = new Date();
+        //将date设置为过去的时间
+        date.setTime(date.getTime() - 10000);
+        var originalVal = getCookie(key);
+        //将这个cookie删除
+        document.cookie = key + '=' + originalVal + '; expires=' + date.toUTCString() + '; path=/';
+    };
+
     function getCookie(key)
     {
         var arrCookie = document.cookie.split('; ');

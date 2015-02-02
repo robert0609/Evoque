@@ -105,16 +105,18 @@ var TujiaJSBridge = (function (own) {
 
     function createOutputFunc(onlyKey, resultCallback) {
         var cb = resultCallback;
-        if (!isFunction(cb)) {
-            return '';
-        }
 
         var outputFuncName = 'output' + onlyKey;
         var wholeOutputFuncName = funcPrefix + outputFuncName;
 
+        var exceptionFuncName = 'exception' + onlyKey;
+
         var outputFunc = function (jsonStr) {
             delete own[outputFuncName];
-            cb.call(window, { result: JSON.parse(jsonStr) });
+            delete own[exceptionFuncName];
+            if (isFunction(cb)) {
+                cb.call(window, { result: JSON.parse(jsonStr) });
+            }
         };
 
         own[outputFuncName] = outputFunc;
@@ -124,16 +126,18 @@ var TujiaJSBridge = (function (own) {
 
     function createExceptionFunc(onlyKey, exceptionCallback) {
         var cb = exceptionCallback;
-        if (!isFunction(cb)) {
-            return '';
-        }
 
         var exceptionFuncName = 'exception' + onlyKey;
         var wholeExceptionFuncName = funcPrefix + exceptionFuncName;
 
+        var outputFuncName = 'output' + onlyKey;
+
         var exceptionFunc = function (jsonStr) {
+            delete own[outputFuncName];
             delete own[exceptionFuncName];
-            cb.call(window, { result: JSON.parse(jsonStr) });
+            if (isFunction(cb)) {
+                cb.call(window, { ex: JSON.parse(jsonStr) });
+            }
         };
 
         own[exceptionFuncName] = exceptionFunc;
@@ -152,24 +156,14 @@ var TujiaJSBridge = (function (own) {
         var exceptionFuncName = createExceptionFunc(onlyKey, exceptionCallback);
         //针对android平台不能直接获得js函数返回值的情况，进行处理
         if (isFunction(own.androidInput)) {
-            if (outputFuncName !== '') {
-                bundleParam.output = outputFuncName;
-            }
-            if (exceptionFuncName !== '') {
-                bundleParam.exception = exceptionFuncName;
-            }
+            bundleParam.output = outputFuncName;
+            bundleParam.exception = exceptionFuncName;
             own.androidInput(JSON.stringify(bundleParam));
         }
         else {
             appendFrame();
 
-            var url = tjProtocol + '?input=' + createInputFunc(onlyKey, bundleParam);
-            if (outputFuncName !== '') {
-                url += '&output=' + outputFuncName;
-            }
-            if (exceptionFuncName !== '') {
-                url += '&exception=' + exceptionFuncName;
-            }
+            var url = tjProtocol + '?input=' + createInputFunc(onlyKey, bundleParam) + '&output=' + outputFuncName + '&exception=' + exceptionFuncName;
             iframe.src = url;
         }
     }
@@ -225,16 +219,24 @@ var TujiaJSBridge = (function (own) {
     return own;
 }(TujiaJSBridge || {}));
 
-var tujiaJSBridgeEvent;
-if (document.createEvent) {
-    tujiaJSBridgeEvent = document.createEvent('CustomEvent');
-    tujiaJSBridgeEvent.initCustomEvent('TujiaBridgeReady', true, false, { bridge: TujiaJSBridge });
-}
-else {
-    tujiaJSBridgeEvent = new CustomEvent('TujiaBridgeReady', {
-        detail: { bridge: TujiaJSBridge },
-        bubbles: true,
-        cancelable: false
-    });
-}
-document.dispatchEvent(tujiaJSBridgeEvent);
+(function () {
+    try
+    {
+        var tujiaJSBridgeEvent;
+        if (document.createEvent) {
+            tujiaJSBridgeEvent = document.createEvent('CustomEvent');
+            tujiaJSBridgeEvent.initCustomEvent('TujiaBridgeReady', true, false, { bridge: TujiaJSBridge });
+        }
+        else {
+            tujiaJSBridgeEvent = new CustomEvent('TujiaBridgeReady', {
+                detail: { bridge: TujiaJSBridge },
+                bubbles: true,
+                cancelable: false
+            });
+        }
+        document.dispatchEvent(tujiaJSBridgeEvent);
+    }
+    catch (e) {
+        alert(e);
+    }
+}());
