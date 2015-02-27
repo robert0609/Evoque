@@ -41,7 +41,8 @@ var Evoque = (function (self)
      */
     window.mDevice = {
         other: 0,
-        mx3: 1
+        mx3: 1,
+        samsung: 2
     };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
@@ -99,6 +100,9 @@ var Evoque = (function (self)
     var _mDevice = mDevice.other;
     if (_agent.indexOf('m353') > -1) {
         _mDevice = mDevice.mx3;
+    }
+    else if (_agent.indexOf('gt-i9100g') > -1 || _agent.indexOf('gt-i9158p') > -1) {
+        _mDevice = mDevice.samsung;
     }
 
     /**
@@ -477,21 +481,23 @@ var Evoque = (function (self)
      * @param v
      * @return {Boolean}
      */
-    Array.prototype.contains = function (v) {
-        if ($.checkType(this.indexOf) === type.eFunction) {
-            return this.indexOf(v) > -1;
+    Object.defineProperty(Array.prototype, 'contains', {
+        value: function (v) {
+            if ($.checkType(this.indexOf) === type.eFunction) {
+                return this.indexOf(v) > -1;
+            }
+            else {
+                var flag = false;
+                $(this).each(function () {
+                    if (this === v) {
+                        flag = true;
+                        return false;
+                    }
+                });
+                return flag;
+            }
         }
-        else {
-            var flag = false;
-            $(this).each(function () {
-                if (this === v) {
-                    flag = true;
-                    return false;
-                }
-            });
-            return flag;
-        }
-    };
+    });
 
     /**
      * 数值想减，如果是浮点型数字则转换成整型进行想减

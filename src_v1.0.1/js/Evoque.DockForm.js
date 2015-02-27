@@ -117,8 +117,15 @@ Evoque.extend('dockForm', (function (self) {
             document.body.appendChild(bgObj);
             document.body.appendChild(div);
             setDivSize();
-            $div.addClass('bottomTop');
+            if ($.device() !== mDevice.samsung) {
+                $div.addClass('bottomTop');
+            }
             showFlag = true;
+            if ($.device() === mDevice.samsung) {
+                if ($.checkType(animationEndCallback) === type.eFunction) {
+                    animationEndCallback.call(div);
+                }
+            }
 
             return this;
         };
@@ -148,7 +155,9 @@ Evoque.extend('dockForm', (function (self) {
             {
                 return;
             }
-            $div.removeClass('bottomTop');
+            if ($.device() !== mDevice.samsung) {
+                $div.removeClass('bottomTop');
+            }
             document.body.removeChild(div);
             var element = this.currentShowElement;
             $(element).hide();
