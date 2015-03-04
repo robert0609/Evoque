@@ -6,7 +6,6 @@ $.container = (function (self)
         startDivId: '',
         onShow: function () {},
         onHide: function () {},
-        //同一个页面最多只能有一个container开启history操控
         enableHistory: false,
         //不同的div切换的特效: 'none'、'bottom2top'、'right2left'.default: 'none'
         switchEffect: 'none',
@@ -75,6 +74,11 @@ $.container = (function (self)
                 {
                     return;
                 }
+                //判断如果要显示的id不在当前container中，则直接跳出
+                if (ids.contains(e.state.toShowId)) {
+                    return;
+                }
+
                 var parameter = createOption();
                 if ($.checkType(e.state.remainHideDivInput) === type.eBoolean)
                 {
@@ -90,6 +94,11 @@ $.container = (function (self)
 
         this.display = function(divId, option)
         {
+            //判断如果要显示的id不在当前container中，则直接跳出
+            if (ids.contains(divId)) {
+                return;
+            }
+
             var parameter = createOption();
             var isOptionNull = $.isObjectNull(option);
             if (!isOptionNull)
