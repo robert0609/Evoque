@@ -75,7 +75,7 @@ $.container = (function (self)
                     return;
                 }
                 //判断如果要显示的id不在当前container中，则直接跳出
-                if (ids.contains(e.state.toShowId)) {
+                if (!ids.contains(e.state.toShowId)) {
                     return;
                 }
 
@@ -95,7 +95,7 @@ $.container = (function (self)
         this.display = function(divId, option)
         {
             //判断如果要显示的id不在当前container中，则直接跳出
-            if (ids.contains(divId)) {
+            if (!ids.contains(divId)) {
                 return;
             }
 
