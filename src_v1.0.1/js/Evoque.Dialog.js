@@ -258,10 +258,6 @@ Evoque.extend('dialog', (function (self) {
                 return;
             }
             innerShow(ctx.option);
-            if ($.checkType(onDialogShowed) === type.eFunction)
-            {
-                onDialogShowed.call(window);
-            }
             if ($.checkType(ctx.afterShow) === type.eFunction)
             {
                 var waiting100 = window.setTimeout(function ()
@@ -563,6 +559,11 @@ Evoque.extend('dialog', (function (self) {
             originalWindowWidth = document.documentElement.clientWidth;
             originalWindowHeight = document.documentElement.clientHeight;
             originalDirection = direction;
+            //触发DialogShow事件
+            if ($.checkType(onDialogShowed) === type.eFunction)
+            {
+                onDialogShowed.call(window);
+            }
             //show出来之后再判断下高度，超长则更改dialog的定位
             if (originalDirection === 'center' && originalDialogHeight > originalWindowHeight) {
                 originalDirection = 'top';
