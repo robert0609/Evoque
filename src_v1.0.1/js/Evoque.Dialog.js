@@ -28,9 +28,7 @@ Evoque.extend('dialog', (function (self) {
         //弹层的位置:'center', 'top'. default: 'center'
         direction: 'center',
         //弹层的布局样式版本:'plain', 'preset'. default: 'preset'
-        layoutVersion: 'preset',
-        //是否禁止背景蒙版滚动
-        disableBackgroundScroll: false
+        layoutVersion: 'preset'
     };
 
     var showSource = {
@@ -197,6 +195,26 @@ Evoque.extend('dialog', (function (self) {
         }
         return context;
     }
+
+    var evoquePage = (function () {
+        var currentScrollTop = 0;
+        return {
+            fixBackground: function () {
+                currentScrollTop = document.body.scrollTop;
+                var objStyle = document.body.style;
+                objStyle.setProperty('position', 'fixed');
+                objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
+                objStyle.setProperty('width', '100%');
+            },
+            restoreFixBackground: function () {
+                var objStyle = document.body.style;
+                objStyle.removeProperty('position');
+                objStyle.removeProperty('top');
+                objStyle.removeProperty('width');
+                window.scrollTo(0, currentScrollTop);
+            }
+        };
+    }());
 
     function dialogContextClass(contextGuid) {
         var inited = false;
@@ -406,12 +424,6 @@ Evoque.extend('dialog', (function (self) {
 
         function innerShow(option) {
             init();
-            var disableBackgroundScroll = option.getValueOfProperty('disableBackgroundScroll', defaultOption);
-            //为了屏蔽双滚动条，即背景页面也能滚动的问题，增加此代码
-            if (disableBackgroundScroll && !document.documentElement.classList.contains('notscroll'))
-            {
-                document.documentElement.classList.add('notscroll');
-            }
 
             var showSrc = option[0].__source;
             dialogObj.style.opacity = 1;
@@ -555,17 +567,20 @@ Evoque.extend('dialog', (function (self) {
                 w = document.documentElement.clientWidth * 0.9;
             }
             dialogObj.style.width = w + 'px';
+            //固定住背景页面
+            evoquePage.fixBackground();
+            //触发DialogShow事件
+            if ($.checkType(onDialogShowed) === type.eFunction)
+            {
+                onDialogShowed.call(window);
+            }
+
             originalDialogWidth = w;
             originalDialogHeight = dialogObj.clientHeight;
             originalOrientation = $.orientation();
             originalWindowWidth = document.documentElement.clientWidth;
             originalWindowHeight = document.documentElement.clientHeight;
             originalDirection = direction;
-            //触发DialogShow事件
-            if ($.checkType(onDialogShowed) === type.eFunction)
-            {
-                onDialogShowed.call(window);
-            }
             //show出来之后再判断下高度，超长则更改dialog的定位
             if (originalDirection === 'center' && originalDialogHeight > originalWindowHeight) {
                 originalDirection = 'top';
@@ -640,11 +655,8 @@ Evoque.extend('dialog', (function (self) {
                 }
             }
 
-            //为了屏蔽双滚动条，即背景页面也能滚动的问题，增加此代码
-            if (document.documentElement.classList.contains('notscroll'))
-            {
-                document.documentElement.classList.remove('notscroll');
-            }
+            //解除固定背景页面
+            evoquePage.restoreFixBackground();
 
             //弹出消息序列中下一个消息框
             exeShowContext();

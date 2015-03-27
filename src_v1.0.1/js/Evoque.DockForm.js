@@ -61,7 +61,7 @@ Evoque.extend('dockForm', (function (self) {
             }
         };
     }());
-    
+
     function dockFormClass(direction)
     {
         var that = this;
