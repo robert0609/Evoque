@@ -1,30 +1,51 @@
-//Dependency: Evoque.js
+//Dependency: Evoque.js, Evoque.Session.js
 $.extend('cache', (function (self) {
+    var defaultOption = {
+        // 'page' | 'session' | 'local', default: 'page'
+        cacheLevel: 'page'
+    };
+
     var __global = new cacheClass();
     var __elementCacheKeyProperty = 'elementCache';
 
-    self.create = function () {
-        return new cacheClass();
+    self.create = function (option) {
+        var lvl = getLevel(option);
+        switch (lvl) {
+            case 'session':
+                return $.session;
+            case 'local':
+                return $.storage;
+            default:
+                return new cacheClass();
+        }
     };
 
-    self.push = function (key, obj) {
-        __global.push(key, obj);
+    self.push = function (key, obj, option) {
+        getCacheProvider(getLevel(option)).push(key, obj);
     };
 
-    self.pop = function () {
-        return __global.pop();
+    self.pop = function (option) {
+        return getCacheProvider(getLevel(option)).pop();
     };
 
-    self.containsKey = function (key) {
-        return __global.containsKey(key);
+    self.containsKey = function (key, option) {
+        return getCacheProvider(getLevel(option)).containsKey(key);
     };
 
-    self.get = function (key) {
-        return __global.get(key);
+    self.get = function (key, option) {
+        return getCacheProvider(getLevel(option)).get(key);
     };
 
-    self.del = function (key) {
-        __global.del(key);
+    self.set = function (key, obj, option) {
+        getCacheProvider(getLevel(option)).set(key, obj);
+    };
+
+    self.del = function (key, option) {
+        getCacheProvider(getLevel(option)).del(key);
+    };
+
+    self.keys = function (option) {
+        return getCacheProvider(getLevel(option)).keys();
     };
 
     function cacheClass() {
@@ -63,6 +84,13 @@ $.extend('cache', (function (self) {
             return __dataStorer[key];
         };
 
+        this.set = function (key, obj) {
+            if (!this.containsKey(key)) {
+                __seqStorer.push(key);
+            }
+            __dataStorer[key] = obj;
+        };
+
         this.del = function (key) {
             if (this.containsKey(key))
             {
@@ -83,27 +111,76 @@ $.extend('cache', (function (self) {
                 }
             }
         };
+
+        this.keys = function () {
+            return __seqStorer;
+        };
+    }
+
+    function getLevel(option) {
+        option = option || {};
+        var $option = $(option);
+        var cacheLevel = $option.getValueOfProperty('cacheLevel', defaultOption).toLowerCase();
+        if ((cacheLevel === 'session' && $.isObjectNull($.session)) || (cacheLevel === 'local' && $.isObjectNull($.storage))) {
+            cacheLevel = 'page';
+        }
+        return cacheLevel;
+    }
+
+    function getCacheProvider(lvl) {
+        switch (lvl) {
+            case 'session':
+                return $.session;
+            case 'local':
+                return $.storage;
+            default:
+                return __global;
+        }
     }
 
     //API
     Evoque.cache = function () {
-        if (this.length < 1)
+        if (this.length !== 1)
         {
             return null;
         }
-        var ele = this[0];
-        var key = ele[__elementCacheKeyProperty];
+        var key = this.getAttr(__elementCacheKeyProperty);
         if ($.isStringEmpty(key))
         {
             key = $.guid();
-            ele[__elementCacheKeyProperty] = key;
+            this.setAttr(__elementCacheKeyProperty, key);
         }
+        var isGCStarted = __gcCacheKeys.length > 0;
         if (!$.cache.containsKey(key))
         {
             $.cache.push(key, new cacheClass());
+            __gcCacheKeys.push(key);
+        }
+        if (!isGCStarted) {
+            gcCache();
         }
         return $.cache.get(key);
     };
+
+    //Evoque.cache的回收处理
+    var __gcCacheKeys = [];
+    function gcCache() {
+        if (__gcCacheKeys.length > 0) {
+            for (var i in __gcCacheKeys) {
+                var key = __gcCacheKeys[i];
+                if ($('*[' + __elementCacheKeyProperty + '="' + key + '"]').length === 0) {
+                    $.cache.del(key);
+                    delete __gcCacheKeys[i];
+                }
+            }
+            __gcCacheKeys = __gcCacheKeys.filter(function (loop) {
+                return $.checkType(loop) !== type.eUndefined;
+            });
+        }
+        if (__gcCacheKeys.length > 0) {
+            setTimeout(gcCache, 180000);
+        }
+    }
 
     return self;
 }({})));

@@ -64,6 +64,19 @@ Evoque.extend('calendarV2', (function (self) {
         });
     };
 
+    self.findDayCell = function (date) {
+        var caller = self.evoqueTarget;
+        var ret = null;
+        if (caller.length > 0) {
+            var thisCache = $(caller[0]).cache();
+            if (thisCache.containsKey('calendar_v2'))
+            {
+                ret = thisCache.get('calendar_v2').findDayCell(date);
+            }
+        }
+        return ret;
+    };
+
     function calendarClass(element, minDate, maxDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected)
     {
         var minYear = Number(minDate.getFullYear());
@@ -455,6 +468,9 @@ Evoque.extend('calendarV2', (function (self) {
         }
 
         return {
+            findDayCell: function (date) {
+                return findDayTd(date);
+            },
             reset: function () {
                 if (pickMode === 'range')
                 {

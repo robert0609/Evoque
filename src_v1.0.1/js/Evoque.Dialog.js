@@ -28,7 +28,9 @@ Evoque.extend('dialog', (function (self) {
         //弹层的位置:'center', 'top'. default: 'center'
         direction: 'center',
         //弹层的布局样式版本:'plain', 'preset'. default: 'preset'
-        layoutVersion: 'preset'
+        layoutVersion: 'preset',
+        //是否禁止背景蒙版滚动
+        disableBackgroundScroll: false
     };
 
     var showSource = {
@@ -404,9 +406,9 @@ Evoque.extend('dialog', (function (self) {
 
         function innerShow(option) {
             init();
-
+            var disableBackgroundScroll = option.getValueOfProperty('disableBackgroundScroll', defaultOption);
             //为了屏蔽双滚动条，即背景页面也能滚动的问题，增加此代码
-            if (!document.documentElement.classList.contains('notscroll'))
+            if (disableBackgroundScroll && !document.documentElement.classList.contains('notscroll'))
             {
                 document.documentElement.classList.add('notscroll');
             }
