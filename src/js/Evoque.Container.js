@@ -268,7 +268,7 @@ $.container = (function (self)
                                 show(toShowDiv);
                                 if (toShowDiv.length > 0 && onShowIsFn)
                                 {
-                                    onShow.call(toShowDiv[0]);
+                                    onShow.call(toShowDiv[0], { backMode: backFlag });
                                 }
                             }
                         }, 400);
@@ -297,7 +297,7 @@ $.container = (function (self)
                                 show(toShowDiv);
                                 if (toShowDiv.length > 0 && onShowIsFn)
                                 {
-                                    onShow.call(toShowDiv[0]);
+                                    onShow.call(toShowDiv[0], { backMode: backFlag });
                                 }
                             }
                         }, 400);
@@ -333,7 +333,7 @@ $.container = (function (self)
                             show(toShowDiv);
                             if (toShowDiv.length > 0 && onShowIsFn)
                             {
-                                onShow.call(toShowDiv[0]);
+                                onShow.call(toShowDiv[0], { backMode: backFlag });
                             }
                             window.setTimeout(function () {
                                 toShowDiv.setStyle('webkitTransform', 'translateY(-' + top2 + 'px)');
@@ -353,7 +353,7 @@ $.container = (function (self)
                             show(toShowDiv);
                             if (toShowDiv.length > 0 && onShowIsFn)
                             {
-                                onShow.call(toShowDiv[0]);
+                                onShow.call(toShowDiv[0], { backMode: backFlag });
                             }
                             window.setTimeout(function () {
                                 toShowDiv.setStyle('webkitTransform', 'translateX(0px)');
@@ -371,7 +371,7 @@ $.container = (function (self)
                     show(toShowDiv);
                     if (toShowDiv.length > 0 && onShowIsFn)
                     {
-                        onShow.call(toShowDiv[0]);
+                        onShow.call(toShowDiv[0], { backMode: backFlag });
                     }
                 }
             }
