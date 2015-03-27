@@ -1588,7 +1588,7 @@ var Evoque = (function (self)
             this.each(function () {
                 if (innerIsBindedTapEvent(this))
                 {
-                    innerDispatchCustomEvent(this, 'tap');
+                    innerDispatchCustomEvent(this, 'tap', setEventTarget(this));
                 }
                 else
                 {
@@ -1627,10 +1627,12 @@ var Evoque = (function (self)
      * 绑定Html元素的事件处理回调
      * @param evtName 事件名
      * @param callback 处理回调
-     * @param option 一些参数:{ useCapture: false, useEventPrefix: false }. useCapture:捕获模式开关, useEventPrefix:是否对事件名称加上不同浏览器的前缀
+     * @param option 一些参数:{ useCapture: false, useEventPrefix: false, forceEvent: false }. useCapture:捕获模式开关, useEventPrefix:是否对事件名称加上不同浏览器的前缀, forceEvent:强制绑定指定事件
      */
     self.addEventHandler = function (evtName, callback, option) {
-        if (_hasTouchEvent)
+        //判断处理option参数
+        var o = handleEventOption(option);
+        if (_hasTouchEvent && !o.forceEvent)
         {
             if ($.enableTapEvent() && evtName == 'click')
             {
@@ -1641,8 +1643,6 @@ var Evoque = (function (self)
                 evtName = 'click';
             }
         }
-        //判断处理option参数
-        var o = handleEventOption(option);
         this.each(function ()
         {
             var thisType = $.checkType(this);
@@ -1675,10 +1675,12 @@ var Evoque = (function (self)
      * 移除Html元素的事件处理回调
      * @param evtName 事件名
      * @param callback 处理回调
-     * @param option 一些参数:{ useCapture: false, useEventPrefix: false }. useCapture:捕获模式开关, useEventPrefix:是否对事件名称加上不同浏览器的前缀
+     * @param option 一些参数:{ useCapture: false, useEventPrefix: false, forceEvent: false }. useCapture:捕获模式开关, useEventPrefix:是否对事件名称加上不同浏览器的前缀, forceEvent:强制绑定指定事件
      */
     self.removeEventHandler = function (evtName, callback, option) {
-        if (_hasTouchEvent)
+        //判断处理option参数
+        var o = handleEventOption(option);
+        if (_hasTouchEvent && !o.forceEvent)
         {
             if ($.enableTapEvent() && evtName == 'click')
             {
@@ -1689,8 +1691,6 @@ var Evoque = (function (self)
                 evtName = 'click';
             }
         }
-        //判断处理option参数
-        var o = handleEventOption(option);
         this.each(function ()
         {
             var thisType = $.checkType(this);
@@ -1722,6 +1722,7 @@ var Evoque = (function (self)
     function handleEventOption(option) {
         var useCapture = false;
         var useEventPrefix = false;
+        var forceEvent = false;
         switch ($.checkType(option)) {
             case type.eBoolean:
                 useCapture = option;
@@ -1733,13 +1734,17 @@ var Evoque = (function (self)
                 if ($.checkType(option.useEventPrefix) === type.eBoolean) {
                     useEventPrefix = option.useEventPrefix;
                 }
+                if ($.checkType(option.forceEvent) === type.eBoolean) {
+                    forceEvent = option.forceEvent;
+                }
                 break;
             default:
                 break;
         }
         return {
             useCapture: useCapture,
-            useEventPrefix: useEventPrefix
+            useEventPrefix: useEventPrefix,
+            forceEvent: forceEvent
         };
     }
     function generatePrefixEvent(evtName) {
@@ -1771,7 +1776,7 @@ var Evoque = (function (self)
      */
     self.dispatchCustomEvent = function (evtName, arg) {
         this.each(function () {
-            innerDispatchCustomEvent(this, evtName, arg);
+            innerDispatchCustomEvent(this, evtName, setEventTarget(this, arg));
         });
     };
 
@@ -1835,6 +1840,12 @@ var Evoque = (function (self)
                 ele[evtListName] -= 1;
             }
         }
+    }
+
+    function setEventTarget(ele, arg) {
+        arg = arg || {};
+        arg.target = ele;
+        return arg;
     }
 
     if (_hasTouchEvent)
@@ -1942,7 +1953,7 @@ var Evoque = (function (self)
                 var evtTyp = touchState.touchType();
                 var that = this;
                 $(evtTyp).each(function () {
-                    innerDispatchCustomEvent(that, this.name, this.arg);
+                    innerDispatchCustomEvent(that, this.name, setEventTarget(e.target, this.arg));
                 });
             });
             $ele.addEventHandler('touchend', function (e) {
@@ -1961,7 +1972,7 @@ var Evoque = (function (self)
                     setTimeout(function () {document.body.removeChild(_bg);}, 350);
                 }
                 $(evtTyp).each(function () {
-                    innerDispatchCustomEvent(that, this.name, this.arg);
+                    innerDispatchCustomEvent(that, this.name, setEventTarget(e.target, this.arg));
                 });
             });
 
