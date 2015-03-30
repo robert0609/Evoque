@@ -676,6 +676,18 @@ var Evoque = (function (self)
     };
 
     /**
+     * 判断一个变量是否未定义或者为空
+     * @param v
+     */
+    $.isNullOrUndefined = function (v) {
+        if (v === undefined)
+        {
+            return true;
+        }
+        return v === null;
+    };
+
+    /**
      * 判断数字是否是浮点型，并返回小数位数等信息
      */
     $.checkFloat = function (n) {
