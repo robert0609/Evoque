@@ -21,7 +21,7 @@
 //                $.dialog.alert('tap');
 //            });
             $('.touchable').addEventHandler('touchstart', function (ev) {
-                var msg = '';
+                var msg = 'touchstart ';
                 msg += 'Last: ' + ev.changedTouches.length + '<br>';
                 if (ev.changedTouches.length > 0)
                 {
@@ -44,7 +44,7 @@
             });
 
             $('.touchable').addEventHandler('touchmove', function (ev) {
-                var msg = '';
+                var msg = 'touchmove ';
                 msg += 'Last: ' + ev.changedTouches.length + '<br>';
                 if (ev.changedTouches.length > 0)
                 {
@@ -67,7 +67,7 @@
             });
 
             $('.touchable').addEventHandler('touchend', function (ev) {
-                var msg = '';
+                var msg = 'touchend ';
                 msg += 'Last: ' + ev.changedTouches.length + '<br>';
                 if (ev.changedTouches.length > 0)
                 {
@@ -87,12 +87,35 @@
                     msg += 'pageX:' + ev.touches[0].pageX + '; pageY:' + ev.touches[0].pageY + '<br>';
                 }
                 eDebugger.output(msg);
-                //$.cancelEventFlow(ev);
             });
         });
+
     </script>
 </head>
 <body style="height: 800px;">
-<div class="touchable" style="border-color: green; border-width: 2px; border-style: solid; width: 300px;height: 200px;">Touchable Element 1</div>
+<button onclick="clickButton();">show</button>
+<button onclick="clickButton1();">hide</button>
+<div id="container"></div>
+<div class="touchable" style="border-color: green; border-width: 2px; border-style: solid; width: 300px;height: 200px; display: ;">Touchable Element 1</div>
+
+
+<script type="text/javascript">
+
+    var div = document.createElement('div');
+    var element = $('.touchable')[0];
+    var parentCache = null;
+    function clickButton() {
+        parentCache = element.parentElement;
+        div.appendChild(element);
+        $(element).show();
+        $('#container')[0].appendChild(div);
+    }
+    function clickButton1() {
+        $('#container')[0].removeChild(div);
+        $(element).hide();
+        parentCache.appendChild(element);
+        parentCache = null;
+    }
+</script>
 </body>
 </html>

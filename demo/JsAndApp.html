@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript">
+        /*$(document).addEventHandler('TujiaBridgeReady', function (e) {*/
+        document.addEventListener('TujiaBridgeReady', function (e) {
+            var bridge = e.detail.bridge;
+            //先检测下本地APP是否登录
+            bridge.callApp({
+                action: 'IsLogin',
+                resultCallback: function (json) {
+                    alert(JSON.stringify(json));
+                },
+                exceptionCallback: function (json) {
+                    alert(JSON.stringify(json));
+                }
+            });
+
+            $('#btnNativeLogin').click(function () {
+                bridge.callApp({
+                    action: 'ShowLogin',
+                    resultCallback: function (json) {
+                        alert(JSON.stringify(json));
+                    },
+                    exceptionCallback: function (json) {
+                        alert(JSON.stringify(json));
+                    }
+                });
+            });
+
+            $('#btnSendToApp').click(function () {
+                bridge.callApp({
+                    action: 'Login',
+                    parameter: { userId: 428015, userToken: '474d70f5-367d-44bf-bf4d-41a168fee390' },
+                    resultCallback: function (json) {
+                        alert(JSON.stringify(json));
+                    },
+                    exceptionCallback: function (json) {
+                        alert(JSON.stringify(json));
+                    }
+                });
+            });
+
+            $('#btnNativeRegister').click(function () {
+                bridge.callApp({
+                    action: 'ShowRegister',
+                    parameter: { channelCode: '@(ViewBag.UserRegisterChannel)' },
+                    resultCallback: function (json) {
+                        alert(JSON.stringify(json));
+                    },
+                    exceptionCallback: function (json) {
+                        alert(JSON.stringify(json));
+                    }
+                });
+            });
+
+        });
+    </script>
+</head>
+<body>
+    <ul>
+        <li><button id="btnSendToApp">发送Token到APP</button></li>
+        <li><button id="btnNativeLogin">调取本地登录</button></li>
+        <li><button id="btnNativeRegister">大礼包注册</button></li>
+    </ul>
+    <!--<script type="text/javascript" src="../src_v1.0.1/js/TujiaJSBridge.js"></script>-->
+</body>
+</html>

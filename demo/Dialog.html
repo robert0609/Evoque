@@ -5,47 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <title></title>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cache.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.ScrollBox.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.ScrollBox.css" />
     <script type="text/javascript">
         function click()
         {
-//            $('#article').addEventHandler('touchstart', function (e) {
-//                $.cancelEventFlow(e);
-//                $.cancelDefault(e);
-//            });
-//            $('#article').addEventHandler('touchmove', function (e) {
-//                $.cancelEventFlow(e);
-//                $.cancelDefault(e);
-//            });
-//            $('#article').addEventHandler('touchend', function (e) {
-//                $.cancelEventFlow(e);
-//                $.cancelDefault(e);
-//            });
-
-//            $(document.body).addEventHandler('touchstart', function (e) {
-//                //$.cancelEventFlow(e);
-//                //$.cancelDefault(e);
-//            });
-//            $(document.body).addEventHandler('touchmove', function (e) {
-//                //$.cancelEventFlow(e);
-//                //$.cancelDefault(e);
-//            });
-//            $(document.body).addEventHandler('touchend', function (e) {
-//                //$.cancelEventFlow(e);
-//                //$.cancelDefault(e);
-//            });
 //            var i = 0;
-//            $('#article').addEventHandler('scroll', function (e) {
-//                $('#result').text(++i);
-//            });
-//            //调用dialog控件显示
-//            $.dialog.showModalDialog({
-//                content:'article',
-//                width:document.documentElement.clientWidth * 0.9,
-//                autoClose: false
-//            });
+            //调用dialog控件显示
+            $.dialog.showModalDialog({
+                content:'article',
+                width:document.documentElement.clientWidth * 0.9,
+                onDialogShowed: function () {
+                    $('#articleScroll').scrollBox.create();
+                },
+                autoClose: false
+            });
 //            window.setTimeout(function () {
 //                $.dialog.closeCurrentDialog();
 //            }, 2000);
@@ -81,22 +59,21 @@
 //                direction: 'center',
 //                layoutVersion: 'plain'
 //            });
-//            $.dialog.showModalDialog({
-//                content:'dialog',
-//                button:'yes|no',
-//                onQuiting: function () {
-//                    alert('onQuiting---2');
-//                },
-//                onDialogClosed: function () {
-//                    alert('onDialogClosed---2');
-//                },
-//                autoClose: false,
-//                direction: 'center',
-//                layoutVersion: 'preset'
-//            });
-            $.dialog.showLoading('loading...', function () {
+            /*$.dialog.showModalDialog({
+                content:'dialog',
+                button:'yes|no',
+                onQuiting: function () {
+                    alert('onQuiting---2');
+                },
+                onDialogClosed: function () {
+                    alert('onDialogClosed---2');
+                },
+                autoClose: false,
+                direction: 'top'
+            });*/
+/*            $.dialog.showLoading('loading...', function () {
                 $.loadPage('/demo/demo.html');
-            });
+            });*/
             //$(document).dialog.closeCurrentDialog();
         }
 
@@ -174,7 +151,7 @@
     </div>
 
     <div id="article" style="display: none; background:#fff;">
-        <div style="overflow-y:auto;height: 300px;">
+        <div id="articleScroll" style="height: 300px;">
             <div style="">
             如果你已经厌烦了使用PowerPoint制作PPT，那么impress.js是一个非常好的选择，用它做的PPT更加直观，效果也非常的不错。
             装X是需要一定代价的，不过如果你是个前端爱好者那么一切就没问题了。当然如果你能勉强明白HTML和CSS也没问题，

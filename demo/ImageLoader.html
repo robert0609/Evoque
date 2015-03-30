@@ -4,20 +4,47 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
+    <script type="text/javascript" src="../src_v1.0.1/js/exif.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.ImageLoader.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         $(function () {
             $('#load').click(function () {
                 $('#imgTest').imageLoader.load();
             });
+
+            $('img').click(function () {
+                var img = this;
+                EXIF.getData(img, function() {
+                    $.dialog.showMessageBox({
+                        content: EXIF.getTag(img, 'Orientation').toString(),
+                        autoClose: false
+                    });
+                });
+            });
         });
     </script>
+    <style>
+        img{
+            width: 30%;
+        }
+    </style>
 </head>
 <body>
-    <button id="load">Load Image</button>
+<!--    <button id="load">Load Image</button>
     <div id="imgTest" evo-imgSrc="http://staticfile.tujia.com/upload/landlordunit/day_130730/thumb/20130730045844401_640_400.jpg" style="width: 320px; height: 200px; left: 50px; top: 60px; position: fixed; background-color: gray; overflow: auto;">
 
-    </div>
+    </div>-->
+
+<ul>
+    <li><img src="./img/IMG_0125.JPG"></li>
+    <li><img src="./img/IMG_0126.JPG"></li>
+    <li><img src="./img/IMG_0127.JPG"></li>
+    <li><img src="./img/IMG_0128.JPG"></li>
+    <li><img src="./img/IMG_0129.JPG"></li>
+</ul>
 </body>
 </html>

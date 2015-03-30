@@ -11,21 +11,21 @@
             if ($.hasTouchEvent())
             {
                 $('#container').html('Touch me!');
-                $('#container').addEventHandler('touchstart', function () { eDebugger.output('touch start'); });
-                $('#container').addEventHandler('touchmove', function () { eDebugger.output('touch move'); });
-                $('#container').addEventHandler('touchend', function () { eDebugger.output('touch end'); });
+                $('#container').addEventHandler('touchstart', function () { eDebugger.output('touch start' + ':' + (new Date()).getTime()); });
+                $('#container').addEventHandler('touchmove', function () { eDebugger.output('touch move' + ':' + (new Date()).getTime()); });
+                $('#container').addEventHandler('touchend', function () { eDebugger.output('touch end' + ':' + (new Date()).getTime()); });
             }
             else
             {
                 $('#container').html('Click me!');
             }
 
-            $('#container').addEventHandler('mousedown', function () { eDebugger.output('mouse down'); });
-            $('#container').addEventHandler('mouseup', function () { eDebugger.output('mouse up'); });
-            $('#container').addEventHandler('mouseout', function () { eDebugger.output('mouse out'); });
-            $('#container').addEventHandler('mouseover', function () { eDebugger.output('mouse over'); });
-            $('#container').addEventHandler('mousemove', function () { eDebugger.output('mouse move'); });
-            $('#container').addEventHandler('click', function () { eDebugger.output('click'); });
+            $('#container').addEventHandler('mousedown', function () { eDebugger.output('mouse down' + ':' + (new Date()).getTime()); });
+            $('#container').addEventHandler('mouseup', function () { eDebugger.output('mouse up' + ':' + (new Date()).getTime()); });
+            $('#container').addEventHandler('mouseout', function () { eDebugger.output('mouse out' + ':' + (new Date()).getTime()); });
+            $('#container').addEventHandler('mouseover', function () { eDebugger.output('mouse over' + ':' + (new Date()).getTime()); });
+            $('#container').addEventHandler('mousemove', function () { eDebugger.output('mouse move' + ':' + (new Date()).getTime()); });
+            $('#container').addEventHandler('click', function () { eDebugger.output('click' + ':' + (new Date()).getTime()); });
         });
     </script>
 </head>
