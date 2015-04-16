@@ -1,0 +1,331 @@
+/*
+    2015.4.13
+    日历控件改版
+*/
+
+/*日历控件*/
+
+.m-calendar{
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+}
+
+/*m-calendar-btn*/
+.m-calendar-btn {
+    color:#0079ff;
+    font-size:16px
+}
+.m-calendar-btn ul {
+    background:#f5f5f9;
+    overflow: hidden;
+}
+.m-calendar-btn li{
+    position:relative;
+    float: left;
+    width: 20%;
+    height:45px;
+    line-height:45px;
+}
+.m-calendar-btn li span{
+    display:inline-block;
+    width:100%;
+    height:45px;
+    text-align:center
+}
+.m-calendar-btn .text{
+    width:58%;
+    color:#202325;
+    font-size:14px
+}
+.m-calendar-btn .text:before,
+.m-calendar-btn .text:after{
+    content: "";
+    position: absolute;
+    top:12px;
+    width: 1px;
+    height: 21px;
+    background: #ccc;
+}
+.m-calendar-btn .text:before{
+    left: 0;
+}
+.m-calendar-btn .text:after{
+    right: 0;
+}
+.m-calendar-btn .text strong {
+    margin:0 5px;
+    color:#f60;
+}
+.m-calendar-btn .cancel,
+.m-calendar-btn .confirm {
+    width:21%
+}
+.m-calendar-btn .confirm {
+    text-align:right
+}
+.m-calendar-btn .cancel span:active,.m-calendar-btn .confirm span:active {
+    color:rgba(47,152,224,.5)
+}
+.m-calendar-btn li b {
+    position:absolute;
+    top:50%;
+    left:100%;
+    margin-top:-10px;
+    height:20px;
+    border-right:1px solid #cacbcf
+}
+.m-calendar-btn .confirm b {
+    right:100%;
+    left:auto
+}
+
+/*月份回显*/
+.m-calendar-title {
+    position:relative;
+    z-index:1;
+    display:-webkit-box;
+    -webkit-box-sizing:border-box;
+    height:100%;
+    overflow:hidden;
+    height:48px;
+    color:#f60;
+    font-size:20px;
+    border-top:1px solid #ccc;
+    background-color: #fff;
+    -webkit-box-align:center;
+    -webkit-box-pack:center;
+}
+.m-calendar-title p {
+    position:relative;
+    display:inline-block;
+    overflow:visible;
+    padding:0 20px;
+    text-align:center;
+    -webkit-backface-visibility:hidden
+}
+.m-calendar-title em {
+    display:inline-block;
+    margin-right:6px;
+    width:1em;
+    height:2em;
+    vertical-align:-3px;
+    font-size:10px;
+    line-height:1
+}
+.m-calendar-title b{
+    position: absolute;
+    right: 0;
+    top:50%;
+    margin-top: -3px;
+    border:6px solid transparent;
+    border-top-color: #f60;
+}
+.m-calendar-month-show .m-calendar-title b{
+    -webkit-transform:rotate(-180deg);
+    -webkit-transition: all .2s ease-out;
+    transition: all .2s ease-out;
+    -webkit-transform-origin:50% 3px;
+    transform-origin:50% 3px;
+}
+.m-calendar-table li{
+    float: left;
+    width: 14.2857%;
+    text-align: center;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+/*月份选择*/
+.m-calendar-bd{
+    position: relative;
+    overflow: hidden;
+}
+.m-calendar-month{
+    position: absolute;
+    left: 0;
+    top:-100%;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 100;
+    -webkit-transform:translateY(0);
+    transform:translateY(0);
+}
+.m-calendar-month ul{
+    overflow: hidden;
+}
+.m-calendar-month li{
+    float: left;
+    width: 25%;
+    text-align: center;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box;
+    border-bottom:1px solid #ebecf2;
+    border-left:1px solid #ebecf2;
+}
+.m-calendar-month li:last-child{
+    border-right:1px solid #ebecf2;
+}
+.m-calendar-month li.selected{
+    color:#fff;
+    background:#f60;
+}
+.m-calendar-month li>div{
+    position: relative;
+    height: 0;
+    padding-bottom: 100%;
+}
+.m-calendar-month li p{
+    position: absolute;
+    top:50%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    -webkit-transform:translateY(-50%);
+    transform:translateY(-50%);
+}
+.m-calendar-month strong{
+    display: block;
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 30px;
+}
+.m-calendar-month em{
+    font-size: 10px;
+    font-weight: normal;
+    line-height: 20px;
+}
+/*月份选择显示动画*/
+.m-calendar-month-show .m-calendar-month{
+    -webkit-transform:translateY(100%);
+    transform:translateY(100%);
+    -webkit-transition: all .2s ease-out;
+    transition: all .2s ease-out;
+}
+
+/*星期*/
+.m-calendar-weekday {
+    border-top:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    color:#333;
+    -webkit-transform:translate3d(0,0,0);
+    overflow: hidden;
+}
+.m-calendar-weekday div {
+    position:relative;
+    overflow:visible;
+    padding-bottom:68%;
+    height:0
+}
+.m-calendar-weekday p {
+    position:absolute;
+    top:0;
+    left:0;
+    display:-webkit-box;
+    width:100%;
+    height:100%;
+    -webkit-box-align:center;
+    -webkit-box-pack:center
+}
+
+/*日历*/
+.m-calendar-wrapper{
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+}
+.m-calendar-days{
+    overflow: hidden;
+}
+.m-calendar-days li{
+    border-bottom:1px solid #ebecf2;
+    border-left:1px solid #ebecf2;
+}
+.m-calendar-days div {
+    position:relative;
+    overflow:visible;
+    padding-bottom:100%;
+    height:0;
+}
+.m-calendar-days p {
+    position:absolute;
+    top:0;
+    left:0;
+    overflow:hidden;
+    width:100%;
+    height:100%;
+    text-align:center;
+    line-height:0;
+}
+.m-calendar-days strong,.m-calendar-days em,.m-calendar-days span {
+    position:absolute;
+    left:0;
+    display:inline-block;
+    width:100%;
+    height:20px;
+    vertical-align:top;
+    text-align:center;
+    font-weight:bold;
+    font-size:14px;
+    line-height:20px;
+}
+.m-calendar-days strong {
+    bottom:42%
+}
+.m-calendar-days em {
+    top:56%;
+    vertical-align:bottom;
+    font-weight:normal;
+    font-size:10px
+}
+.m-calendar-days span{
+    top:auto;
+    bottom:10%;
+    display:none;
+    color:#bababa;
+    vertical-align:bottom;
+    font-weight:normal;
+    font-size:10px
+}
+
+/*日历状态*/
+/*不可订*/
+.m-calendar-days .disabled{
+    color: #dadee5;
+    background: #ebecf2;
+    border-color:#ebecf2;
+}
+/*当天*/
+.m-calendar-days .today em{
+    color: #f60;
+}
+/*入住、离店日期*/
+.m-calendar-days .selected{
+    color:#fff;
+    background: #f60;
+}
+/*入住日期*/
+.m-calendar-days .range{
+    color: #fff;
+    background: #f90;
+}
+
+
+.poper-dg-div{
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    z-index: 6010;
+}
+/*自下而上*/
+.poper-bottomTop{
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    -webkit-transition: all .15s ease .01s;
+    transition: all .15s ease .01s;
+}
+.poper-bottomTop.show{
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
