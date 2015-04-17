@@ -1,5 +1,5 @@
 ﻿//Dependency: Evoque.js, Evoque.Cache.js, Evoque.ScrollBox.js
-Evoque.extend('calendarV2', (function (self) {
+Evoque.extend('calendarV3', (function (self) {
     var defaultOption = {
         startDate: (new Date()).getYMD(),
         endDate: Date.min,
@@ -80,12 +80,14 @@ Evoque.extend('calendarV2', (function (self) {
     };
 
     var defaultShowOption = {
+        confirmButtonText: '确定',
         onConfirm: function () {},
         onCancel: function () {}
     };
     self.show = function (option) {
         option = option || {};
         option = $(option);
+        var confirmButtonText = option.getValueOfProperty('confirmButtonText', defaultShowOption);
         var onConfirm = option.getValueOfProperty('onConfirm', defaultShowOption);
         var onCancel = option.getValueOfProperty('onCancel', defaultShowOption);
         var caller = self.evoqueTarget;
@@ -93,7 +95,7 @@ Evoque.extend('calendarV2', (function (self) {
             var thisCache = $(this).cache();
             if (thisCache.containsKey('calendar_v2'))
             {
-                thisCache.get('calendar_v2').show(onConfirm, onCancel);
+                thisCache.get('calendar_v2').show(confirmButtonText, onConfirm, onCancel);
             }
         });
     };
@@ -149,7 +151,7 @@ Evoque.extend('calendarV2', (function (self) {
         var btnConfirm = document.createElement('li');
         var $btnConfirm = $(btnConfirm);
         $btnConfirm.addClass('confirm');
-        $btnConfirm.html('<span>确定</span>');
+        $btnConfirm.html('<span></span>');
         $btnConfirm.click(function () {
             if ($.checkType(confirmCallback) === type.eFunction)
             {
@@ -394,6 +396,19 @@ Evoque.extend('calendarV2', (function (self) {
                         {
                             tder.canClick = true;
                             tder.day = date.getDate();
+                            //判断今天还是明天
+                            var today = (new Date()).getYMD();
+                            var minus = date - today;
+                            if (minus == 0)
+                            {
+                                tder.today();
+                                tder.title = '今天';
+                            }
+                            else if (minus == 86400000)
+                            {
+                                tder.today();
+                                tder.title = '明天';
+                            }
                             if ($.checkType(onRenderDateTd) === type.eFunction)
                             {
                                 onRenderDateTd.call(td, { renderTarget: td, tdDate: date, controller: tder });
@@ -433,37 +448,34 @@ Evoque.extend('calendarV2', (function (self) {
                                     var nowSel = findDayTd(selectDates[0]);
                                     select(nowSel);
                                 }
-                                if ($.checkType(onSelected) === type.eFunction)
+                                if (pickMode === 'range')
                                 {
-                                    if (pickMode === 'range')
+                                    if (selectDates.length > 1)
                                     {
-                                        if (selectDates.length > 1)
+                                        var minus = selectDates[0] - selectDates[1];
+                                        var min, max;
+                                        if (minus < 0)
                                         {
-                                            var minus = selectDates[0] - selectDates[1];
-                                            var min, max;
-                                            if (minus < 0)
-                                            {
-                                                min = selectDates[0];
-                                                max = selectDates[1];
-                                            }
-                                            else
-                                            {
-                                                min = selectDates[1];
-                                                max = selectDates[0];
-                                            }
-                                            setFinalSelectDate(min, max);
-                                            onSelected.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy(), findDayTd: findDayTd, getTdController: getTdController });
+                                            min = selectDates[0];
+                                            max = selectDates[1];
                                         }
-                                        else if (selectDates.length === 1)
+                                        else
                                         {
-                                            setFinalSelectDate(selectDates[0]);
-                                            onSelected.call(this, event, { selectDateStart: selectDates[0].copy(), findDayTd: findDayTd, getTdController: getTdController });
+                                            min = selectDates[1];
+                                            max = selectDates[0];
                                         }
+                                        setFinalSelectDate(min, max);
+                                        onSelectedCallback.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy(), findDayTd: findDayTd, getTdController: getTdController });
                                     }
-                                    else
+                                    else if (selectDates.length === 1)
                                     {
-                                        onSelected.call(this, event, { selectDate: selVal.copy(), findDayTd: findDayTd, getTdController: getTdController });
+                                        setFinalSelectDate(selectDates[0]);
+                                        onSelectedCallback.call(this, event, { selectDateStart: selectDates[0].copy(), findDayTd: findDayTd, getTdController: getTdController });
                                     }
+                                }
+                                else
+                                {
+                                    onSelectedCallback.call(this, event, { selectDate: selVal.copy(), findDayTd: findDayTd, getTdController: getTdController });
                                 }
                             });
                             //保存初始td样式和初始innerHTML
@@ -503,6 +515,24 @@ Evoque.extend('calendarV2', (function (self) {
         bodyDiv.appendChild(bodyMonthDiv);
         bodyDiv.appendChild(bodyTableDiv);
         calendarContainer.appendChild(bodyDiv);
+
+        function onSelectedCallback(event, arg) {
+            if (pickMode === 'range')
+            {
+                var tder = arg.getTdController(arg.selectDateStart);
+                tder.select();
+                tder.title = '入住';
+                if (!$.isObjectNull(arg.selectDateEnd))
+                {
+                    tder = arg.getTdController(arg.selectDateEnd);
+                    tder.select();
+                    tder.title = '离店';
+                }
+            }
+            if ($.checkType(onSelected) === type.eFunction) {
+                onSelected.call(this, event, arg);
+            }
+        }
 
         function getTdController(date) {
             return findDayTd(date).cache().get('controller');
@@ -636,12 +666,14 @@ Evoque.extend('calendarV2', (function (self) {
                 $(btnSelectDate).html('<span>' + strStart + '入住,共<strong>' + dayNum + '</strong>晚</span>');
             }
             else {
+                _finalEnd = null;
                 $(btnSelectDate).html('<span>' + strStart + '入住,共<strong></strong>晚</span>');
             }
         }
 
         return {
-            show: function (onConfirm, onCancel) {
+            show: function (confirmButtonText, onConfirm, onCancel) {
+                $btnConfirm.getChild('span').text(confirmButtonText);
                 confirmCallback = onConfirm;
                 cancelCallback = onCancel;
                 $element.poper.show({
@@ -752,7 +784,7 @@ Evoque.extend('calendarV2', (function (self) {
                         }
                     }
                     setFinalSelectDate(min, max);
-                    onSelected.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy(), findDayTd: findDayTd, getTdController: getTdController });
+                    onSelectedCallback.call(this, event, { selectDateStart: min.copy(), selectDateEnd: max.copy(), findDayTd: findDayTd, getTdController: getTdController });
                 }
                 else
                 {
@@ -787,7 +819,7 @@ Evoque.extend('calendarV2', (function (self) {
                     selectDates[0] = arguments[0].getYMD();
                     var nowSel = findDayTd(selectDates[0]);
                     select(nowSel);
-                    onSelected.call(this, event, { selectDate: selectDates[0].copy(), findDayTd: findDayTd, getTdController: getTdController });
+                    onSelectedCallback.call(this, event, { selectDate: selectDates[0].copy(), findDayTd: findDayTd, getTdController: getTdController });
                 }
             }
         };
