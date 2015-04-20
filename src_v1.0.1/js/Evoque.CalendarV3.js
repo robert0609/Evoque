@@ -174,8 +174,16 @@ Evoque.extend('calendarV3', (function (self) {
         var headDiv = document.createElement('div');
         $(headDiv).addClass('m-calendar-hd');
         $(headDiv).click(function () {
-            $(headDiv).addClass('m-calendar-month-show');
-            $(bodyDiv).addClass('m-calendar-month-show');
+            if ($(headDiv).getClassList().contains('m-calendar-month-show'))
+            {
+                $(headDiv).removeClass('m-calendar-month-show');
+                $(bodyDiv).removeClass('m-calendar-month-show');
+            }
+            else
+            {
+                $(headDiv).addClass('m-calendar-month-show');
+                $(bodyDiv).addClass('m-calendar-month-show');
+            }
         });
         var headTitleDiv = document.createElement('div');
         $(headTitleDiv).addClass('m-calendar-title');
@@ -225,7 +233,7 @@ Evoque.extend('calendarV3', (function (self) {
             var ym = $($uls[0]).getAttr('curYM');
             $uls.each(function () {
                 var offsetTop = this.offsetTop - this.parentElement.offsetTop;
-                if (scrollTop > offsetTop)
+                if (scrollTop >= offsetTop)
                 {
                     ym = $(this).getAttr('curYM');
                 }
@@ -249,7 +257,7 @@ Evoque.extend('calendarV3', (function (self) {
             {
                 var monthUl = $monthUl[0];
                 var offsetTop = monthUl.offsetTop - monthUl.parentElement.offsetTop;
-                $bodyTableWrapper[0].scrollTop = offsetTop + 1;
+                $bodyTableWrapper[0].scrollTop = offsetTop;
             }
         }
 
@@ -522,13 +530,24 @@ Evoque.extend('calendarV3', (function (self) {
         {
             var d = new Date(minYear, minMonth + i, 1);
             var bodyCurYear = d.getFullYear();
-            var bodyCurMonth = d.getMonth() + 1;
+            var bodyCurMonth = d.getMonth();
             var bodyMonthLi = document.createElement('li');
-            $(bodyMonthLi).html('<div><p><strong>' + bodyCurMonth + '月</strong><em>' + bodyCurYear + '</em></p></div>');
+            $(bodyMonthLi).html('<div><p><strong>' + (bodyCurMonth + 1).toString() + '月</strong><em>' + bodyCurYear + '</em></p></div>');
             $(bodyMonthLi).setAttr('curYM', bodyCurYear + '-' + bodyCurMonth);
+            $(bodyMonthLi).click(function () {
+                var curYM = $(this).getAttr('curYM');
+                var yms = curYM.split('-');
+                var m = Number(yms[1]) + 1;
+                scrollToMonth((yms[0] + '-' + m + '-1').toDate());
+                $(headDiv).removeClass('m-calendar-month-show');
+                $(bodyDiv).removeClass('m-calendar-month-show');
+            });
             bodyMonthUl.appendChild(bodyMonthLi);
             bodyTableWrapper.appendChild(initTable(d)[0]);
         }
+        var bodyMonthUlFooter = document.createElement('ul');
+        bodyMonthUlFooter.style.height = '0px';
+        bodyTableWrapper.appendChild(bodyMonthUlFooter);
 
         bodyDiv.appendChild(bodyMonthDiv);
         bodyDiv.appendChild(bodyTableDiv);
@@ -688,6 +707,9 @@ Evoque.extend('calendarV3', (function (self) {
                 $(btnSelectDate).html('<span>' + strStart + '入住,共<strong></strong>晚</span>');
             }
         }
+        function clearFinalSelectDate() {
+            $(btnSelectDate).html('');
+        }
 
         return {
             show: function (confirmButtonText, onConfirm, onCancel) {
@@ -698,15 +720,19 @@ Evoque.extend('calendarV3', (function (self) {
                     onShow: function () {
                         var height = document.documentElement.clientHeight - $('div.m-calendar-btn')[0].clientHeight - $('div.m-calendar-hd')[0].clientHeight - $('ul.m-calendar-weekday')[0].clientHeight;
                         $element.getChild('div.m-calendar-wrapper').setStyle('height', height + 'px');
+                        //设置可滚动的补足区域的高度
+                        var lastMonthDate = new Date(minYear, minMonth + 5, 1);
+                        var lastYear = lastMonthDate.getFullYear();
+                        var lastMonth = lastMonthDate.getMonth();
+                        var $lastMonthUl = $bodyTableWrapper.getChild('ul[curYM="' + lastYear + '-' + lastMonth + '"]');
+                        bodyMonthUlFooter.style.height = (height - $lastMonthUl[0].clientHeight + 1) + 'px';
                         if (selectDates.length > 0)
                         {
                             scrollToMonth(selectDates[0]);
                         }
                         else
                         {
-                            var curMon = getCurrentScrollMonth(0);
-                            $(headEm).text(yearDesc(curMon));
-                            $(headStrong).text(curMon.getMonth() + 1);
+                            scrollToMonth(minDate);
                         }
                     },
                     onHide: function () {}
@@ -747,6 +773,7 @@ Evoque.extend('calendarV3', (function (self) {
                         }
                         selectDates = [];
                     }
+                    clearFinalSelectDate();
                 }
             },
             setActiveDate: function () {
