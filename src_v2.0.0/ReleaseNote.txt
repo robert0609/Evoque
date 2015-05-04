@@ -1,0 +1,4 @@
+﻿2.0.0
+增加对单页面WebApp的架构支持
+
+Evoque.Validate.js不兼容上一个版本

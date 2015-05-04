@@ -1,0 +1,29 @@
+.dockform-bg-div{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #777;
+    opacity: 0.5;
+    margin: 0;
+    padding: 0;
+    z-index: 5000;
+}
+.dockform-dg-div{
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    z-index: 5010;
+}
+/*自下而上*/
+@-webkit-keyframes bottomTop {
+    0% {-webkit-transform: translateY(100%);}
+    100% {-webkit-transform: translateY(0);}
+}
+@keyframes bottomTop {
+    0% {transform: translateY(100%);}
+    100% {transform: translateY(0);}
+}
+.bottomTop{
+    -webkit-animation:bottomTop .15s ease both .01s;
+    animation:bottomTop .15s ease both .01s;
+}

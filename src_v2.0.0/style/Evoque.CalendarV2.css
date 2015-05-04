@@ -1,0 +1,26 @@
+.ui-calendar{padding:0 10px}
+.ui-calendar .h-light{color:#f60}
+.ui-calendar-month{margin:10px 0;font-size:12px;color:#666;border:1px solid #ccc;background-color:#fff;overflow:hidden}
+.ui-calendar-l,.ui-calendar-r{position:absolute;width:22px;height:22px;top:10px;color: #F60;}
+.ui-calendar-l{left:20px}
+.ui-calendar-r{right:20px}
+.ui-calendar-title{position:relative}
+.ui-calendar-title h3{padding-top:10px;font-size:15px;text-align:center}
+.ui-calendar-title .disable{color: #999;}
+.ui-calendar-week{color:#999;position:relative;overflow:hidden}
+.ui-calendar-day{margin:0 -5px;overflow:hidden}
+.ui-calendar-month li{float:left;width:14%;padding:0 3px;height:40px;line-height:40px;text-align:center;-webkit-box-sizing:border-box;box-sizing:border-box}
+.ui-calendar-month li:nth-child(7n + 1),.ui-calendar-month li:nth-child(7n){width:15%}
+.ui-calendar-day li{border-top:1px solid #ccc;border-left:1px solid #ccc}
+.ui-calendar-day li:nth-child(7n + 1){border-left:0}
+.ui-calendar-month .line2{line-height:20px;text-align:left}
+.ui-calendar-month .line2>span{text-align:right;display:block;font-size:10px;line-height:20px}
+.ui-calendar-month .old{color:#c8c8c8;background-color:#ebebeb}
+.ui-calendar-month .select{color:#fff;background-color:#f60}
+.ui-calendar-month .checkout{color:#fff;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQBAMAAAB8P++eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAASUExURf9mAP9mAf9+KP9+Kf/x6P////7O/mMAAAEPSURBVEjHjcxZEcQwDARRVxDsQSEQlkIgmD+V9W3Juqa/X3V6Y33TK0HdILweEN4Zg9cDwjtjsAwxWIYQrEMI1iEC2xCBbQjAPgRgH8ZwDGM4hiGcwxDOYQTXMIJrGMA9DOAe+pAMfUiGLqRDF9KhB9nQg2zoQD50IB/a8Bja8Bia8Bya8BxaUAwtKIYGlEMDyqEOlaEOlaEKtaEKtaEG1aEG1aEC9aEC9aGExlBCYyigNRTQGp7QHJ7QHB7QHh7QHnLoDDl0hgx6Qwa9IYXukEJ3SKA/JNAfbhgMNwyGC0bDBaPhhOFwwnA4YDwcMB52CAw7BIYNIsMGkWGF0LBCaFggNiwQG+b0eUD4g1jOf+AmES/4zr74AAAAAElFTkSuQmCC)}
+.ui-calendar-month .checkin{color:#f60;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQBAMAAAB8P++eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAASUExURf////9mAP9mAf/x6P9+KP9+Ka2d0QoAAAEPSURBVEjHjczbEcIwDERRZqiAlJAaQgFQAv0Xg+34JWkl7f0+cx9kb9I9vyS8DnL4IeH1OsghCa8XB8uQg2VIwTqkYB0ysA0Z2IYEvIcEvIc57MMc9mEKxzCFY5jBOczgHCZwDRO4hjHchjHchiHchyHchxEUwwiKYQDlMIBy6EM19KEaulAPXaiHHjRDD5qhA+3QgXaIIRhiCIYQoiGEaIggHCIIhwDiIYB4aKEztNAZGugNDfSGGrpDDd2hgv5QQX8oYTCUMBgKGA0FjIY7DIc7DIcbjIcbjIcLJsMFk+GE2XDCbDhgOhwwHXaYDzvMhzckhjckhg0ywwaZYYXUsEJqWCA3LJAbFvg7mc7zD2vQfU1ShesFAAAAAElFTkSuQmCC)}
+.ui-calendar-month .checkout,.ui-calendar-month .checkin{background-repeat:no-repeat;background-size:100% 100%}
+.ui-calendar-month .checkout>span{color:#f60}
+.ui-calendar-month .checkin>span{color:#fff}
+.ui-calendar-month li:nth-child(7n){border-right:3px solid #fff}
+.ui-calendar-month li:nth-child(7n + 1){border-left:5px solid #fff}
