@@ -1,7 +1,7 @@
 var Evoque = (function (self)
 {
     self.FrameworkName = 'Evoque.js';
-    self.FrameworkVersion = '1.0.1';
+    self.FrameworkVersion = '2.0.0';
 
     var _hasTouchEvent = 'ontouchstart' in window;
     var _enableTapEvent;
