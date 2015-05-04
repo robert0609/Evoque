@@ -1,5 +1,5 @@
 //Dependency: Evoque.js, Evoque.Dialog.js
-$.extend('performance', (function (self) {
+lexus.extend('performance', (function (self) {
 
     var panel = null;
 
@@ -17,7 +17,7 @@ $.extend('performance', (function (self) {
         }
 
 
-        $.dialog.showModalDialog({
+        lexus.dialog.showModalDialog({
             //对话框内容，可以是文本字符串，也可以是要显示的div的id
             content:'performance_panel',
             autoClose: false
@@ -42,7 +42,7 @@ $.extend('performance', (function (self) {
     }
 
     function initPanel() {
-        if (!$.isObjectNull(panel))
+        if (!lexus.isObjectNull(panel))
         {
             return;
         }

@@ -13,16 +13,16 @@ Evoque.extend('dockForm', (function (self) {
         option = option || {};
         self.hide();
 
-        if ($.isObjectNull(option))
+        if (lexus.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
-        option = $(option);
+        option = lexus(option);
         var caller = self.evoqueTarget;
         if (caller.length > 0) {
             var element = caller[0];
             var dir = option.getValueOfProperty('direction', defaultOption).toLowerCase();
-            if ($.isObjectNull(dockFormInstances[dir]))
+            if (lexus.isObjectNull(dockFormInstances[dir]))
             {
                 dockFormInstances[dir] = new dockFormClass(dir);
             }
@@ -35,7 +35,7 @@ Evoque.extend('dockForm', (function (self) {
     self.hide = function () {
         for (var p in dockFormInstances)
         {
-            if ($.checkType(dockFormInstances[p].hide) === type.eFunction)
+            if (lexus.checkType(dockFormInstances[p].hide) === type.eFunction)
             {
                 dockFormInstances[p].hide();
             }
@@ -46,7 +46,7 @@ Evoque.extend('dockForm', (function (self) {
         var currentScrollTop = 0;
         function disableScrollHandler(e)
         {
-            $.cancelDefault(e);
+            lexus.cancelDefault(e);
         }
         return {
             fixBackground: function () {
@@ -55,7 +55,7 @@ Evoque.extend('dockForm', (function (self) {
                 objStyle.setProperty('position', 'fixed');
                 objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
                 objStyle.setProperty('width', '100%');*/
-                $(document.body).addEventHandler('touchstart', disableScrollHandler);
+                lexus(document.body).addEventHandler('touchstart', disableScrollHandler);
             },
             restoreFixBackground: function () {
                 /*var objStyle = document.body.style;
@@ -63,7 +63,7 @@ Evoque.extend('dockForm', (function (self) {
                 objStyle.removeProperty('top');
                 objStyle.removeProperty('width');
                 window.scrollTo(0, currentScrollTop);*/
-                $(document.body).removeEventHandler('touchstart', disableScrollHandler);
+                lexus(document.body).removeEventHandler('touchstart', disableScrollHandler);
             }
         };
     }());
@@ -78,7 +78,7 @@ Evoque.extend('dockForm', (function (self) {
         var maxHeight = Math.floor(docHeight * 0.9);
 
         var div = document.createElement('div');
-        var $div = $(div);
+        var $div = lexus(div);
         $div.addClass('dockform-dg-div');
         div.style[direction] = '0';
         switch (direction)
@@ -95,18 +95,18 @@ Evoque.extend('dockForm', (function (self) {
         }
         var animationEndCallback = null;
         $div.addEventHandler('animationEnd', function () {
-            if ($.checkType(animationEndCallback) === type.eFunction) {
+            if (lexus.checkType(animationEndCallback) === type.eFunction) {
                 animationEndCallback.call(div);
             }
         }, { useEventPrefix: true });
         var formHideCallback = null;
 
         var bgObj = document.createElement('div');
-        $(bgObj).addClass('dockform-bg-div');
+        lexus(bgObj).addClass('dockform-bg-div');
         bgObj.style.width = docWidth + 'px';
         bgObj.style.height = getbackgroundHeight() + 'px';
         bgObj.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75)';
-        $(bgObj).addEventHandler('click', function () {
+        lexus(bgObj).addEventHandler('click', function () {
             that.hide();
         });
         //TODO: 发现在弹出的层中绑定的触摸事件，第一次弹出有效，以后的弹出无效，加上以下这句代码，该现象不存在，原因不明。
@@ -139,17 +139,17 @@ Evoque.extend('dockForm', (function (self) {
             parentCache = element.parentElement;
             this.currentShowElement = element;
             div.appendChild(element);
-            $(element).show();
+            lexus(element).show();
             document.body.appendChild(bgObj);
             document.body.appendChild(div);
             evoquePage.fixBackground();
             setDivSize();
-            if ($.device() !== mDevice.samsung) {
+            if (lexus.device() !== mDevice.samsung) {
                 $div.addClass('bottomTop');
             }
             showFlag = true;
-            if ($.device() === mDevice.samsung) {
-                if ($.checkType(animationEndCallback) === type.eFunction) {
+            if (lexus.device() === mDevice.samsung) {
+                if (lexus.checkType(animationEndCallback) === type.eFunction) {
                     animationEndCallback.call(div);
                 }
             }
@@ -182,20 +182,20 @@ Evoque.extend('dockForm', (function (self) {
             {
                 return;
             }
-            if ($.device() !== mDevice.samsung) {
+            if (lexus.device() !== mDevice.samsung) {
                 $div.removeClass('bottomTop');
             }
             evoquePage.restoreFixBackground();
             document.body.removeChild(div);
             var element = this.currentShowElement;
-            $(element).hide();
+            lexus(element).hide();
             document.body.removeChild(bgObj);
             parentCache.appendChild(element);
             parentCache = null;
             this.currentShowElement = null;
             showFlag = false;
 
-            if ($.checkType(formHideCallback) === type.eFunction) {
+            if (lexus.checkType(formHideCallback) === type.eFunction) {
                 formHideCallback.call(div);
             }
             animationEndCallback = null;

@@ -1,5 +1,5 @@
 //Dependency: Evoque.js
-$.extend('uploader', (function (self) {
+lexus.extend('uploader', (function (self) {
     var defaultOption = {
         url : '',
         // json
@@ -17,7 +17,7 @@ $.extend('uploader', (function (self) {
 
     self.exec = function (option) {
         checkOption(option);
-        option = $(option);
+        option = lexus(option);
         var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
@@ -38,11 +38,11 @@ $.extend('uploader', (function (self) {
 
     function checkOption(option)
     {
-        if ($.isObjectNull(option))
+        if (lexus.isObjectNull(option))
         {
             throw 'option is null!';
         }
-        if ($.isStringEmpty(option.url))
+        if (lexus.isStringEmpty(option.url))
         {
             throw 'url is empty!';
         }
@@ -62,7 +62,7 @@ $.extend('uploader', (function (self) {
         xmlhttp.onloadstart = function () {};
         xmlhttp.onload = function () {
             var resp = null;
-            if ($.checkType(xmlhttp.response) === type.eUndefined)
+            if (lexus.checkType(xmlhttp.response) === type.eUndefined)
             {
                 resp = xmlhttp.responseText;
             }
@@ -93,24 +93,24 @@ $.extend('uploader', (function (self) {
     function serializeForm(parameter, form)
     {
         var formData;
-        var typeF = $.checkType(form);
+        var typeF = lexus.checkType(form);
         if (typeF === type.eElement && form instanceof HTMLFormElement)
         {
             formData = new FormData(form);
         }
-        else if (typeF === type.eString && !$.isStringEmpty(form))
+        else if (typeF === type.eString && !lexus.isStringEmpty(form))
         {
-            var formEle = $('#' + form);
+            var formEle = lexus('#' + form);
             if (formEle.length > 0)
             {
                 formData = new FormData(formEle[0]);
             }
         }
-        else if ($.isObject(form) && form instanceof FormData)
+        else if (lexus.isObject(form) && form instanceof FormData)
         {
             formData = form;
         }
-        if ($.isObjectNull(formData))
+        if (lexus.isObjectNull(formData))
         {
             formData = new FormData();
         }

@@ -7,12 +7,12 @@ Evoque.extend('dockMenu', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        var $option = $(option);
+        var $option = lexus(option);
         var menuElementId = $option.getValueOfProperty('menuElementId', defaultOption);
-        if ($.isStringEmpty(menuElementId)) {
+        if (lexus.isStringEmpty(menuElementId)) {
             return;
         }
-        var $menuElement = $('#' + menuElementId);
+        var $menuElement = lexus('#' + menuElementId);
         if ($menuElement.length < 1) {
             return;
         }

@@ -43,7 +43,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.alert = function (message, onDialogClosed) {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         ctx.show({
@@ -61,7 +61,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.prompt = function (message, onclickyes) {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         ctx.show({
@@ -79,7 +79,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.message = function (message) {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         ctx.show({
@@ -98,7 +98,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.showLoading = function (loadingMsg, callback) {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         ctx.show({
@@ -125,7 +125,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.showMessageBox = function (option) {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         option.__source = showSource.messageBox;
@@ -139,7 +139,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.showModalDialog = function (option) {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         option.__source = showSource.modalDialog;
@@ -152,7 +152,7 @@ Evoque.extend('dialog', (function (self) {
      */
     self.closeCurrentDialog = function () {
         var ctx = getDialogContext.call(self.evoqueTarget);
-        if ($.isObjectNull(ctx)) {
+        if (lexus.isObjectNull(ctx)) {
             return;
         }
         ctx.close();
@@ -161,7 +161,7 @@ Evoque.extend('dialog', (function (self) {
     /**
      * 关闭所有文本框，关联在全局$对象上
      */
-    $.closeAllDialogs = function () {
+    lexus.closeAllDialogs = function () {
         for (var pName in dialogCache) {
             dialogCache[pName].closeAll();
         }
@@ -182,9 +182,9 @@ Evoque.extend('dialog', (function (self) {
     function createDialogContext() {
         var context = null;
         var key = this[dialogContextProperty];
-        if ($.isStringEmpty(key))
+        if (lexus.isStringEmpty(key))
         {
-            key = $.guid();
+            key = lexus.guid();
             this[dialogContextProperty] = key;
             context = new dialogContextClass(key);
             dialogCache[key] = context;
@@ -264,7 +264,7 @@ Evoque.extend('dialog', (function (self) {
 
         function exeShowContext() {
             var ctx = showContextSeq.shift();
-            if ($.isObjectNull(ctx))
+            if (lexus.isObjectNull(ctx))
             {
                 showContextExecuting = false;
                 var delIdx = -1;
@@ -280,7 +280,7 @@ Evoque.extend('dialog', (function (self) {
                 return;
             }
             innerShow(ctx.option);
-            if ($.checkType(ctx.afterShow) === type.eFunction)
+            if (lexus.checkType(ctx.afterShow) === type.eFunction)
             {
                 var waiting100 = window.setTimeout(function ()
                 {
@@ -301,11 +301,11 @@ Evoque.extend('dialog', (function (self) {
 
             bgObj = document.createElement('div');
             bgObj.setAttribute('id', 'm-bgDiv_' + contextGuid);
-            $(bgObj).addClass('bg-dialog');
+            lexus(bgObj).addClass('bg-dialog');
             //增加点击背景返回的事件处理器
-            $(bgObj).click(function (event) {
+            lexus(bgObj).click(function (event) {
                 var result;
-                if ($.checkType(onQuiting) === type.eFunction)
+                if (lexus.checkType(onQuiting) === type.eFunction)
                 {
                     result = onQuiting.call(this, event);
                 }
@@ -318,15 +318,15 @@ Evoque.extend('dialog', (function (self) {
 
             bgObjWhite = document.createElement('div');
             bgObjWhite.setAttribute('id', 'm-bgDivWhite_' + contextGuid);
-            $(bgObjWhite).addClass('bg-dialog-none');
+            lexus(bgObjWhite).addClass('bg-dialog-none');
 
             dialogObj = document.createElement('div');
 
-            $.orientationChange(function () {
+            lexus.orientationChange(function () {
                 var windowWidth = document.documentElement.clientWidth;
                 var windowHeight = document.documentElement.clientHeight;
-                var $dialog = $(dialogObj);
-                var o = $.orientation();
+                var $dialog = lexus(dialogObj);
+                var o = lexus.orientation();
                 if (o === originalOrientation) {
                     dialogObj.style.width = originalDialogWidth + 'px';
                     if (originalDirection === 'center') {
@@ -346,7 +346,7 @@ Evoque.extend('dialog', (function (self) {
                 bgObjWhite.style.height = getbackgroundHeight() + 'px';
             });
             //针对某些手机，在input软键盘弹出的时候，导致蒙版高度设置不对的问题，进行一些兼容
-            if ($.hasTouchEvent()) {
+            if (lexus.hasTouchEvent()) {
                 document.addEventListener('blur', function () {
                     bgObj.style.height = getbackgroundHeight() + 'px';
                     bgObjWhite.style.height = getbackgroundHeight() + 'px';
@@ -354,16 +354,16 @@ Evoque.extend('dialog', (function (self) {
             }
 
             titleObj = document.createElement('div');
-            $(titleObj).addClass('J-pop-hd');
+            lexus(titleObj).addClass('J-pop-hd');
 
             contentObj = document.createElement('div');
 
             buttonObj = document.createElement('div');
-            $(buttonObj).addClass('J-pop-button');
+            lexus(buttonObj).addClass('J-pop-button');
 
             btnOK = createButton({ caption: '确定', onClick: function (event)
             {
-                if ($.checkType(onClickOk) === type.eFunction)
+                if (lexus.checkType(onClickOk) === type.eFunction)
                 {
                     return onClickOk.call(this, event);
                 }
@@ -371,7 +371,7 @@ Evoque.extend('dialog', (function (self) {
             });
             btnCancel = createButton({ caption: '取消', onClick: function (event)
             {
-                if ($.checkType(onClickCancel) === type.eFunction)
+                if (lexus.checkType(onClickCancel) === type.eFunction)
                 {
                     return onClickCancel.call(this, event);
                 }
@@ -379,7 +379,7 @@ Evoque.extend('dialog', (function (self) {
             });
             btnYes = createButton({ caption: '是', onClick: function (event)
             {
-                if ($.checkType(onClickYes) === type.eFunction)
+                if (lexus.checkType(onClickYes) === type.eFunction)
                 {
                     return onClickYes.call(this, event);
                 }
@@ -387,7 +387,7 @@ Evoque.extend('dialog', (function (self) {
             });
             btnNo = createButton({ caption: '否', onClick: function (event)
             {
-                if ($.checkType(onClickNo) === type.eFunction)
+                if (lexus.checkType(onClickNo) === type.eFunction)
                 {
                     return onClickNo.call(this, event);
                 }
@@ -395,7 +395,7 @@ Evoque.extend('dialog', (function (self) {
             });
             btnClose = createButton({ caption: '关闭', onClick: function (event)
             {
-                if ($.checkType(onClickClose) === type.eFunction)
+                if (lexus.checkType(onClickClose) === type.eFunction)
                 {
                     return onClickClose.call(this, event);
                 }
@@ -408,10 +408,10 @@ Evoque.extend('dialog', (function (self) {
         function createButton(btnOption) {
             var btn = document.createElement('span');
             btn.innerHTML = btnOption.caption;
-            $(btn).addClass('button');
-            $(btn).click(function (event) {
+            lexus(btn).addClass('button');
+            lexus(btn).click(function (event) {
                 var result;
-                if ($.checkType(btnOption.onClick) === type.eFunction)
+                if (lexus.checkType(btnOption.onClick) === type.eFunction)
                 {
                     result = btnOption.onClick.call(this, event);
                 }
@@ -436,56 +436,56 @@ Evoque.extend('dialog', (function (self) {
             var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
             var layoutVersion = option.getValueOfProperty('layoutVersion', defaultOption).toLowerCase();
             var autoClose = option.getValueOfProperty('autoClose', defaultOption);
-            if (!$.isStringEmpty(title)) {
+            if (!lexus.isStringEmpty(title)) {
                 titleObj.innerHTML = title;
                 if (layoutVersion !== 'plain') {
                     dialogObj.appendChild(titleObj);
                 }
             }
-            if (!$.isStringEmpty(content))
+            if (!lexus.isStringEmpty(content))
             {
-                var eContent = $('#' + content);
+                var eContent = lexus('#' + content);
                 if (eContent.length > 0)
                 {
                     //缓存内容的父节点
                     var ele = eContent[0];
                     contentParentCache = ele.parentElement;
                     contentObj.appendChild(ele);
-                    $(ele).show();
+                    lexus(ele).show();
                     if (layoutVersion === 'plain') {
-                        $(dialogObj).addClass('J-pop-box-transparent');
+                        lexus(dialogObj).addClass('J-pop-box-transparent');
                     }
                 }
                 else
                 {
-                    $(contentObj).html(content);
+                    lexus(contentObj).html(content);
                     if (showSrc === showSource.modalDialog) {
-                        $(contentObj).addClass('J-pop-bd-l');
+                        lexus(contentObj).addClass('J-pop-bd-l');
                     }
                     else {
-                        $(contentObj).addClass('J-pop-bd');
+                        lexus(contentObj).addClass('J-pop-bd');
                     }
-                    if ($.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
-                        $(dialogObj).addClass('J-pop-box-b');
+                    if (lexus.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
+                        lexus(dialogObj).addClass('J-pop-box-b');
                     }
                 }
             }
             else
             {
-                $(contentObj).html('');
-                $(contentObj).addClass('J-pop-bd');
-                if ($.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
-                    $(dialogObj).addClass('J-pop-box-b');
+                lexus(contentObj).html('');
+                lexus(contentObj).addClass('J-pop-bd');
+                if (lexus.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
+                    lexus(dialogObj).addClass('J-pop-box-b');
                 }
             }
             dialogObj.appendChild(contentObj);
-            $(dialogObj).addClass('J-pop-box');
+            lexus(dialogObj).addClass('J-pop-box');
             if (direction === 'top') {
-                $(dialogObj).addClass('J-pop-box-t');
+                lexus(dialogObj).addClass('J-pop-box-t');
             }
-            if (!$.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
+            if (!lexus.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
             {
-                if (!$.isStringEmpty(buttonProperty))
+                if (!lexus.isStringEmpty(buttonProperty))
                 {
                     var buttonArray = buttonProperty.split('|');
                     for (var i = 0; i < buttonArray.length; ++i)
@@ -518,7 +518,7 @@ Evoque.extend('dialog', (function (self) {
                     for (var j = 0; j < customButtonProperty.length; ++j)
                     {
                         var customBtn = customButtonProperty[j];
-                        if (!$.isStringEmpty(customBtn.caption))
+                        if (!lexus.isStringEmpty(customBtn.caption))
                         {
                             buttonObj.appendChild(createButton(customBtn));
                         }
@@ -572,21 +572,21 @@ Evoque.extend('dialog', (function (self) {
             //固定住背景页面
             evoquePage.fixBackground();
             //触发DialogShow事件
-            if ($.checkType(onDialogShowed) === type.eFunction)
+            if (lexus.checkType(onDialogShowed) === type.eFunction)
             {
                 onDialogShowed.call(window);
             }
 
             originalDialogWidth = w;
             originalDialogHeight = dialogObj.clientHeight;
-            originalOrientation = $.orientation();
+            originalOrientation = lexus.orientation();
             originalWindowWidth = document.documentElement.clientWidth;
             originalWindowHeight = document.documentElement.clientHeight;
             originalDirection = direction;
             //show出来之后再判断下高度，超长则更改dialog的定位
             if (originalDirection === 'center' && originalDialogHeight > originalWindowHeight) {
                 originalDirection = 'top';
-                $(dialogObj).addClass('J-pop-box-t');
+                lexus(dialogObj).addClass('J-pop-box-t');
             }
         }
 
@@ -610,17 +610,17 @@ Evoque.extend('dialog', (function (self) {
             }
 
             titleObj.innerHTML = '';
-            if ($.checkType(contentParentCache) === type.eElement)
+            if (lexus.checkType(contentParentCache) === type.eElement)
             {
                 if (contentObj.children.length > 0)
                 {
-                    $(contentObj.firstElementChild).hide();
+                    lexus(contentObj.firstElementChild).hide();
                     contentParentCache.appendChild(contentObj.firstElementChild);
                 }
             }
             contentParentCache = null;
             contentObj.innerHTML = '';
-            $(buttonObj).clearChild();
+            lexus(buttonObj).clearChild();
 
             onClickOk = null;
             onClickCancel = null;
@@ -629,29 +629,29 @@ Evoque.extend('dialog', (function (self) {
             onClickClose = null;
 
             buttonObj.innerHTML = '';
-            $(dialogObj).clearChild();
-            $(dialogObj).setAttr('class', '');
-            $(contentObj).setAttr('class', '');
+            lexus(dialogObj).clearChild();
+            lexus(dialogObj).setAttr('class', '');
+            lexus(contentObj).setAttr('class', '');
             document.body.removeChild(dialogObj);
-            if ($('#m-bgDiv_' + contextGuid).length > 0)
+            if (lexus('#m-bgDiv_' + contextGuid).length > 0)
             {
                 document.body.removeChild(bgObj);
             }
-            if ($('#m-bgDivWhite_' + contextGuid).length > 0)
+            if (lexus('#m-bgDivWhite_' + contextGuid).length > 0)
             {
                 document.body.removeChild(bgObjWhite);
             }
 
             if (isTimeout)
             {
-                if ($.checkType(onTimeout) === type.eFunction)
+                if (lexus.checkType(onTimeout) === type.eFunction)
                 {
                     onTimeout.call(window);
                 }
             }
             else
             {
-                if ($.checkType(onDialogClosed) === type.eFunction)
+                if (lexus.checkType(onDialogClosed) === type.eFunction)
                 {
                     onDialogClosed.call(window);
                 }
@@ -678,11 +678,11 @@ Evoque.extend('dialog', (function (self) {
         }
 
         this.show = function (option, afterShowCallBack) {
-            if ($.isObjectNull(option))
+            if (lexus.isObjectNull(option))
             {
                 throw 'Parameter is null!';
             }
-            option = $(option);
+            option = lexus(option);
             showContextSeq.push(new showContextClass(option, afterShowCallBack));
             if (showContextExecuting)
             {

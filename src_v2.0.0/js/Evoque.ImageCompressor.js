@@ -1,5 +1,5 @@
 //Dependency: Evoque.js, exif.js
-$.extend('imageCompressor', (function (self) {
+lexus.extend('imageCompressor', (function (self) {
     var defaultOption = {
         //需要压缩的图片文件数组，每个元素为File对象或者Image标签对象
         srcImgList: [],
@@ -11,9 +11,9 @@ $.extend('imageCompressor', (function (self) {
     var windowHeight = 1024;
 
     self.exec = function (option) {
-        var $option = $(option);
+        var $option = lexus(option);
         var srcImgList = defaultOption.srcImgList;
-        var typeOfSrcImgList = $.checkType(option.srcImgList);
+        var typeOfSrcImgList = lexus.checkType(option.srcImgList);
         if (typeOfSrcImgList === type.eArray || typeOfSrcImgList === type.eArraylist) {
             srcImgList = option.srcImgList;
         }
@@ -58,7 +58,7 @@ $.extend('imageCompressor', (function (self) {
             function increaseCount() {
                 ++completedCount;
                 if (completedCount >= srcImgList.length) {
-                    if ($.checkType(onCompleted) === type.eFunction) {
+                    if (lexus.checkType(onCompleted) === type.eFunction) {
                         onCompleted.call(this, { result: result });
                     }
                 }
@@ -72,7 +72,7 @@ $.extend('imageCompressor', (function (self) {
         reader.onload = function (e) {
             var img = document.createElement('img');
             img.onload = function () {
-                if ($.checkType(onRead) === type.eFunction) {
+                if (lexus.checkType(onRead) === type.eFunction) {
                     onRead.call(that, { readImage: this, imageIndex: index, width: this.width, height: this.height });
                 }
             };
@@ -118,7 +118,7 @@ $.extend('imageCompressor', (function (self) {
             }
             ctx.drawImage(srcImg, 0, 0);
             var imgData = canvas.toDataURL("image/jpeg", ratio);
-            if ($.checkType(onResult) === type.eFunction) {
+            if (lexus.checkType(onResult) === type.eFunction) {
                 onResult.call(that, { resultImageData: imgData, imageIndex: index });
             }
         });

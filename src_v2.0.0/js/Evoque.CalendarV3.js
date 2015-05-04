@@ -18,7 +18,7 @@ Evoque.extend('calendarV3', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var caller = self.evoqueTarget;
         defaultOption.startDate = (new Date()).getYMD();
         var startDate = option.getValueOfProperty('startDate', defaultOption);
@@ -37,7 +37,7 @@ Evoque.extend('calendarV3', (function (self) {
         var onSelected = option.getValueOfProperty('onSelected', defaultOption);
 
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (!thisCache.containsKey('calendar_v2'))
             {
                 thisCache.push('calendar_v2', new calendarClass(this, startDate, endDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected));
@@ -49,7 +49,7 @@ Evoque.extend('calendarV3', (function (self) {
         var parameters = arguments;
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('calendar_v2'))
             {
                 thisCache.get('calendar_v2').setActiveDate.apply(thisCache.get('calendar_v2'), parameters);
@@ -60,7 +60,7 @@ Evoque.extend('calendarV3', (function (self) {
     self.reset = function () {
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('calendar_v2'))
             {
                 thisCache.get('calendar_v2').reset();
@@ -72,7 +72,7 @@ Evoque.extend('calendarV3', (function (self) {
         var caller = self.evoqueTarget;
         var ret = null;
         if (caller.length > 0) {
-            var thisCache = $(caller[0]).cache();
+            var thisCache = lexus(caller[0]).cache();
             if (thisCache.containsKey('calendar_v2'))
             {
                 ret = thisCache.get('calendar_v2').findDayCell(date);
@@ -88,7 +88,7 @@ Evoque.extend('calendarV3', (function (self) {
     };
     self.show = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var confirmButtonText = option.getValueOfProperty('confirmButtonText', defaultShowOption);
         var onConfirm = option.getValueOfProperty('onConfirm', defaultShowOption);
         var onCancel = option.getValueOfProperty('onCancel', defaultShowOption);
@@ -98,7 +98,7 @@ Evoque.extend('calendarV3', (function (self) {
 
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('calendar_v2'))
             {
                 thisCache.get('calendar_v2').show(confirmButtonText, onConfirm, onCancel);
@@ -127,24 +127,24 @@ Evoque.extend('calendarV3', (function (self) {
         }
 
         var calendarContainer = document.createElement('div');
-        var $calendarContainer = $(calendarContainer);
+        var $calendarContainer = lexus(calendarContainer);
         $calendarContainer.addClass('m-calendar');
         element.appendChild(calendarContainer);
-        var $element = $(element);
+        var $element = lexus(element);
 
         //初始化button区域
         var btnDiv = document.createElement('div');
-        $(btnDiv).addClass('m-calendar-btn');
+        lexus(btnDiv).addClass('m-calendar-btn');
         var btnUl = document.createElement('ul');
         var btnCancel = document.createElement('li');
-        var $btnCancel = $(btnCancel);
+        var $btnCancel = lexus(btnCancel);
         $btnCancel.addClass('cancel');
         $btnCancel.html('<span>取消</span>');
         $btnCancel.click(function () {
-            if ($.checkType(cancelCallback) === type.eFunction)
+            if (lexus.checkType(cancelCallback) === type.eFunction)
             {
                 var ret = cancelCallback.call();
-                if ($.checkType(ret) === type.eBoolean && !ret)
+                if (lexus.checkType(ret) === type.eBoolean && !ret)
                 {
                     return;
                 }
@@ -155,16 +155,16 @@ Evoque.extend('calendarV3', (function (self) {
         });
         var cancelCallback = null;
         var btnSelectDate = document.createElement('li');
-        $(btnSelectDate).addClass('text');
+        lexus(btnSelectDate).addClass('text');
         var btnConfirm = document.createElement('li');
-        var $btnConfirm = $(btnConfirm);
+        var $btnConfirm = lexus(btnConfirm);
         $btnConfirm.addClass('confirm');
         $btnConfirm.html('<span></span>');
         $btnConfirm.click(function () {
-            if ($.checkType(confirmCallback) === type.eFunction)
+            if (lexus.checkType(confirmCallback) === type.eFunction)
             {
                 var ret = confirmCallback.call(window, { selectDateStart: _finalStart, selectDateEnd: _finalEnd });
-                if ($.checkType(ret) === type.eBoolean && !ret)
+                if (lexus.checkType(ret) === type.eBoolean && !ret)
                 {
                     return;
                 }
@@ -182,21 +182,21 @@ Evoque.extend('calendarV3', (function (self) {
         calendarContainer.appendChild(btnDiv);
         //初始化标题部分
         var headDiv = document.createElement('div');
-        $(headDiv).addClass('m-calendar-hd');
-        $(headDiv).click(function () {
-            if ($(headDiv).getClassList().contains('m-calendar-month-show'))
+        lexus(headDiv).addClass('m-calendar-hd');
+        lexus(headDiv).click(function () {
+            if (lexus(headDiv).getClassList().contains('m-calendar-month-show'))
             {
-                $(headDiv).removeClass('m-calendar-month-show');
-                $(bodyDiv).removeClass('m-calendar-month-show');
+                lexus(headDiv).removeClass('m-calendar-month-show');
+                lexus(bodyDiv).removeClass('m-calendar-month-show');
             }
             else
             {
-                $(headDiv).addClass('m-calendar-month-show');
-                $(bodyDiv).addClass('m-calendar-month-show');
+                lexus(headDiv).addClass('m-calendar-month-show');
+                lexus(bodyDiv).addClass('m-calendar-month-show');
             }
         });
         var headTitleDiv = document.createElement('div');
-        $(headTitleDiv).addClass('m-calendar-title');
+        lexus(headTitleDiv).addClass('m-calendar-title');
         var headP = document.createElement('p');
         var headSpan = document.createElement('span');
         var headEm = document.createElement('em');
@@ -212,23 +212,23 @@ Evoque.extend('calendarV3', (function (self) {
         calendarContainer.appendChild(headDiv);
         //初始化日历部分
         var bodyDiv = document.createElement('div');
-        $(bodyDiv).addClass('m-calendar-bd');
+        lexus(bodyDiv).addClass('m-calendar-bd');
         var bodyMonthDiv = document.createElement('div');
-        $(bodyMonthDiv).addClass('m-calendar-month');
+        lexus(bodyMonthDiv).addClass('m-calendar-month');
         var bodyTableDiv = document.createElement('div');
-        $(bodyTableDiv).addClass('m-calendar-table');
+        lexus(bodyTableDiv).addClass('m-calendar-table');
         var weekUl = document.createElement('ul');
-        $(weekUl).addClass('m-calendar-weekday');
+        lexus(weekUl).addClass('m-calendar-weekday');
         for (var i = 0; i < 7; ++i)
         {
             var weekLi = document.createElement('li');
-            $(weekLi).html('<div><p>' + weekDay[i] + '</p></div>');
+            lexus(weekLi).html('<div><p>' + weekDay[i] + '</p></div>');
             weekUl.appendChild(weekLi);
         }
         bodyTableDiv.appendChild(weekUl);
 
         var bodyTableWrapper = document.createElement('div');
-        var $bodyTableWrapper = $(bodyTableWrapper);
+        var $bodyTableWrapper = lexus(bodyTableWrapper);
         var _agent = navigator.userAgent.toLowerCase();
         $bodyTableWrapper.addClass('m-calendar-wrapper');
         if (_agent.indexOf('iphone os 8_1_2') < 0)
@@ -240,26 +240,26 @@ Evoque.extend('calendarV3', (function (self) {
         $bodyTableWrapper.addEventHandler('scroll', bodyTableWrapperScrollHandle);
         function bodyTableWrapperScrollHandle() {
             var curMon = getCurrentScrollMonth(this.scrollTop);
-            $(headEm).text(yearDesc(curMon));
-            $(headStrong).text(curMon.getMonth() + 1);
+            lexus(headEm).text(yearDesc(curMon));
+            lexus(headStrong).text(curMon.getMonth() + 1);
         }
 
         function getCurrentScrollMonth(scrollTop) {
             var $uls = $bodyTableWrapper.getChild('ul');
-            var ym = $($uls[0]).getAttr('curYM');
+            var ym = lexus($uls[0]).getAttr('curYM');
             $uls.each(function () {
                 var offsetTop = this.offsetTop - this.parentElement.offsetTop;
                 if (scrollTop >= offsetTop)
                 {
-                    ym = $(this).getAttr('curYM');
+                    ym = lexus(this).getAttr('curYM');
                 }
                 else
                 {
                     return false;
                 }
             });
-            $(bodyMonthDiv).getChild('li').removeClass('selected');
-            $(bodyMonthDiv).getChild('li[curYM="' + ym + '"]').addClass('selected');
+            lexus(bodyMonthDiv).getChild('li').removeClass('selected');
+            lexus(bodyMonthDiv).getChild('li[curYM="' + ym + '"]').addClass('selected');
 
             var arr = ym.split('-');
             return new Date(Number(arr[0]), Number(arr[1]), 1);
@@ -300,8 +300,8 @@ Evoque.extend('calendarV3', (function (self) {
 
         function initTable(displayMonth) {
             var tbody = document.createElement('ul');
-            var $tbody = $(tbody);
-            $(tbody).addClass('m-calendar-days');
+            var $tbody = lexus(tbody);
+            lexus(tbody).addClass('m-calendar-days');
 
             loadMonth(displayMonth);
 
@@ -331,7 +331,7 @@ Evoque.extend('calendarV3', (function (self) {
 
                 function genDayTd(date) {
                     var td = document.createElement('li');
-                    var $td = $(td);
+                    var $td = lexus(td);
                     var div = document.createElement('div');
                     td.appendChild(div);
                     var p = document.createElement('p');
@@ -363,7 +363,7 @@ Evoque.extend('calendarV3', (function (self) {
                         },
                         get day() {
                             var strDay = $td.getAttr('curD');
-                            if ($.isStringEmpty(strDay))
+                            if (lexus.isStringEmpty(strDay))
                             {
                                 return 0;
                             }
@@ -373,21 +373,21 @@ Evoque.extend('calendarV3', (function (self) {
                             }
                         },
                         set day(value) {
-                            if ($.checkType(value) === type.eNumber)
+                            if (lexus.checkType(value) === type.eNumber)
                             {
-                                $(strong).text(value === 1 ? (date.getMonth() + 1).toString() + '月' : value);
+                                lexus(strong).text(value === 1 ? (date.getMonth() + 1).toString() + '月' : value);
                                 $td.setAttr('curD', value);
                             }
                         },
                         get title() {
-                            return $(em).text();
+                            return lexus(em).text();
                         },
                         set title(value) {
-                            $(em).text(value);
+                            lexus(em).text(value);
                         },
                         get canClick() {
                             var s = $td.getAttr('canClick');
-                            if ($.isStringEmpty(s) || s !== '1')
+                            if (lexus.isStringEmpty(s) || s !== '1')
                             {
                                 return false;
                             }
@@ -397,7 +397,7 @@ Evoque.extend('calendarV3', (function (self) {
                             }
                         },
                         set canClick(value) {
-                            if ($.checkType(value) === type.eBoolean)
+                            if (lexus.checkType(value) === type.eBoolean)
                             {
                                 if (value)
                                 {
@@ -423,7 +423,7 @@ Evoque.extend('calendarV3', (function (self) {
                             var that = this;
                             var status = $td.cache().get('status');
                             $td.clearClass();
-                            $(status.initClass).each(function () {
+                            lexus(status.initClass).each(function () {
                                 $td.addClass(this);
                             });
                             that.day = status.day;
@@ -456,12 +456,12 @@ Evoque.extend('calendarV3', (function (self) {
                                 tder.today();
                                 tder.title = '明天';
                             }
-                            if ($.checkType(onRenderDateTd) === type.eFunction)
+                            if (lexus.checkType(onRenderDateTd) === type.eFunction)
                             {
                                 onRenderDateTd.call(td, { renderTarget: td, tdDate: date, controller: tder });
                             }
                             $td.click(function (event) {
-                                var tder = $(this).cache().get('controller');
+                                var tder = lexus(this).cache().get('controller');
                                 if (!tder.canClick)
                                 {
                                     return;
@@ -478,13 +478,13 @@ Evoque.extend('calendarV3', (function (self) {
                                 }
                                 else
                                 {
-                                    if ($.checkType(onBeforeSelect) === type.eFunction)
+                                    if (lexus.checkType(onBeforeSelect) === type.eFunction)
                                     {
                                         var beforeResult = onBeforeSelect.call(this, event, {
                                             newSelectDate: selVal.copy(),
                                             findDayTd: findDayTd, getTdController: getTdController
                                         });
-                                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                                        if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult)
                                         {
                                             return;
                                         }
@@ -552,15 +552,15 @@ Evoque.extend('calendarV3', (function (self) {
             var bodyCurYear = d.getFullYear();
             var bodyCurMonth = d.getMonth();
             var bodyMonthLi = document.createElement('li');
-            $(bodyMonthLi).html('<div><p><strong>' + (bodyCurMonth + 1).toString() + '月</strong><em>' + bodyCurYear + '</em></p></div>');
-            $(bodyMonthLi).setAttr('curYM', bodyCurYear + '-' + bodyCurMonth);
-            $(bodyMonthLi).click(function () {
-                var curYM = $(this).getAttr('curYM');
+            lexus(bodyMonthLi).html('<div><p><strong>' + (bodyCurMonth + 1).toString() + '月</strong><em>' + bodyCurYear + '</em></p></div>');
+            lexus(bodyMonthLi).setAttr('curYM', bodyCurYear + '-' + bodyCurMonth);
+            lexus(bodyMonthLi).click(function () {
+                var curYM = lexus(this).getAttr('curYM');
                 var yms = curYM.split('-');
                 var m = Number(yms[1]) + 1;
                 scrollToMonth((yms[0] + '-' + m + '-1').toDate());
-                $(headDiv).removeClass('m-calendar-month-show');
-                $(bodyDiv).removeClass('m-calendar-month-show');
+                lexus(headDiv).removeClass('m-calendar-month-show');
+                lexus(bodyDiv).removeClass('m-calendar-month-show');
             });
             bodyMonthUl.appendChild(bodyMonthLi);
             bodyTableWrapper.appendChild(initTable(d)[0]);
@@ -579,14 +579,14 @@ Evoque.extend('calendarV3', (function (self) {
                 var tder = arg.getTdController(arg.selectDateStart);
                 tder.select();
                 tder.title = '入住';
-                if (!$.isObjectNull(arg.selectDateEnd))
+                if (!lexus.isObjectNull(arg.selectDateEnd))
                 {
                     tder = arg.getTdController(arg.selectDateEnd);
                     tder.select();
                     tder.title = '离店';
                 }
             }
-            if ($.checkType(onSelected) === type.eFunction) {
+            if (lexus.checkType(onSelected) === type.eFunction) {
                 onSelected.call(this, event, arg);
             }
         }
@@ -599,7 +599,7 @@ Evoque.extend('calendarV3', (function (self) {
             var y = date.getFullYear();
             var m = date.getMonth();
             var d = date.getDate();
-            return $(element).getChild('ul.m-calendar-days[curYM="' + y + '-' + m + '"] li[curD="' + d + '"]');
+            return lexus(element).getChild('ul.m-calendar-days[curYM="' + y + '-' + m + '"] li[curD="' + d + '"]');
         }
 
         function select($td) {
@@ -616,13 +616,13 @@ Evoque.extend('calendarV3', (function (self) {
             if (selectDates.length === 0 || selectDates.length > 1)
             {
                 var minus, min, max, loopDate;
-                if ($.checkType(onBeforeSelect) === type.eFunction)
+                if (lexus.checkType(onBeforeSelect) === type.eFunction)
                 {
                     var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
                         newSelectDateStart: selVal.copy(),
                         findDayTd: findDayTd, getTdController: getTdController
                     });
-                    if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                    if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult)
                     {
                         return;
                     }
@@ -663,13 +663,13 @@ Evoque.extend('calendarV3', (function (self) {
                 else if (minus < 0)
                 {
                     //如果第二次选择的入住日期比前一次小，则取消前一次的选择
-                    if ($.checkType(onBeforeSelect) === type.eFunction)
+                    if (lexus.checkType(onBeforeSelect) === type.eFunction)
                     {
                         var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
                             newSelectDateStart: selVal.copy(),
                             findDayTd: findDayTd, getTdController: getTdController
                         });
-                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                        if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult)
                         {
                             return;
                         }
@@ -680,14 +680,14 @@ Evoque.extend('calendarV3', (function (self) {
                     select(nowSel);
                     return;
                 }
-                if ($.checkType(onBeforeSelect) === type.eFunction)
+                if (lexus.checkType(onBeforeSelect) === type.eFunction)
                 {
                     var beforeResult = onBeforeSelect.call(event.currentTarget, event, {
                         newSelectDateStart: minus > 0 ? selectDates[0].copy() : selVal.copy(),
                         newSelectDateEnd: minus < 0 ? selectDates[0].copy() : selVal.copy(),
                         findDayTd: findDayTd, getTdController: getTdController
                     });
-                    if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                    if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult)
                     {
                         return;
                     }
@@ -717,18 +717,18 @@ Evoque.extend('calendarV3', (function (self) {
         function setFinalSelectDate(start, end) {
             _finalStart = start.copy();
             var strStart = _finalStart.toCustomString('M月d日');
-            if ($.checkType(end) === type.eDate) {
+            if (lexus.checkType(end) === type.eDate) {
                 _finalEnd = end.copy();
                 var dayNum = Math.floor((_finalEnd - _finalStart) / (1000 * 3600 * 24)).toString();
-                $(btnSelectDate).html('<span>' + strStart + '入住,共<strong>' + dayNum + '</strong>晚</span>');
+                lexus(btnSelectDate).html('<span>' + strStart + '入住,共<strong>' + dayNum + '</strong>晚</span>');
             }
             else {
                 _finalEnd = null;
-                $(btnSelectDate).html('<span>' + strStart + '入住,共<strong></strong>晚</span>');
+                lexus(btnSelectDate).html('<span>' + strStart + '入住,共<strong></strong>晚</span>');
             }
         }
         function clearFinalSelectDate() {
-            $(btnSelectDate).html('');
+            lexus(btnSelectDate).html('');
         }
 
         return {
@@ -738,7 +738,7 @@ Evoque.extend('calendarV3', (function (self) {
                 cancelCallback = onCancel;
                 $element.poper.show({
                     onShow: function () {
-                        var height = document.documentElement.clientHeight - $('div.m-calendar-btn')[0].clientHeight - $('div.m-calendar-hd')[0].clientHeight - $('ul.m-calendar-weekday')[0].clientHeight;
+                        var height = document.documentElement.clientHeight - lexus('div.m-calendar-btn')[0].clientHeight - lexus('div.m-calendar-hd')[0].clientHeight - lexus('ul.m-calendar-weekday')[0].clientHeight;
                         $element.getChild('div.m-calendar-wrapper').setStyle('height', height + 'px');
                         //设置可滚动的补足区域的高度
                         var lastMonthDate = new Date(minYear, minMonth + 5, 1);
@@ -803,8 +803,8 @@ Evoque.extend('calendarV3', (function (self) {
                     {
                         return;
                     }
-                    $(arguments).each(function () {
-                        if ($.checkType(this) !== type.eDate)
+                    lexus(arguments).each(function () {
+                        if (lexus.checkType(this) !== type.eDate)
                         {
                             throw 'Parameter type is error!';
                         }
@@ -819,14 +819,14 @@ Evoque.extend('calendarV3', (function (self) {
                     {
                         return;
                     }
-                    if ($.checkType(onBeforeSelect) === type.eFunction)
+                    if (lexus.checkType(onBeforeSelect) === type.eFunction)
                     {
                         var beforeResult = onBeforeSelect.call(this, null, {
                             newSelectDateStart: arguments[0].copy(),
                             newSelectDateEnd: arguments[1].copy(),
                             findDayTd: findDayTd, getTdController: getTdController
                         });
-                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                        if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult)
                         {
                             return;
                         }
@@ -864,8 +864,8 @@ Evoque.extend('calendarV3', (function (self) {
                     {
                         return;
                     }
-                    $(arguments).each(function () {
-                        if ($.checkType(this) !== type.eDate)
+                    lexus(arguments).each(function () {
+                        if (lexus.checkType(this) !== type.eDate)
                         {
                             throw 'Parameter type is error!';
                         }
@@ -875,13 +875,13 @@ Evoque.extend('calendarV3', (function (self) {
                     {
                         return;
                     }
-                    if ($.checkType(onBeforeSelect) === type.eFunction)
+                    if (lexus.checkType(onBeforeSelect) === type.eFunction)
                     {
                         var beforeResult = onBeforeSelect.call(this, null, {
                             newSelectDate: arguments[0].copy(),
                             findDayTd: findDayTd, getTdController: getTdController
                         });
-                        if ($.checkType(beforeResult) === type.eBoolean && !beforeResult)
+                        if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult)
                         {
                             return;
                         }
@@ -914,16 +914,16 @@ Evoque.extend('poper', (function (self) {
         option = option || {};
         self.hide();
 
-        if ($.isObjectNull(option))
+        if (lexus.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
-        option = $(option);
+        option = lexus(option);
         var caller = self.evoqueTarget;
         if (caller.length > 0) {
             var element = caller[0];
             var dir = option.getValueOfProperty('direction', defaultOption).toLowerCase();
-            if ($.isObjectNull(poperInstances[dir]))
+            if (lexus.isObjectNull(poperInstances[dir]))
             {
                 poperInstances[dir] = new poperClass(dir);
             }
@@ -936,7 +936,7 @@ Evoque.extend('poper', (function (self) {
     self.hide = function () {
         for (var p in poperInstances)
         {
-            if ($.checkType(poperInstances[p].hide) === type.eFunction)
+            if (lexus.checkType(poperInstances[p].hide) === type.eFunction)
             {
                 poperInstances[p].hide();
             }
@@ -953,7 +953,7 @@ Evoque.extend('poper', (function (self) {
         var maxHeight = Math.floor(docHeight);
 
         var div = document.createElement('div');
-        var $div = $(div);
+        var $div = lexus(div);
         $div.addClass('poper-dg-div');
         $div.addClass('poper-bottomTop');
         div.style[direction] = '0';
@@ -976,7 +976,7 @@ Evoque.extend('poper', (function (self) {
         $div.addEventHandler('transitionEnd', function () {
             switch (callbackKind) {
                 case 1:
-                    if ($.checkType(formShowCallback) === type.eFunction) {
+                    if (lexus.checkType(formShowCallback) === type.eFunction) {
                         formShowCallback.call(div);
                     }
                     callbackKind = 0;
@@ -984,12 +984,12 @@ Evoque.extend('poper', (function (self) {
                 case 2:
                     document.body.removeChild(div);
                     var element = that.currentShowElement;
-                    $(element).hide();
+                    lexus(element).hide();
                     parentCache.appendChild(element);
                     parentCache = null;
                     that.currentShowElement = null;
                     showFlag = false;
-                    if ($.checkType(formHideCallback) === type.eFunction) {
+                    if (lexus.checkType(formHideCallback) === type.eFunction) {
                         formHideCallback.call(div);
                     }
                     formShowCallback = null;
@@ -1014,16 +1014,16 @@ Evoque.extend('poper', (function (self) {
             parentCache = element.parentElement;
             this.currentShowElement = element;
             div.appendChild(element);
-            $(element).show();
+            lexus(element).show();
             document.body.appendChild(div);
             setDivSize();
-            if ($.device() !== mDevice.samsung) {
+            if (lexus.device() !== mDevice.samsung) {
                 callbackKind = 1;
                 $div.addClass('show');
             }
             showFlag = true;
-            if ($.device() === mDevice.samsung) {
-                if ($.checkType(formShowCallback) === type.eFunction) {
+            if (lexus.device() === mDevice.samsung) {
+                if (lexus.checkType(formShowCallback) === type.eFunction) {
                     formShowCallback.call(div);
                 }
             }
@@ -1056,20 +1056,20 @@ Evoque.extend('poper', (function (self) {
             {
                 return;
             }
-            if ($.device() !== mDevice.samsung) {
+            if (lexus.device() !== mDevice.samsung) {
                 callbackKind = 2;
                 $div.removeClass('show');
             }
 
-            if ($.device() === mDevice.samsung) {
+            if (lexus.device() === mDevice.samsung) {
                 document.body.removeChild(div);
                 var element = this.currentShowElement;
-                $(element).hide();
+                lexus(element).hide();
                 parentCache.appendChild(element);
                 parentCache = null;
                 this.currentShowElement = null;
                 showFlag = false;
-                if ($.checkType(formHideCallback) === type.eFunction) {
+                if (lexus.checkType(formHideCallback) === type.eFunction) {
                     formHideCallback.call(div);
                 }
                 formShowCallback = null;

@@ -1,34 +1,34 @@
 //Dependency: Evoque.js, Evoque.Dialog.js
-$.dialog = (function (self) {
+lexus.dialog = (function (self) {
 
     self.alert = function (message, onDialogClosed)
     {
-        return $(document).dialog.alert(message, onDialogClosed);
+        return lexus(document).dialog.alert(message, onDialogClosed);
     };
 
     self.prompt = function (message, onclickyes) {
-        return $(document).dialog.prompt(message, onclickyes);
+        return lexus(document).dialog.prompt(message, onclickyes);
     };
 
     self.showLoading = function (loadingMsg, callback)
     {
-        return $(document).dialog.showLoading(loadingMsg, callback);
+        return lexus(document).dialog.showLoading(loadingMsg, callback);
     };
 
     self.showMessageBox = function (option) {
-        return $(document).dialog.showMessageBox(option);
+        return lexus(document).dialog.showMessageBox(option);
     };
 
     self.showModalDialog = function (option) {
-        return $(document).dialog.showModalDialog(option);
+        return lexus(document).dialog.showModalDialog(option);
     };
 
     self.closeCurrentDialog = function () {
-        return $(document).dialog.closeCurrentDialog();
+        return lexus(document).dialog.closeCurrentDialog();
     };
 
     self.closeAll = function () {
-        return $.closeAllDialogs();
+        return lexus.closeAllDialogs();
     };
 
     Evoque.alert = function (message, onDialogClosed)
@@ -63,18 +63,18 @@ $.dialog = (function (self) {
 
     window.mDialogManager = {
         alert: function (message) {
-            return $.dialog.alert(message);
+            return lexus.dialog.alert(message);
         },
         showLoading: function (loadingMsg, callback) {
-            return $.dialog.showLoading(loadingMsg, callback);
+            return lexus.dialog.showLoading(loadingMsg, callback);
         },
         showMessageBox: function (option) {
-            return $.dialog.showMessageBox(option);
+            return lexus.dialog.showMessageBox(option);
         },
         showModalDialog: function (option) {
-            return $.dialog.showModalDialog(option);
+            return lexus.dialog.showModalDialog(option);
         }
     };
 
     return self;
-}($.dialog || {}));
+}(lexus.dialog || {}));

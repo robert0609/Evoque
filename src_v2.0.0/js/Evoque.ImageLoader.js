@@ -13,18 +13,18 @@ Evoque.extend('imageLoader', (function (self) {
     function createLoadingDiv()
     {
         var that = this;
-        var $this = $(this);
+        var $this = lexus(this);
         var imgSrc = $this.getAttr(imgSrcAttrName);
-        if ($.isStringEmpty(imgSrc))
+        if (lexus.isStringEmpty(imgSrc))
         {
             return;
         }
         var div = document.createElement('div');
-        var $div = $(div);
+        var $div = lexus(div);
         $div.text('正在加载中...');
         this.appendChild(div);
         var img = document.createElement('img');
-        var $img = $(img);
+        var $img = lexus(img);
         $img.addEventHandler('load', function () {
             that.removeChild(div);
             that.appendChild(img);

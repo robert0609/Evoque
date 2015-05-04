@@ -26,7 +26,7 @@ Evoque.extend('validate', (function (self) {
 
     function getValidJson(ele)
     {
-        var eleCache = $(ele).cache();
+        var eleCache = lexus(ele).cache();
         if (eleCache.containsKey(validAttrName))
         {
             return eleCache.get(validAttrName);
@@ -42,7 +42,7 @@ Evoque.extend('validate', (function (self) {
         var obj = castArray(validJson[require]);
         for (var i = 0; i < obj.length; ++i)
         {
-            if (!$.isObjectNull(obj[i]) && !validRequire(ele, obj[i]))
+            if (!lexus.isObjectNull(obj[i]) && !validRequire(ele, obj[i]))
             {
                 return false;
             }
@@ -50,7 +50,7 @@ Evoque.extend('validate', (function (self) {
         obj = castArray(validJson[len]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$.isObjectNull(obj[i]) && !validLen(ele, obj[i]))
+            if (!lexus.isObjectNull(obj[i]) && !validLen(ele, obj[i]))
             {
                 return false;
             }
@@ -58,7 +58,7 @@ Evoque.extend('validate', (function (self) {
         obj = castArray(validJson[range]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$.isObjectNull(obj[i]) && !validRange(ele, obj[i]))
+            if (!lexus.isObjectNull(obj[i]) && !validRange(ele, obj[i]))
             {
                 return false;
             }
@@ -66,7 +66,7 @@ Evoque.extend('validate', (function (self) {
         obj = castArray(validJson[regex]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$.isObjectNull(obj[i]) && !validRegex(ele, obj[i]))
+            if (!lexus.isObjectNull(obj[i]) && !validRegex(ele, obj[i]))
             {
                 return false;
             }
@@ -74,7 +74,7 @@ Evoque.extend('validate', (function (self) {
         obj = castArray(validJson[compare]);
         for (i = 0; i < obj.length; ++i)
         {
-            if (!$.isObjectNull(obj[i]) && !validCompare(ele, obj[i]))
+            if (!lexus.isObjectNull(obj[i]) && !validCompare(ele, obj[i]))
             {
                 return false;
             }
@@ -84,7 +84,7 @@ Evoque.extend('validate', (function (self) {
 
     function castArray(obj)
     {
-        if ($.isObjectNull(obj))
+        if (lexus.isObjectNull(obj))
         {
             return [];
         }
@@ -105,14 +105,14 @@ Evoque.extend('validate', (function (self) {
         var ret = true;
         var val = ele.value;
         var empty = json[require_empty];
-        if ($.isStringEmpty(val))
+        if (lexus.isStringEmpty(val))
         {
             container.alert(json[errorMsg]);
             ret = false;
         }
         else
         {
-            if (!$.isStringEmpty(empty))
+            if (!lexus.isStringEmpty(empty))
             {
                 if (val == empty)
                 {
@@ -131,7 +131,7 @@ Evoque.extend('validate', (function (self) {
         var max = json[len_max];
         var min = json[len_min];
 
-        if (!$.isStringEmpty(max))
+        if (!lexus.isStringEmpty(max))
         {
             if (val.length > Number(max))
             {
@@ -139,7 +139,7 @@ Evoque.extend('validate', (function (self) {
                 ret = false;
             }
         }
-        if (!$.isStringEmpty(min))
+        if (!lexus.isStringEmpty(min))
         {
             if (val.length < Number(min))
             {
@@ -156,7 +156,7 @@ Evoque.extend('validate', (function (self) {
         var val = Number(ele.value);
         var max = json[range_max];
         var min = json[range_min];
-        if (!$.isStringEmpty(max))
+        if (!lexus.isStringEmpty(max))
         {
             if (val > Number(max))
             {
@@ -164,7 +164,7 @@ Evoque.extend('validate', (function (self) {
                 ret = false;
             }
         }
-        if (!$.isStringEmpty(min))
+        if (!lexus.isStringEmpty(min))
         {
             if (val < Number(min))
             {
@@ -181,7 +181,7 @@ Evoque.extend('validate', (function (self) {
         var ret = true;
         var val = ele.value;
         var regStr = json[regex_expression];
-        if (!$.isStringEmpty(regStr))
+        if (!lexus.isStringEmpty(regStr))
         {
             var reg = new RegExp(regStr);
             if (!reg.test(val))
@@ -199,19 +199,19 @@ Evoque.extend('validate', (function (self) {
         var val = ele.value;
         var tarVal = '';
         var tarId = json[compare_target];
-        if ($.isStringEmpty(tarId))
+        if (lexus.isStringEmpty(tarId))
         {
             var tarSelector = json[compare_targetSelector];
-            if (!$.isStringEmpty(tarSelector))
+            if (!lexus.isStringEmpty(tarSelector))
             {
-                tarVal = $(tarSelector).getVal();
+                tarVal = lexus(tarSelector).getVal();
             }
         }
         else
         {
-            tarVal = $('#' + tarId).getVal();
+            tarVal = lexus('#' + tarId).getVal();
         }
-        if (!$.isStringEmpty(tarVal))
+        if (!lexus.isStringEmpty(tarVal))
         {
             if (val != tarVal)
             {
@@ -259,12 +259,12 @@ Evoque.extend('validate', (function (self) {
     };
 
     self.validRule = function (rule) {
-        if ($.isObjectNull(rule))
+        if (lexus.isObjectNull(rule))
         {
             return;
         }
         self.evoqueTarget.each(function () {
-            $(this).cache().push(validAttrName, rule);
+            lexus(this).cache().push(validAttrName, rule);
         });
     };
 

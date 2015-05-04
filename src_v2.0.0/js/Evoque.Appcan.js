@@ -1,8 +1,8 @@
 //Dependency: Evoque.js
-$.extend('appcan', (function (self) {
+lexus.extend('appcan', (function (self) {
 
     self.supportAppcan = function () {
-        return !$.isObjectNull(window.uexWidgetOne)
+        return !lexus.isObjectNull(window.uexWidgetOne)
     };
 
     function createFunction(fn)

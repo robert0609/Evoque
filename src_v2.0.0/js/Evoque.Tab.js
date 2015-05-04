@@ -18,11 +18,11 @@ Evoque.tab = (function (self)
 
     self.create = function (option, tabDivElement)
     {
-        if ($.isObjectNull(option))
+        if (lexus.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
-        option = $(option);
+        option = lexus(option);
         var orientation = option.getValueOfProperty('orientation', defaultOption);
         if (![ 'horizontal', 'vertical' ].contains(orientation)) {
             orientation = 'horizontal';
@@ -30,30 +30,30 @@ Evoque.tab = (function (self)
         var verticalContentHeight = option.getValueOfProperty('verticalContentHeight', defaultOption);
 
         var tabId;
-        if ($.checkType(tabDivElement) === type.eElement)
+        if (lexus.checkType(tabDivElement) === type.eElement)
         {
             tabId = tabDivElement;
         }
         else
         {
             tabId = option.getValueOfProperty('tabDivId', defaultOption);
-            if ($.isStringEmpty(tabId))
+            if (lexus.isStringEmpty(tabId))
             {
                 throw 'Parameter is error!';
             }
-            var $tabObj = $('#' + tabId);
+            var $tabObj = lexus('#' + tabId);
             if ($tabObj.length === 0) {
                 throw 'Parameter is error!';
             }
             tabId = $tabObj[0];
         }
-        if ($.isObjectNull(tabId.__tabControl)) {
+        if (lexus.isObjectNull(tabId.__tabControl)) {
             tabId.__tabControl = new tabClass(tabId, option.getValueOfProperty('defaultTabIndex', defaultOption), orientation, verticalContentHeight, option.getValueOfProperty('onTabSwitched', defaultOption));
         }
     };
 
     self.resetScrollBox = function (tabDivElement) {
-        if ($.isObjectNull(tabDivElement.__tabControl)) {
+        if (lexus.isObjectNull(tabDivElement.__tabControl)) {
             return;
         }
         tabDivElement.__tabControl.resetScrollBox();
@@ -66,20 +66,20 @@ Evoque.tab = (function (self)
         var currentIndex;
 
         var tabDivObj = null;
-        if ($.checkType(tabDivElement) === type.eElement)
+        if (lexus.checkType(tabDivElement) === type.eElement)
         {
-            tabDivObj = $(tabDivElement);
+            tabDivObj = lexus(tabDivElement);
         }
-        else if ($.checkType(tabDivElement) === type.eString)
+        else if (lexus.checkType(tabDivElement) === type.eString)
         {
-            tabDivObj = $('#' + tabDivElement);
+            tabDivObj = lexus('#' + tabDivElement);
         }
         else
         {
             throw 'Invalid parameter!';
         }
         //增加唯一Attr
-        var guid = $.guid();
+        var guid = lexus.guid();
         tabDivObj.setAttr('data-guid', guid);
         var titleArray = tabDivObj.getChild('*[data-guid="' + guid + '"]>.' + titleClass + '>*[' + indexAttrName + ']').sort(sortBy);
         var contentArray = tabDivObj.getChild('*[data-guid="' + guid + '"]>.' + contentClass + '>*[' + indexAttrName + ']').sort(sortBy);
@@ -104,7 +104,7 @@ Evoque.tab = (function (self)
             this.Title = title;
             this.Content = content;
 
-            $(title).addEventHandler('click', function ()
+            lexus(title).addEventHandler('click', function ()
             {
                 switchTo(nIndex, onTabSwitched);
             }, false);
@@ -119,21 +119,21 @@ Evoque.tab = (function (self)
 
         function switchTo(tabIndex, tabSwitchedHandler)
         {
-            if ($.checkType(currentIndex) !== type.eUndefined)
+            if (lexus.checkType(currentIndex) !== type.eUndefined)
             {
                 if (currentIndex == tabIndex)
                 {
                     return;
                 }
-                $(tabList[currentIndex].Title).removeClass('current');
-                $(tabList[currentIndex].Content).hide();
+                lexus(tabList[currentIndex].Title).removeClass('current');
+                lexus(tabList[currentIndex].Content).hide();
             }
 
-            $(tabList[tabIndex].Title).addClass('current');
-            var $content = $(tabList[tabIndex].Content);
+            lexus(tabList[tabIndex].Title).addClass('current');
+            var $content = lexus(tabList[tabIndex].Content);
             $content.show();
 
-            if ($.checkType(tabSwitchedHandler) === type.eFunction)
+            if (lexus.checkType(tabSwitchedHandler) === type.eFunction)
             {
                 tabSwitchedHandler.call(tabList[tabIndex].Content, {
                     lastSelectIndex : currentIndex,
@@ -156,10 +156,10 @@ Evoque.tab = (function (self)
 
         return {
             resetScrollBox: function () {
-                /*if ($.checkType(currentIndex) !== type.eNumber) {
+                /*if (lexus.checkType(currentIndex) !== type.eNumber) {
                     return;
                 }
-                var $content = $(tabList[currentIndex].Content);
+                var $content = lexus(tabList[currentIndex].Content);
                 if (orientation === 'vertical' && verticalContentHeight > 0) {
                     $content.setStyle('height', verticalContentHeight + 'px');
                     $content.scrollBox.recreate();

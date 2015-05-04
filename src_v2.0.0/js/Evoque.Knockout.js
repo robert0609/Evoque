@@ -1,10 +1,10 @@
 //Dependency: Evoque.js, knockout.js
-$.extend('knockout', (function (self) {
+lexus.extend('knockout', (function (self) {
     ko.extenders.dateFormat = function (target, format) {
         var result = ko.computed({
             read: function () {
                 var curVal = target();
-                if ($.isStringEmpty(curVal))
+                if (lexus.isStringEmpty(curVal))
                 {
                     return null;
                 }
@@ -14,7 +14,7 @@ $.extend('knockout', (function (self) {
                 }
             },
             write: function (value) {
-                if ($.isStringEmpty(value))
+                if (lexus.isStringEmpty(value))
                 {
                     target(null);
                 }

@@ -16,7 +16,7 @@ Evoque.extend('folder', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var mode = option.getValueOfProperty('mode', defaultOption).toLowerCase();
         var status = option.getValueOfProperty('status', defaultOption).toLowerCase();
         var autoTop = option.getValueOfProperty('autoTop', defaultOption);
@@ -29,7 +29,7 @@ Evoque.extend('folder', (function (self) {
         var caller = self.evoqueTarget;
         caller.each(function () {
             var folder = this;
-            if ($.isObjectNull(this.__innerFolder))
+            if (lexus.isObjectNull(this.__innerFolder))
             {
                 folder.__innerFolder = new folderClass(folder, mode, status, autoTop, onFolded, onUnfolded);
             }
@@ -38,7 +38,7 @@ Evoque.extend('folder', (function (self) {
 
     function folderClass(folder, mode, status, autoTop, onFolded, onUnfolded)
     {
-        var $folder = $(folder);
+        var $folder = lexus(folder);
         var $title = $folder.getChild('.' + titleClass);
         var $content = $folder.getChild('.' + contentClass);
 
@@ -143,10 +143,10 @@ Evoque.extend('folder', (function (self) {
 
         function unfold() {
             var grpAttr = $folder.getAttr(groupAttr);
-            if (!$.isStringEmpty(grpAttr))
+            if (!lexus.isStringEmpty(grpAttr))
             {
-                $('[' + groupAttr + '="' + grpAttr + '"]').each(function () {
-                    if ($.isObjectNull(this.__innerFolder))
+                lexus('[' + groupAttr + '="' + grpAttr + '"]').each(function () {
+                    if (lexus.isObjectNull(this.__innerFolder))
                     {
                         return;
                     }
@@ -161,7 +161,7 @@ Evoque.extend('folder', (function (self) {
             setContentUnfoldHeight();
             if (autoTop)
             {
-                $.scrollTo(0, $title[0].offsetTop);
+                lexus.scrollTo(0, $title[0].offsetTop);
             }
             onUnfolded.apply({ title: $title[0], content: $content[0], setContentHeight: setContentUnfoldHeight});
         }
@@ -187,7 +187,7 @@ Evoque.extend('folder', (function (self) {
 
     Evoque.openFolder = function () {
         this.each(function () {
-            if ($.isObjectNull(this.__innerFolder))
+            if (lexus.isObjectNull(this.__innerFolder))
             {
                 return;
             }
@@ -197,7 +197,7 @@ Evoque.extend('folder', (function (self) {
 
     Evoque.closeFolder = function () {
         this.each(function () {
-            if ($.isObjectNull(this.__innerFolder))
+            if (lexus.isObjectNull(this.__innerFolder))
             {
                 return;
             }

@@ -1,5 +1,5 @@
 //Dependency: Evoque.js, Evoque.Session.js
-$.extend('cache', (function (self) {
+lexus.extend('cache', (function (self) {
     var defaultOption = {
         // 'page' | 'session' | 'local', default: 'page'
         cacheLevel: 'page'
@@ -12,9 +12,9 @@ $.extend('cache', (function (self) {
         var lvl = getLevel(option);
         switch (lvl) {
             case 'session':
-                return $.session;
+                return lexus.session;
             case 'local':
-                return $.storage;
+                return lexus.storage;
             default:
                 return new cacheClass();
         }
@@ -119,9 +119,9 @@ $.extend('cache', (function (self) {
 
     function getLevel(option) {
         option = option || {};
-        var $option = $(option);
+        var $option = lexus(option);
         var cacheLevel = $option.getValueOfProperty('cacheLevel', defaultOption).toLowerCase();
-        if ((cacheLevel === 'session' && $.isObjectNull($.session)) || (cacheLevel === 'local' && $.isObjectNull($.storage))) {
+        if ((cacheLevel === 'session' && lexus.isObjectNull(lexus.session)) || (cacheLevel === 'local' && lexus.isObjectNull(lexus.storage))) {
             cacheLevel = 'page';
         }
         return cacheLevel;
@@ -130,9 +130,9 @@ $.extend('cache', (function (self) {
     function getCacheProvider(lvl) {
         switch (lvl) {
             case 'session':
-                return $.session;
+                return lexus.session;
             case 'local':
-                return $.storage;
+                return lexus.storage;
             default:
                 return __global;
         }
@@ -145,21 +145,21 @@ $.extend('cache', (function (self) {
             return null;
         }
         var key = this.getAttr(__elementCacheKeyProperty);
-        if ($.isStringEmpty(key))
+        if (lexus.isStringEmpty(key))
         {
-            key = $.guid();
+            key = lexus.guid();
             this.setAttr(__elementCacheKeyProperty, key);
         }
         var isGCStarted = __gcCacheKeys.length > 0;
-        if (!$.cache.containsKey(key))
+        if (!lexus.cache.containsKey(key))
         {
-            $.cache.push(key, new cacheClass());
+            lexus.cache.push(key, new cacheClass());
             __gcCacheKeys.push(key);
         }
         if (!isGCStarted) {
             gcCache();
         }
-        return $.cache.get(key);
+        return lexus.cache.get(key);
     };
 
     //Evoque.cache的回收处理
@@ -168,13 +168,13 @@ $.extend('cache', (function (self) {
         if (__gcCacheKeys.length > 0) {
             for (var i in __gcCacheKeys) {
                 var key = __gcCacheKeys[i];
-                if ($('*[' + __elementCacheKeyProperty + '="' + key + '"]').length === 0) {
-                    $.cache.del(key);
+                if (lexus('*[' + __elementCacheKeyProperty + '="' + key + '"]').length === 0) {
+                    lexus.cache.del(key);
                     delete __gcCacheKeys[i];
                 }
             }
             __gcCacheKeys = __gcCacheKeys.filter(function (loop) {
-                return $.checkType(loop) !== type.eUndefined;
+                return lexus.checkType(loop) !== type.eUndefined;
             });
         }
         if (__gcCacheKeys.length > 0) {

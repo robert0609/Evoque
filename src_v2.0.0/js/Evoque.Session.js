@@ -118,7 +118,7 @@
 
         function getJsonData(key) {
             var val = dataStorage.getItem(realKey2Raw(key));
-            if ($.isStringEmpty(val))
+            if (lexus.isStringEmpty(val))
             {
                 return null;
             }
@@ -143,7 +143,7 @@
 
         function popJsonData() {
             var filterSeq = __seqStorer.filter(function (loop) {
-                return $.checkType(loop) !== type.eUndefined;
+                return lexus.checkType(loop) !== type.eUndefined;
             });
             if (filterSeq.length < 1)
             {
@@ -188,7 +188,7 @@
                 throw '缓存中不存在键为[' + key + ']的对象';
             }
             var obj = getJsonData(key);
-            if (!$.isObjectNull(obj)) {
+            if (!lexus.isObjectNull(obj)) {
                 obj = rawData2Real(obj);
             }
             return obj;
@@ -215,7 +215,7 @@
 
         this.pop = createFunction(function () {
             var obj = popJsonData();
-            if (!$.isObjectNull(obj)) {
+            if (!lexus.isObjectNull(obj)) {
                 obj = rawData2Real(obj);
             }
             return obj;
@@ -223,11 +223,11 @@
 
         this.keys = function () {
             return __seqStorer.filter(function (loop) {
-                return $.checkType(loop) !== type.eUndefined;
+                return lexus.checkType(loop) !== type.eUndefined;
             });
         };
     }
 
-    $.extend('session', new wrapper('session'));
-    $.extend('storage', new wrapper('storage'));
+    lexus.extend('session', new wrapper('session'));
+    lexus.extend('storage', new wrapper('storage'));
 }());

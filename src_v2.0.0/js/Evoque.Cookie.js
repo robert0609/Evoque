@@ -1,5 +1,5 @@
 //Dependency: Evoque.js
-$.extend('cookie', (function (self) {
+lexus.extend('cookie', (function (self) {
     var defaultOption = {
         expires: (new Date()).addDay(1),
         path: '/',
@@ -7,7 +7,7 @@ $.extend('cookie', (function (self) {
     };
 
     self.checkEnable = function () {
-        if ($.checkType(navigator.cookiesEnabled) === type.eBoolean)
+        if (lexus.checkType(navigator.cookiesEnabled) === type.eBoolean)
         {
             return navigator.cookiesEnabled;
         }
@@ -68,12 +68,12 @@ $.extend('cookie', (function (self) {
             document.cookie = key + '=' + originalVal + '; expires=' + date.toUTCString() + '; path=/';
         }
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var expires = option.getValueOfProperty('expires', defaultOption);
         var path = option.getValueOfProperty('path', defaultOption);
         var domain = option.getValueOfProperty('domain', defaultOption);
         var strVal = null;
-        switch ($.checkType(val))
+        switch (lexus.checkType(val))
         {
             case type.eBoolean:
                 strVal = val ? 'True' : 'False';
@@ -85,15 +85,15 @@ $.extend('cookie', (function (self) {
                 strVal = val;
                 break;
         }
-        if (!$.isStringEmpty(strVal)) {
+        if (!lexus.isStringEmpty(strVal)) {
             var strCookie = key + '=' + strVal + '; expires=' + expires.toUTCString();
-            if ($.isStringEmpty(path)) {
+            if (lexus.isStringEmpty(path)) {
                 strCookie += '; path=/';
             }
             else {
                 strCookie += '; path=' + path;
             }
-            if (!$.isStringEmpty(domain) && domain.toLowerCase() !== 'localhost')
+            if (!lexus.isStringEmpty(domain) && domain.toLowerCase() !== 'localhost')
             {
                 strCookie += '; domain=' + domain;
             }

@@ -136,6 +136,9 @@ var Evoque = (function (self)
         eObject: 'object'
     };
 
+    window.lexus = __fetcher;
+    window.$ = __fetcher;
+
     var class2type = {
         'undefined' : type.eUndefined,
         'number' : type.eNumber,
@@ -158,7 +161,7 @@ var Evoque = (function (self)
     function core_addReadyHandler(fn, useCapture)
     {
         //DOM标准
-        if (document.addEventListener && $.checkType(fn) === type.eFunction) {
+        if (document.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
             document.addEventListener('DOMContentLoaded', fn, useCapture);
         }
     }
@@ -171,7 +174,7 @@ var Evoque = (function (self)
             evtName = 'pageshow';
         }
         //DOM标准
-        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+        if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
             window.addEventListener(evtName, fn, useCapture);
         }
     }
@@ -184,7 +187,7 @@ var Evoque = (function (self)
             evtName = 'pagehide';
         }
         //DOM标准
-        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+        if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
             window.addEventListener(evtName, fn, useCapture);
         }
     }
@@ -213,7 +216,7 @@ var Evoque = (function (self)
         var y = Number(this.getFullYear());
         var M = Number(this.getMonth()) + 1;
         var d = Number(this.getDate());
-        if ($.isStringEmpty(format))
+        if (__fetcher.isStringEmpty(format))
         {
             return y + '-' + M.toString().padLeft(2, '0') + '-' + d.toString().padLeft(2, '0');
         }
@@ -358,12 +361,12 @@ var Evoque = (function (self)
      */
     String.prototype.padLeft = function (n, c) {
         var ret = this;
-        var s = $.isStringEmpty(c) ? ' ' : c;
+        var s = __fetcher.isStringEmpty(c) ? ' ' : c;
         while (ret.length < n)
         {
             ret = s + ret;
         }
-        if ($.isStringEmpty(s.trim()))
+        if (__fetcher.isStringEmpty(s.trim()))
         {
             ret = ret.replace(' ', '&nbsp;');
         }
@@ -376,12 +379,12 @@ var Evoque = (function (self)
      * @return {String}
      */
     String.prototype.trim = function (c) {
-        if ($.isStringEmpty(this) || this.length === 0)
+        if (__fetcher.isStringEmpty(this) || this.length === 0)
         {
             return this;
         }
         var reg = null
-        if ($.isStringEmpty(c))
+        if (__fetcher.isStringEmpty(c))
         {
             reg = new RegExp('\\s', 'g');
         }
@@ -422,7 +425,7 @@ var Evoque = (function (self)
      */
     String.prototype.toDate = function () {
         var ret = new Date(this);
-        if ($.checkType(ret) === type.eDate && !isNaN(ret.valueOf()))
+        if (__fetcher.checkType(ret) === type.eDate && !isNaN(ret.valueOf()))
         {
             return ret;
         }
@@ -483,12 +486,12 @@ var Evoque = (function (self)
      */
     Object.defineProperty(Array.prototype, 'contains', {
         value: function (v) {
-            if ($.checkType(this.indexOf) === type.eFunction) {
+            if (__fetcher.checkType(this.indexOf) === type.eFunction) {
                 return this.indexOf(v) > -1;
             }
             else {
                 var flag = false;
-                $(this).each(function () {
+                __fetcher(this).each(function () {
                     if (this === v) {
                         flag = true;
                         return false;
@@ -504,8 +507,8 @@ var Evoque = (function (self)
      * @param n
      */
     Number.prototype.subtract = function (n) {
-        var chkThis = $.checkFloat(this);
-        var chkN = $.checkFloat(n);
+        var chkThis = __fetcher.checkFloat(this);
+        var chkN = __fetcher.checkFloat(n);
         if (!chkN.isNumber) {
             return NaN;
         }
@@ -527,7 +530,7 @@ var Evoque = (function (self)
         }
         var element = this;
         var ret = false;
-        $(['webkit', 'moz', 'ms', 'o']).each(function () {
+        __fetcher(['webkit', 'moz', 'ms', 'o']).each(function () {
             var mtdName = this + 'MatchesSelector';
             if (element[mtdName]) {
                 ret = element[mtdName](cssSelector);
@@ -542,10 +545,10 @@ var Evoque = (function (self)
      * @param parameter 可以是CSS选择器、js变量、DOM对象，也可以是DOMReady事件的回调函数
      * @return {EvoqueClass}
      */
-    window.$ = function (parameter)
+    function __fetcher(parameter)
     {
         var list = [];
-        switch ($.checkType(parameter))
+        switch (__fetcher.checkType(parameter))
         {
             case type.eString:
                 if (document.querySelectorAll) {
@@ -554,7 +557,7 @@ var Evoque = (function (self)
                         var ret = document.querySelectorAll(parameter);
                         if (ret !== null && ret.length > 0)
                         {
-                            list = list.concat($.makeArray(ret));
+                            list = list.concat(__fetcher.makeArray(ret));
                         }
                     }
                     catch (ex)
@@ -580,7 +583,7 @@ var Evoque = (function (self)
                 list = list.concat(parameter);
                 break;
             case type.eArraylist:
-                list = list.concat($.makeArray(parameter));
+                list = list.concat(__fetcher.makeArray(parameter));
                 break;
             case type.eFunction:
                 core_addReadyHandler(parameter, false);
@@ -610,7 +613,7 @@ var Evoque = (function (self)
      * 获取当前UserAgent的标识码
      * @return {*}
      */
-    $.agent = function () {
+    __fetcher.agent = function () {
         return _mAgent;
     };
 
@@ -618,14 +621,14 @@ var Evoque = (function (self)
      * 获取当前内嵌的应用标识码
      * @return {*}
      */
-    $.app = function () {
+    __fetcher.app = function () {
         return _mApp;
     };
 
     /**
      * 获取当前设备的种类
      */
-    $.device = function () {
+    __fetcher.device = function () {
         return _mDevice;
     };
 
@@ -633,7 +636,7 @@ var Evoque = (function (self)
      * 终止事件流
      * @param event
      */
-    $.cancelEventFlow = function (event) {
+    __fetcher.cancelEventFlow = function (event) {
         event = event || window.event;
         if (event.stopPropagation) {
             event.stopPropagation();
@@ -647,7 +650,7 @@ var Evoque = (function (self)
      * 取消事件的默认行为
      * @param event
      */
-    $.cancelDefault = function (event) {
+    __fetcher.cancelDefault = function (event) {
         event = event || window.event;
         if (event.preventDefault) {
             event.preventDefault();
@@ -662,13 +665,13 @@ var Evoque = (function (self)
      * @param obj
      * @return {Boolean}
      */
-    $.isObjectNull = function (obj)
+    __fetcher.isObjectNull = function (obj)
     {
         if (obj === undefined)
         {
             return true;
         }
-        if (!$.isObject(obj))
+        if (!__fetcher.isObject(obj))
         {
             throw 'Parameter is not an object!';
         }
@@ -679,7 +682,7 @@ var Evoque = (function (self)
      * 判断一个变量是否未定义或者为空
      * @param v
      */
-    $.isNullOrUndefined = function (v) {
+    __fetcher.isNullOrUndefined = function (v) {
         if (v === undefined)
         {
             return true;
@@ -690,7 +693,7 @@ var Evoque = (function (self)
     /**
      * 判断数字是否是浮点型，并返回小数位数等信息
      */
-    $.checkFloat = function (n) {
+    __fetcher.checkFloat = function (n) {
         var ret = {
             isNumber: false,
             isFloat: false,
@@ -716,9 +719,9 @@ var Evoque = (function (self)
      * @param str
      * @return {Boolean}
      */
-    $.isStringEmpty = function (str)
+    __fetcher.isStringEmpty = function (str)
     {
-        var ty = $.checkType(str);
+        var ty = __fetcher.checkType(str);
         if (ty === type.eUndefined || ty === type.eNull)
         {
             return true;
@@ -727,7 +730,7 @@ var Evoque = (function (self)
         {
             throw 'Parameter is not a string!';
         }
-        if ($.isObject(str))
+        if (__fetcher.isObject(str))
         {
             return str.valueOf() === '';
         }
@@ -742,7 +745,7 @@ var Evoque = (function (self)
      * @param obj
      * @return {Boolean}
      */
-    $.isObject = function (obj)
+    __fetcher.isObject = function (obj)
     {
         return 'undefined,number,boolean,string'.indexOf(typeof obj) < 0;
     };
@@ -752,7 +755,7 @@ var Evoque = (function (self)
      * @param obj
      * @return {window.type}
      */
-    $.checkType = function (obj)
+    __fetcher.checkType = function (obj)
     {
         var ty = typeof obj;
         if (class2type[ty])
@@ -828,7 +831,7 @@ var Evoque = (function (self)
      * 加载Url
      * @param url
      */
-    $.loadPage = function (url)
+    __fetcher.loadPage = function (url)
     {
         window.location.href = url;
     };
@@ -838,7 +841,7 @@ var Evoque = (function (self)
      * @param obj
      * @return {*}
      */
-    $.makeArray = function (obj)
+    __fetcher.makeArray = function (obj)
     {
         return core_slice.call(obj,0);
     };
@@ -847,7 +850,7 @@ var Evoque = (function (self)
      * 绑定页面卸载的事件，*对支持页面间缓存的UserAgent来说，则是绑定pageHide事件
      * @param fn
      */
-    $.unload = function (fn)
+    __fetcher.unload = function (fn)
     {
         core_addUnloadHandler(fn, false);
     };
@@ -856,7 +859,7 @@ var Evoque = (function (self)
      * 绑定页面加载的事件，*对支持页面间缓存的UserAgent来说，则是绑定pageShow事件
      * @param fn
      */
-    $.load = function (fn)
+    __fetcher.load = function (fn)
     {
         core_addLoadedHandler(fn, false);
     };
@@ -865,9 +868,9 @@ var Evoque = (function (self)
      * 绑定设备重力感应方向变化的事件
      * @param fn
      */
-    $.orientationChange = function (fn) {
+    __fetcher.orientationChange = function (fn) {
         var evtName = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+        if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
             window.addEventListener(evtName, fn, false);
         }
     };
@@ -875,7 +878,7 @@ var Evoque = (function (self)
     /**
      * 获取设备当前方向
      */
-    $.orientation = function () {
+    __fetcher.orientation = function () {
         if (window.orientation == 180||window.orientation == 0) {
             return mOrientation.vertical;
         }
@@ -889,10 +892,10 @@ var Evoque = (function (self)
      * @param fn
      * @param checkHandle: 由于fn有可能会发出异步的ajax调用，故需要调用方提供一个控制能否继续触发滚动事件的回调函数，checkHandle就是这个回调函数的指针
      */
-    $.scroll2Bottom = function (fn, checkHandle)
+    __fetcher.scroll2Bottom = function (fn, checkHandle)
     {
         //DOM标准
-        if (window.addEventListener && $.checkType(fn) === type.eFunction) {
+        if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
             window.addEventListener('scroll', function (e) {
                 var bodyH = document.body.scrollHeight;
                 var winH = document.documentElement.clientHeight;
@@ -902,7 +905,7 @@ var Evoque = (function (self)
                 }
                 var h = bodyH - winH;
                 var bo = h / 4;
-                if ($.checkType(checkHandle) === type.eFunction)
+                if (__fetcher.checkType(checkHandle) === type.eFunction)
                 {
                     if (checkHandle.call(window) === false)
                     {
@@ -927,7 +930,7 @@ var Evoque = (function (self)
      * @param destinationX 目的地X坐标
      * @param destinationY 目的地Y坐标
      */
-    $.scrollTo = function (destinationX, destinationY, scrollComplete) {
+    __fetcher.scrollTo = function (destinationX, destinationY, scrollComplete) {
         var bodyW = document.body.scrollWidth;
         var winW = document.documentElement.clientWidth;
         var maxScrollWidth = 0;
@@ -989,7 +992,7 @@ var Evoque = (function (self)
             if (reachedX && reachedY)
             {
                 window.clearInterval(intervalId);
-                if ($.checkType(scrollComplete) === type.eFunction) {
+                if (__fetcher.checkType(scrollComplete) === type.eFunction) {
                     scrollComplete.call();
                 }
                 return;
@@ -1023,7 +1026,7 @@ var Evoque = (function (self)
      * 判断是否支持触屏事件
      * @return {Boolean}
      */
-    $.hasTouchEvent = function () {
+    __fetcher.hasTouchEvent = function () {
         return _hasTouchEvent;
     };
 
@@ -1031,13 +1034,13 @@ var Evoque = (function (self)
      * 是否启动tap事件替换click事件
      * @return {*}
      */
-    $.enableTapEvent = function () {
-        if ($.checkType(_enableTapEvent) === type.eBoolean)
+    __fetcher.enableTapEvent = function () {
+        if (__fetcher.checkType(_enableTapEvent) === type.eBoolean)
         {
             return _enableTapEvent;
         }
         //查找文档元数据：<meta name="EvoqueEnableTapEvent" content="true" />
-        var $meta = $('meta[name="EvoqueEnableTapEvent"]');
+        var $meta = __fetcher('meta[name="EvoqueEnableTapEvent"]');
         if ($meta.length < 1)
         {
             _enableTapEvent = false;
@@ -1045,7 +1048,7 @@ var Evoque = (function (self)
         else
         {
             var content = $meta.getAttr('content');
-            if ($.isStringEmpty(content) || content.toLowerCase() !== 'true')
+            if (__fetcher.isStringEmpty(content) || content.toLowerCase() !== 'true')
             {
                 _enableTapEvent = false;
             }
@@ -1061,7 +1064,7 @@ var Evoque = (function (self)
      * 判断是否支持离线存储
      * @return {Boolean}
      */
-    $.supportSessionStorage = function () {
+    __fetcher.supportSessionStorage = function () {
         return !!window.sessionStorage;
     };
 
@@ -1070,7 +1073,7 @@ var Evoque = (function (self)
      * 生成GUID
      * @return {String}
      */
-    $.guid = function () {
+    __fetcher.guid = function () {
         var uuid = [], i;
         // rfc4122, version 4 form
         var r;
@@ -1097,7 +1100,7 @@ var Evoque = (function (self)
      * @return {*}
      */
     self.sort = function (fn) {
-        if ($.checkType(fn) === type.eFunction)
+        if (__fetcher.checkType(fn) === type.eFunction)
         {
             core_sort.call(this.innerObjectList, fn);
         }
@@ -1110,7 +1113,7 @@ var Evoque = (function (self)
      * @param fn
      */
     self.each = function (fn) {
-        if ($.checkType(fn) === type.eFunction)
+        if (__fetcher.checkType(fn) === type.eFunction)
         {
             for (var i = 0; i < this.length; ++i)
             {
@@ -1128,13 +1131,13 @@ var Evoque = (function (self)
      */
     self.getVal = function () {
         var ret = null;
-        switch ($.checkType(this[0]))
+        switch (__fetcher.checkType(this[0]))
         {
             case type.eElement:
                 if (this[0] instanceof HTMLInputElement || this[0] instanceof HTMLTextAreaElement)
                 {
                     ret = this[0].value;
-                    if ($.isStringEmpty(ret))
+                    if (__fetcher.isStringEmpty(ret))
                     {
                         ret = this[0].getAttribute('value');
                     }
@@ -1146,7 +1149,7 @@ var Evoque = (function (self)
                 break;
             case type.eNumber:
             case type.eBoolean:
-                if ($.isObject(this[0]))
+                if (__fetcher.isObject(this[0]))
                 {
                     ret = this[0].valueOf();
                 }
@@ -1172,7 +1175,7 @@ var Evoque = (function (self)
     self.setVal = function (val) {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement && this instanceof HTMLInputElement)
+            if (__fetcher.checkType(this) === type.eElement && this instanceof HTMLInputElement)
             {
                 this.setAttribute('value', val);
                 this.value = val;
@@ -1186,7 +1189,7 @@ var Evoque = (function (self)
      * @return {String}
      */
     self.getAttr = function (name) {
-        if ($.checkType(this[0]) === type.eElement)
+        if (__fetcher.checkType(this[0]) === type.eElement)
         {
             return this[0].getAttribute(name);
         }
@@ -1204,7 +1207,7 @@ var Evoque = (function (self)
     self.setAttr = function (name, value) {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
                 this.setAttribute(name, value);
             }
@@ -1218,7 +1221,7 @@ var Evoque = (function (self)
     self.delAttr = function (name) {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
                 var t = this.getAttribute(name);
                 if ((t !== undefined && t !== null))
@@ -1237,7 +1240,7 @@ var Evoque = (function (self)
     self.setStyle = function (name, value) {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
                 this.style[name] = value;
             }
@@ -1251,18 +1254,18 @@ var Evoque = (function (self)
      */
     self.getChild = function (query) {
         var list = [];
-        if ($.checkType(this[0]) === type.eElement)
+        if (__fetcher.checkType(this[0]) === type.eElement)
         {
-            if ($.isStringEmpty(query))
+            if (__fetcher.isStringEmpty(query))
             {
-                list = $.makeArray(this[0].children);
+                list = __fetcher.makeArray(this[0].children);
             }
             else
             {
                 var ret = this[0].querySelectorAll(query);
                 if (ret !== null && ret.length > 0)
                 {
-                    list = $.makeArray(ret);
+                    list = __fetcher.makeArray(ret);
                 }
             }
         }
@@ -1275,11 +1278,11 @@ var Evoque = (function (self)
     self.clearChild = function () {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
                 if (this.hasChildNodes())
                 {
-                    var lst = $.makeArray(this.childNodes);
+                    var lst = __fetcher.makeArray(this.childNodes);
                     for (var i = 0; i < lst.length; ++i)
                     {
                         this.removeChild(lst[i]);
@@ -1295,7 +1298,7 @@ var Evoque = (function (self)
      * @return {*}
      */
     self.html = function (innerHtml) {
-        var ty = $.checkType(this[0]);
+        var ty = __fetcher.checkType(this[0]);
         if (innerHtml === undefined)
         {
             if (ty === type.eElement)
@@ -1322,7 +1325,7 @@ var Evoque = (function (self)
      * @return {*}
      */
     self.text = function (innerText) {
-        var ty = $.checkType(this[0]);
+        var ty = __fetcher.checkType(this[0]);
         if (innerText === undefined)
         {
             if (ty === type.eElement)
@@ -1348,12 +1351,12 @@ var Evoque = (function (self)
      * @return {Array}
      */
     self.getClassList = function () {
-        if ($.checkType(this[0]) === type.eElement)
+        if (__fetcher.checkType(this[0]) === type.eElement)
         {
-            if ($.isObjectNull(this[0].classList))
+            if (__fetcher.isObjectNull(this[0].classList))
             {
                 var classText = this.getAttr('class').trim();
-                if ($.isStringEmpty(classText))
+                if (__fetcher.isStringEmpty(classText))
                 {
                     return [];
                 }
@@ -1364,7 +1367,7 @@ var Evoque = (function (self)
             }
             else
             {
-                return $.makeArray(this[0].classList);
+                return __fetcher.makeArray(this[0].classList);
             }
         }
         else
@@ -1378,25 +1381,25 @@ var Evoque = (function (self)
      * @param className
      */
     self.addClass = function (className) {
-        if ($.isStringEmpty(className))
+        if (__fetcher.isStringEmpty(className))
         {
             return;
         }
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
-                if ($.isObjectNull(this.classList))
+                if (__fetcher.isObjectNull(this.classList))
                 {
-                    var classText = $(this).getAttr('class');
-                    if ($.isStringEmpty(classText))
+                    var classText = __fetcher(this).getAttr('class');
+                    if (__fetcher.isStringEmpty(classText))
                     {
                         classText = '';
                     }
                     classText = classText.trim();
                     if (classText.indexOf(className) < 0)
                     {
-                        $(this).setAttr('class', classText + ' ' + className);
+                        __fetcher(this).setAttr('class', classText + ' ' + className);
                     }
                 }
                 else
@@ -1415,25 +1418,25 @@ var Evoque = (function (self)
      * @param className
      */
     self.removeClass = function (className) {
-        if ($.isStringEmpty(className))
+        if (__fetcher.isStringEmpty(className))
         {
             return;
         }
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
-                if ($.isObjectNull(this.classList))
+                if (__fetcher.isObjectNull(this.classList))
                 {
-                    var classText = $(this).getAttr('class');
-                    if ($.isStringEmpty(classText))
+                    var classText = __fetcher(this).getAttr('class');
+                    if (__fetcher.isStringEmpty(classText))
                     {
                         classText = '';
                     }
                     classText = classText.trim();
                     if (classText.indexOf(className) > -1)
                     {
-                        $(this).setAttr('class', classText.replace(className, ''));
+                        __fetcher(this).setAttr('class', classText.replace(className, ''));
                     }
                 }
                 else
@@ -1452,15 +1455,15 @@ var Evoque = (function (self)
      */
     self.clearClass = function () {
         this.each(function () {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
-                if ($.isObjectNull(this.classList))
+                if (__fetcher.isObjectNull(this.classList))
                 {
-                    $(this).setAttr('class', '');
+                    __fetcher(this).setAttr('class', '');
                 }
                 else
                 {
-                    var clses = $(this).getClassList();
+                    var clses = __fetcher(this).getClassList();
                     for (var i = 0; i < clses.length; ++i)
                     {
                         this.classList.remove(clses[i]);
@@ -1476,7 +1479,7 @@ var Evoque = (function (self)
     self.hide = function () {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
                 this.style.display = 'none';
             }
@@ -1489,7 +1492,7 @@ var Evoque = (function (self)
     self.show = function () {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement)
+            if (__fetcher.checkType(this) === type.eElement)
             {
                 this.style.display = '';
             }
@@ -1501,12 +1504,12 @@ var Evoque = (function (self)
      * @return {Boolean}
      */
     self.isHide = function () {
-        if ($.checkType(this[0]) === type.eElement)
+        if (__fetcher.checkType(this[0]) === type.eElement)
         {
             var ret = false;
             var ele = this[0];
             var parent = ele.parentElement;
-            while (ele.style.display != 'none' && !$.isObjectNull(parent))
+            while (ele.style.display != 'none' && !__fetcher.isObjectNull(parent))
             {
                 ele = parent;
                 parent = ele.parentElement;
@@ -1529,9 +1532,9 @@ var Evoque = (function (self)
     self.enable = function () {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
+            if (__fetcher.checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
             {
-                $(this).delAttr('disabled');
+                __fetcher(this).delAttr('disabled');
             }
         });
     };
@@ -1542,9 +1545,9 @@ var Evoque = (function (self)
     self.disable = function () {
         this.each(function ()
         {
-            if ($.checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
+            if (__fetcher.checkType(this) === type.eElement && (this instanceof HTMLSelectElement || this instanceof HTMLInputElement))
             {
-                $(this).setAttr('disabled', 'disabled');
+                __fetcher(this).setAttr('disabled', 'disabled');
             }
         });
     };
@@ -1559,18 +1562,18 @@ var Evoque = (function (self)
         var isPropertyExistInThis = false;
         var isPropertyExistInDefObj = false;
         var thisType, defaultType;
-        if (!$.isObjectNull(this[0]))
+        if (!__fetcher.isObjectNull(this[0]))
         {
-            thisType = $.checkType(this[0][propertyName]);
+            thisType = __fetcher.checkType(this[0][propertyName]);
             isPropertyExistInThis = thisType !== type.eUndefined && thisType !== type.eNull;
         }
-        if ($.isObjectNull(defObj))
+        if (__fetcher.isObjectNull(defObj))
         {
             defObj = {};
         }
         else
         {
-            defaultType = $.checkType(defObj[propertyName]);
+            defaultType = __fetcher.checkType(defObj[propertyName]);
             isPropertyExistInDefObj = defaultType !== type.eUndefined && defaultType !== type.eNull;
         }
 
@@ -1595,7 +1598,7 @@ var Evoque = (function (self)
      * 触发Click事件
      */
     self.dispatchClick = function () {
-        if (_hasTouchEvent && $.enableTapEvent())
+        if (_hasTouchEvent && __fetcher.enableTapEvent())
         {
             this.each(function () {
                 if (innerIsBindedTapEvent(this))
@@ -1625,7 +1628,7 @@ var Evoque = (function (self)
      * @param callback
      */
     self.click = function (callback) {
-        if (_hasTouchEvent && $.enableTapEvent())
+        if (_hasTouchEvent && __fetcher.enableTapEvent())
         {
             this.tap(callback);
         }
@@ -1646,18 +1649,18 @@ var Evoque = (function (self)
         var o = handleEventOption(option);
         if (_hasTouchEvent && !o.forceEvent)
         {
-            if ($.enableTapEvent() && evtName == 'click')
+            if (__fetcher.enableTapEvent() && evtName == 'click')
             {
                 evtName = 'tap';
             }
-            else if (!$.enableTapEvent() && evtName == 'tap')
+            else if (!__fetcher.enableTapEvent() && evtName == 'tap')
             {
                 evtName = 'click';
             }
         }
         this.each(function ()
         {
-            var thisType = $.checkType(this);
+            var thisType = __fetcher.checkType(this);
             if (thisType === type.eElement || thisType === type.eDocument)
             {
                 if (_customEvents.hasOwnProperty(evtName))
@@ -1667,7 +1670,7 @@ var Evoque = (function (self)
                 else
                 {
                     //DOM标准
-                    if (this.addEventListener && $.checkType(callback) === type.eFunction) {
+                    if (this.addEventListener && __fetcher.checkType(callback) === type.eFunction) {
                         if (o.useEventPrefix) {
                             var evtNames = generatePrefixEvent(evtName);
                             for (var i = 0; i < evtNames.length; ++i) {
@@ -1694,18 +1697,18 @@ var Evoque = (function (self)
         var o = handleEventOption(option);
         if (_hasTouchEvent && !o.forceEvent)
         {
-            if ($.enableTapEvent() && evtName == 'click')
+            if (__fetcher.enableTapEvent() && evtName == 'click')
             {
                 evtName = 'tap';
             }
-            else if (!$.enableTapEvent() && evtName == 'tap')
+            else if (!__fetcher.enableTapEvent() && evtName == 'tap')
             {
                 evtName = 'click';
             }
         }
         this.each(function ()
         {
-            var thisType = $.checkType(this);
+            var thisType = __fetcher.checkType(this);
             if (thisType === type.eElement || thisType === type.eDocument)
             {
                 if (_customEvents.hasOwnProperty(evtName))
@@ -1715,7 +1718,7 @@ var Evoque = (function (self)
                 else
                 {
                     //DOM标准
-                    if (this.removeEventListener && $.checkType(callback) === type.eFunction) {
+                    if (this.removeEventListener && __fetcher.checkType(callback) === type.eFunction) {
                         if (o.useEventPrefix) {
                             var evtNames = generatePrefixEvent(evtName);
                             for (var i = 0; i < evtNames.length; ++i) {
@@ -1735,18 +1738,18 @@ var Evoque = (function (self)
         var useCapture = false;
         var useEventPrefix = false;
         var forceEvent = false;
-        switch ($.checkType(option)) {
+        switch (__fetcher.checkType(option)) {
             case type.eBoolean:
                 useCapture = option;
                 break;
             case type.eObject:
-                if ($.checkType(option.useCapture) === type.eBoolean) {
+                if (__fetcher.checkType(option.useCapture) === type.eBoolean) {
                     useCapture = option.useCapture;
                 }
-                if ($.checkType(option.useEventPrefix) === type.eBoolean) {
+                if (__fetcher.checkType(option.useEventPrefix) === type.eBoolean) {
                     useEventPrefix = option.useEventPrefix;
                 }
-                if ($.checkType(option.forceEvent) === type.eBoolean) {
+                if (__fetcher.checkType(option.forceEvent) === type.eBoolean) {
                     forceEvent = option.forceEvent;
                 }
                 break;
@@ -1760,7 +1763,7 @@ var Evoque = (function (self)
         };
     }
     function generatePrefixEvent(evtName) {
-        if ($.isStringEmpty(evtName)) {
+        if (__fetcher.isStringEmpty(evtName)) {
             return [evtName];
         }
         var retEvt = [evtName, evtName.toLowerCase()];
@@ -1777,7 +1780,7 @@ var Evoque = (function (self)
      * @param evtName 自定义事件名称
      * @return {*}
      */
-    $.declareCustomEvent = function (evtName) {
+    __fetcher.declareCustomEvent = function (evtName) {
         return innerDeclareCustomEvent(evtName);
     }
 
@@ -1799,7 +1802,7 @@ var Evoque = (function (self)
     }
 
     function innerDispatchCustomEvent(ele, evt, arg) {
-        if ($.checkType(ele) !== type.eElement)
+        if (__fetcher.checkType(ele) !== type.eElement)
         {
             return;
         }
@@ -1814,7 +1817,7 @@ var Evoque = (function (self)
 
     function innerBindCustomEvent(ele, evt, callback) {
         var evtListName = _customEvents[evt];
-        if ($.isStringEmpty(evtListName))
+        if (__fetcher.isStringEmpty(evtListName))
         {
             innerDeclareCustomEvent(evt);
             evtListName = _customEvents[evt];
@@ -1823,10 +1826,10 @@ var Evoque = (function (self)
         {
             innerBindTouchEvent(ele);
         }
-        if ($.checkType(ele) === type.eElement && $.checkType(callback) === type.eFunction)
+        if (__fetcher.checkType(ele) === type.eElement && __fetcher.checkType(callback) === type.eFunction)
         {
             ele.addEventListener(evt, callback);
-            if ($.checkType(ele[evtListName]) !== type.eNumber)
+            if (__fetcher.checkType(ele[evtListName]) !== type.eNumber)
             {
                 ele[evtListName] = 0;
             }
@@ -1836,15 +1839,15 @@ var Evoque = (function (self)
 
     function innerUnbindCustomEvent(ele, evt, callback) {
         var evtListName = _customEvents[evt];
-        if ($.isStringEmpty(evtListName))
+        if (__fetcher.isStringEmpty(evtListName))
         {
             innerDeclareCustomEvent(evt);
             evtListName = _customEvents[evt];
         }
-        if ($.checkType(ele) === type.eElement && $.checkType(callback) === type.eFunction)
+        if (__fetcher.checkType(ele) === type.eElement && __fetcher.checkType(callback) === type.eFunction)
         {
             ele.removeEventListener(evt, callback);
-            if ($.checkType(ele[evtListName]) !== type.eNumber)
+            if (__fetcher.checkType(ele[evtListName]) !== type.eNumber)
             {
                 ele[evtListName] = 0;
             }
@@ -1932,8 +1935,8 @@ var Evoque = (function (self)
         _bg.style.margin = 0;
         _bg.style.padding = 0;
         _bg.onclick = function (e) {
-            $.cancelDefault(e);
-            $.cancelEventFlow(e);
+            __fetcher.cancelDefault(e);
+            __fetcher.cancelEventFlow(e);
         };
 
         function innerBindTouchEvent(ele)
@@ -1942,7 +1945,7 @@ var Evoque = (function (self)
             {
                 return;
             }
-            var $ele = $(ele);
+            var $ele = __fetcher(ele);
             var touchStateDictionary = {};
 
             $ele.addEventHandler('touchstart', function (e) {
@@ -1953,7 +1956,7 @@ var Evoque = (function (self)
                 var touchState = new TouchStateClass(e.touches[0].identifier);
                 touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
                 touchStateDictionary[e.touches[0].identifier] = touchState;
-                $.cancelDefault(e);
+                __fetcher.cancelDefault(e);
             });
             $ele.addEventHandler('touchmove', function (e) {
                 if (e.touches.length !== 1)
@@ -1964,7 +1967,7 @@ var Evoque = (function (self)
                 touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
                 var evtTyp = touchState.touchType();
                 var that = this;
-                $(evtTyp).each(function () {
+                __fetcher(evtTyp).each(function () {
                     innerDispatchCustomEvent(that, this.name, setEventTarget(e.target, this.arg));
                 });
             });
@@ -1983,7 +1986,7 @@ var Evoque = (function (self)
                     document.body.appendChild(_bg);
                     setTimeout(function () {document.body.removeChild(_bg);}, 350);
                 }
-                $(evtTyp).each(function () {
+                __fetcher(evtTyp).each(function () {
                     innerDispatchCustomEvent(that, this.name, setEventTarget(e.target, this.arg));
                 });
             });
@@ -2024,11 +2027,11 @@ var Evoque = (function (self)
                             var sameY = dy == 0 ? true : (this.directionY == dy);
                             this.isSameDirection = sameX && sameY;
                         }
-                        if ($.checkType(this.directionX) === type.eUndefined)
+                        if (__fetcher.checkType(this.directionX) === type.eUndefined)
                         {
                             this.directionX = dx;
                         }
-                        if ($.checkType(this.directionY) === type.eUndefined)
+                        if (__fetcher.checkType(this.directionY) === type.eUndefined)
                         {
                             this.directionY = dy;
                         }
@@ -2047,7 +2050,7 @@ var Evoque = (function (self)
 
                 this.touchType = function () {
                     var types = [];
-                    if ($.checkType(this.touchEndTime) !== type.eDate)
+                    if (__fetcher.checkType(this.touchEndTime) !== type.eDate)
                     {
                         if (this.touchPointList.length > 0)
                         {
@@ -2118,7 +2121,7 @@ var Evoque = (function (self)
         function innerIsBindedTapEvent(ele)
         {
             var tapEvtListName = _customEvents['tap'];
-            if ($.checkType(ele[tapEvtListName]) === type.eNumber && ele[tapEvtListName] > 0)
+            if (__fetcher.checkType(ele[tapEvtListName]) === type.eNumber && ele[tapEvtListName] > 0)
             {
                 return true;
             }
@@ -2134,8 +2137,8 @@ var Evoque = (function (self)
      * @param name 功能对象名
      * @param obj 提供功能调用的对象
      */
-    $.extend = function (name, obj) {
-        Object.defineProperty($, name, {
+    __fetcher.extend = function (name, obj) {
+        Object.defineProperty(__fetcher, name, {
             get: function () {
                 obj.evoqueTarget = undefined;
                 return obj;

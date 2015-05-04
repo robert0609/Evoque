@@ -1,5 +1,5 @@
 //Dependency: Evoque.js, Evoque.Dialog.js
-$.container = (function (self)
+lexus.container = (function (self)
 {
     var defaultOption = {
         divIdList: [],
@@ -15,11 +15,11 @@ $.container = (function (self)
 
     self.create = function (option)
     {
-        if ($.isObjectNull(option))
+        if (lexus.isObjectNull(option))
         {
             throw 'Parameter is null!';
         }
-        option = $(option);
+        option = lexus(option);
         var divIdList = option.getValueOfProperty('divIdList', defaultOption);
         var onShowMtd = option.getValueOfProperty('onShow', defaultOption);
         var onHideMtd = option.getValueOfProperty('onHide', defaultOption);
@@ -30,17 +30,17 @@ $.container = (function (self)
         if (![ 'none', 'bottom2top', 'right2left' ].contains(switchEffect)) {
             switchEffect = 'none';
         }
-        if ($.checkType(divIdList) !== type.eArray || divIdList.length < 1)
+        if (lexus.checkType(divIdList) !== type.eArray || divIdList.length < 1)
         {
             throw 'Parameter is error!';
         }
         var startDivId = option.getValueOfProperty('startDivId', defaultOption);
-        if (!$.isStringEmpty(startDivId) && divIdList.indexOf(startDivId) < 0)
+        if (!lexus.isStringEmpty(startDivId) && divIdList.indexOf(startDivId) < 0)
         {
             startDivId = divIdList[0];
         }
         var obj = new containerClass(divIdList, startDivId, onShowMtd, onHideMtd, enableHistory, switchEffect, autoTop, getFinalScrollAxis);
-        if (!$.isStringEmpty(startDivId))
+        if (!lexus.isStringEmpty(startDivId))
         {
             obj.disableSwitchEffect();
             obj.display(startDivId);
@@ -51,14 +51,14 @@ $.container = (function (self)
 
     function containerClass(divIdList, startDivId, onShow, onHide, enableHistory, switchEffect, autoTop, getFinalScrollAxis)
     {
-        var onShowIsFn = $.checkType(onShow) === type.eFunction;
-        var onHideIsFn = $.checkType(onHide) === type.eFunction;
+        var onShowIsFn = lexus.checkType(onShow) === type.eFunction;
+        var onHideIsFn = lexus.checkType(onHide) === type.eFunction;
 
         var ids = divIdList;
         var divList = [];
         for (var i = 0; i < ids.length; ++i)
         {
-            var loop = $('#' + ids[i]);
+            var loop = lexus('#' + ids[i]);
             divList.push(loop);
             hide(loop);
         }
@@ -70,7 +70,7 @@ $.container = (function (self)
         {
             var that = this;
             window.addEventListener('popstate', function (e) {
-                if ($.isObjectNull(e.state))
+                if (lexus.isObjectNull(e.state))
                 {
                     return;
                 }
@@ -80,7 +80,7 @@ $.container = (function (self)
                 }
 
                 var parameter = createOption();
-                if ($.checkType(e.state.remainHideDivInput) === type.eBoolean)
+                if (lexus.checkType(e.state.remainHideDivInput) === type.eBoolean)
                 {
                     parameter.remainHideDivInput = e.state.remainHideDivInput;
                 }
@@ -100,10 +100,10 @@ $.container = (function (self)
             }
 
             var parameter = createOption();
-            var isOptionNull = $.isObjectNull(option);
+            var isOptionNull = lexus.isObjectNull(option);
             if (!isOptionNull)
             {
-                if ($.checkType(option.remainHideDivInput) === type.eBoolean)
+                if (lexus.checkType(option.remainHideDivInput) === type.eBoolean)
                 {
                     parameter.remainHideDivInput = option.remainHideDivInput;
                 }
@@ -141,7 +141,7 @@ $.container = (function (self)
         var divSpecialEffect = {};
         function getEffect(divId) {
             var effect = switchEffect;
-            if (!$.isStringEmpty(divSpecialEffect[divId])) {
+            if (!lexus.isStringEmpty(divSpecialEffect[divId])) {
                 effect = divSpecialEffect[divId];
             }
             return effect;
@@ -150,7 +150,7 @@ $.container = (function (self)
         var divSpecialFinalAxis = {};
         function getFinalAxisCallback(divId) {
             var cb = getFinalScrollAxis;
-            if ($.checkType(divSpecialFinalAxis[divId]) === type.eFunction) {
+            if (lexus.checkType(divSpecialFinalAxis[divId]) === type.eFunction) {
                 cb = divSpecialFinalAxis[divId];
             }
             return cb;
@@ -165,7 +165,7 @@ $.container = (function (self)
         }
 
         function queryStr2Dic(str) {
-            if ($.isStringEmpty(str)) {
+            if (lexus.isStringEmpty(str)) {
                 return {};
             }
             var dic = {};
@@ -187,7 +187,7 @@ $.container = (function (self)
             var arr = [];
             for (var k in dic) {
                 var v = dic[k];
-                if ($.isStringEmpty(v)) {
+                if (lexus.isStringEmpty(v)) {
                     continue;
                 }
                 var kv = k + '=' + v;
@@ -202,16 +202,16 @@ $.container = (function (self)
         function innerDisplay(divId, parameter, isBack, effect, getFinalAxis)
         {
             if (!isBack) {
-                if (!$.isStringEmpty(effect) && [ 'bottom2top', 'right2left' ].contains(effect)) {
+                if (!lexus.isStringEmpty(effect) && [ 'bottom2top', 'right2left' ].contains(effect)) {
                     divSpecialEffect[divId] = effect;
                 }
-                if ($.checkType(getFinalAxis) === type.eFunction) {
+                if (lexus.checkType(getFinalAxis) === type.eFunction) {
                     divSpecialFinalAxis[divId] = getFinalAxis;
                 }
             }
             var that = this;
             var backFlag = false;
-            if ($.checkType(isBack) === type.eBoolean && isBack)
+            if (lexus.checkType(isBack) === type.eBoolean && isBack)
             {
                 backFlag = true;
             }
@@ -226,7 +226,7 @@ $.container = (function (self)
                 }
                 else
                 {
-                    if (!$.isStringEmpty(currentDisplayId) && ids[i] === currentDisplayId)
+                    if (!lexus.isStringEmpty(currentDisplayId) && ids[i] === currentDisplayId)
                     {
                         toHideDiv = this.currentDisplay;
                     }
@@ -393,7 +393,7 @@ $.container = (function (self)
                 return;
             }
             //调用dialog控件显示
-            $.dialog.showModalDialog({
+            lexus.dialog.showModalDialog({
                 content:divId,
                 width:document.documentElement.clientWidth * 0.9,
                 onDialogShowed: function(){
@@ -428,7 +428,7 @@ $.container = (function (self)
             {
                 return;
             }
-            $.dialog.closeCurrentDialog();
+            lexus.dialog.closeCurrentDialog();
             if (!remainHideDivInput)
             {
                 var select = toHideDiv.getChild('select');
@@ -473,4 +473,4 @@ $.container = (function (self)
     }
 
     return self;
-}($.container || {}));
+}(lexus.container || {}));

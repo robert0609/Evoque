@@ -1,5 +1,5 @@
 ﻿//Dependency: Evoque.js, json2.js, Evoque.Cache.js
-$.extend('ajax', (function (self) {
+lexus.extend('ajax', (function (self) {
     var defaultOption = {
         // 'get'(default), 'post'
         method : 'get',
@@ -20,8 +20,8 @@ $.extend('ajax', (function (self) {
 
     var _cacheInstance = null;
     function getAjaxCache() {
-        if ($.isObjectNull(_cacheInstance)) {
-            _cacheInstance = $.cache.create();
+        if (lexus.isObjectNull(_cacheInstance)) {
+            _cacheInstance = lexus.cache.create();
         }
         return _cacheInstance;
     }
@@ -29,7 +29,7 @@ $.extend('ajax', (function (self) {
     self.request = function (option)
     {
         checkOption(option);
-        var $option = $(option);
+        var $option = lexus(option);
         var method = $option.getValueOfProperty('method', defaultOption);
         if (method === 'post')
         {
@@ -44,11 +44,11 @@ $.extend('ajax', (function (self) {
     self.get = function (option)
     {
         checkOption(option);
-        option = $(option);
+        option = lexus(option);
         var xmlhttp = new XMLHttpRequest();
         var fnResult = {
             abort: function () {
-                if ($.isObjectNull(xmlhttp)) {
+                if (lexus.isObjectNull(xmlhttp)) {
                     return;
                 }
                 xmlhttp.abort();
@@ -82,7 +82,7 @@ $.extend('ajax', (function (self) {
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
         {
-            if ($.app() === mApp.hmbrowser)
+            if (lexus.app() === mApp.hmbrowser)
             {
                 return fnResult;
             }
@@ -98,12 +98,12 @@ $.extend('ajax', (function (self) {
     self.post = function (option)
     {
         checkOption(option);
-        option = $(option);
+        option = lexus(option);
         var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
         var xmlhttp = new XMLHttpRequest();
         var fnResult = {
             abort: function () {
-                if ($.isObjectNull(xmlhttp)) {
+                if (lexus.isObjectNull(xmlhttp)) {
                     return;
                 }
                 xmlhttp.abort();
@@ -132,7 +132,7 @@ $.extend('ajax', (function (self) {
             if (frm) {
                 for (var i = 0; i < frm.length; ++i)
                 {
-                    if ($.isStringEmpty(frm[i].name))
+                    if (lexus.isStringEmpty(frm[i].name))
                     {
                         continue;
                     }
@@ -143,7 +143,7 @@ $.extend('ajax', (function (self) {
         }
         if (!xmlhttp.evoque_sptTimeout)
         {
-            if ($.app() === mApp.hmbrowser)
+            if (lexus.app() === mApp.hmbrowser)
             {
                 return fnResult;
             }
@@ -163,11 +163,11 @@ $.extend('ajax', (function (self) {
 
     function checkOption(option)
     {
-        if ($.isObjectNull(option))
+        if (lexus.isObjectNull(option))
         {
             throw 'option is null!';
         }
-        if ($.isStringEmpty(option.url))
+        if (lexus.isStringEmpty(option.url))
         {
             throw 'url is empty!';
         }
@@ -178,7 +178,7 @@ $.extend('ajax', (function (self) {
         var ret = '';
         for (var p in parameter)
         {
-            if ($.checkType(parameter[p]) === type.eUndefined)
+            if (lexus.checkType(parameter[p]) === type.eUndefined)
             {
                 continue;
             }
@@ -197,30 +197,30 @@ $.extend('ajax', (function (self) {
     function serializeForm(parameter, form)
     {
         var formData;
-        var typeF = $.checkType(form);
+        var typeF = lexus.checkType(form);
         if (typeF === type.eElement && form instanceof HTMLFormElement)
         {
             formData = new FormData(form);
         }
-        else if (typeF === type.eString && !$.isStringEmpty(form))
+        else if (typeF === type.eString && !lexus.isStringEmpty(form))
         {
-            var formEle = $('#' + form);
+            var formEle = lexus('#' + form);
             if (formEle.length > 0)
             {
                 formData = new FormData(formEle[0]);
             }
         }
-        else if ($.isObject(form) && form instanceof FormData)
+        else if (lexus.isObject(form) && form instanceof FormData)
         {
             formData = form;
         }
-        if ($.isObjectNull(formData))
+        if (lexus.isObjectNull(formData))
         {
             formData = new FormData();
         }
         for (var p in parameter)
         {
-            if ($.checkType(parameter[p]) === type.eUndefined)
+            if (lexus.checkType(parameter[p]) === type.eUndefined)
             {
                 continue;
             }
@@ -255,7 +255,7 @@ $.extend('ajax', (function (self) {
         // 这里Chrome和Safari都不支持把 responseType 设置成'json'
         // safari不支持timeout属性
         xmlhttp.evoque_sptTimeout = true;
-        if ($.checkType(xmlhttp.timeout) === type.eUndefined)
+        if (lexus.checkType(xmlhttp.timeout) === type.eUndefined)
         {
             xmlhttp.evoque_sptTimeout = false;
         }
@@ -270,7 +270,7 @@ $.extend('ajax', (function (self) {
                 if (xmlhttp.status == 200)
                 {
                     var resp = null;
-                    if ($.checkType(xmlhttp.response) === type.eUndefined)
+                    if (lexus.checkType(xmlhttp.response) === type.eUndefined)
                     {
                         resp = xmlhttp.responseText;
                     }
@@ -339,17 +339,17 @@ $.extend('ajax', (function (self) {
         var form = this[0];
         if (form instanceof HTMLFormElement)
         {
-            if ($.isStringEmpty(option.url))
+            if (lexus.isStringEmpty(option.url))
             {
                 option.url = this.getAttr('action');
             }
-            if ($.isStringEmpty(option.url))
+            if (lexus.isStringEmpty(option.url))
             {
                 return;
             }
             option.method = 'post';
             option.form = form;
-            return $.ajax.post(option);
+            return lexus.ajax.post(option);
         }
     }
 

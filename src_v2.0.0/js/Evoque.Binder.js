@@ -30,17 +30,17 @@ Evoque.extend('binder', (function (self) {
 
 
         function bindContextClass(bindElement, isContainer) {
-            if ($.checkType(bindElement) !== type.eElement) {
+            if (lexus.checkType(bindElement) !== type.eElement) {
                 throw 'Error [bindElement] parameter type!';
             }
-            if ($.checkType(isContainer) === type.eBoolean && isContainer) {
+            if (lexus.checkType(isContainer) === type.eBoolean && isContainer) {
                 //根上下文的情况
                 this.name = containerName;
                 this.cmd = flowCmdWith;
             }
             else {
-                var bindAttrValue = $(bindElement).getAttr(bindAttrName);
-                if ($.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
+                var bindAttrValue = lexus(bindElement).getAttr(bindAttrName);
+                if (lexus.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
                     throw 'Error [data-bind] attribute value!';
                 }
                 var kvp = bindAttrValue.split(bindSplitter);
@@ -54,7 +54,7 @@ Evoque.extend('binder', (function (self) {
             cmd: '',
             bindElement: null,
             get bindModel() {
-                if ($.isObjectNull(this.parentContext)) {
+                if (lexus.isObjectNull(this.parentContext)) {
                     return viewModel;
                 }
                 else {
@@ -69,14 +69,14 @@ Evoque.extend('binder', (function (self) {
 
         function getAllBindContext(container) {
             //所有绑定上下文的集合
-            var bindContexts = $.cache.create();
+            var bindContexts = lexus.cache.create();
 
-            var $container = $(container);
+            var $container = lexus(container);
             var $contextNodes = $container.getChild('*[' + bindAttrName + '^="' + flowCmdForeach + '"],*[' + bindAttrName + '^="' + flowCmdForeach + '"]');
             $contextNodes.each(function () {
-                var $this = $(this);
+                var $this = lexus(this);
                 var bindAttrValue = $this.getAttr(bindAttrName);
-                if ($.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
+                if (lexus.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
                     return;
                 }
                 var kvp = bindAttrValue.split(bindSplitter);
@@ -93,7 +93,7 @@ Evoque.extend('binder', (function (self) {
 
         function composeBindContext(bindContexts) {
             var rootBindContext = bindContexts.get(containerName);
-            $(bindContexts.keys()).each(function () {
+            lexus(bindContexts.keys()).each(function () {
                 if (this === containerName) {
                     return;
                 }
@@ -123,11 +123,11 @@ Evoque.extend('binder', (function (self) {
 
 
         function binderClass(bindElement) {
-            if ($.checkType(bindElement) !== type.eElement) {
+            if (lexus.checkType(bindElement) !== type.eElement) {
                 throw 'Error [bindElement] parameter type!';
             }
-            var bindAttrValue = $(bindElement).getAttr(bindAttrName);
-            if ($.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
+            var bindAttrValue = lexus(bindElement).getAttr(bindAttrName);
+            if (lexus.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
                 throw 'Error [data-bind] attribute value!';
             }
             var kvp = bindAttrValue.split(bindSplitter);
@@ -144,14 +144,14 @@ Evoque.extend('binder', (function (self) {
 
         function getAllBinder(container) {
             //所有绑定器的集合
-            var binders = $.cache.create();
+            var binders = lexus.cache.create();
 
-            var $container = $(container);
+            var $container = lexus(container);
             var $nodes = $container.getChild('*[' + bindAttrName + '^="' + bindCmdText + '"],*[' + bindAttrName + '^="' + bindCmdValue + '"]');
             $nodes.each(function () {
-                var $this = $(this);
+                var $this = lexus(this);
                 var bindAttrValue = $this.getAttr(bindAttrName);
-                if ($.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
+                if (lexus.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
                     return;
                 }
                 var kvp = bindAttrValue.split(bindSplitter);
@@ -165,7 +165,7 @@ Evoque.extend('binder', (function (self) {
 
         function composeBinder(binders, bindContexts) {
             var rootBindContext = bindContexts.get(containerName);
-            $(binders.keys()).each(function () {
+            lexus(binders.keys()).each(function () {
                 var binder = binders.get(this);
                 var flag = false;
                 var parent = binder.bindElement.parentElement;
@@ -204,8 +204,8 @@ Evoque.extend('binder', (function (self) {
             name: ''
         };
 
-        var bindAttrValue = $(element).getAttr(bindAttrName);
-        if ($.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
+        var bindAttrValue = lexus(element).getAttr(bindAttrName);
+        if (lexus.isStringEmpty(bindAttrValue) || bindAttrValue.indexOf(bindSplitter) < 0) {
             return checkResult;
         }
         var kvp = bindAttrValue.split(bindSplitter);

@@ -1,15 +1,15 @@
 //Dependency: Evoque.js
-$.extend('appCache', (function (self) {
+lexus.extend('appCache', (function (self) {
     var defaultOption = {
         onShowUpdating: function (content) { },
         onComplete: function () { }
     };
 
     self.init = function (option) {
-        if ($.isObjectNull(option)) {
+        if (lexus.isObjectNull(option)) {
             throw 'Parameter is null!';
         }
-        option = $(option);
+        option = lexus(option);
         _onShowUpdating = option.getValueOfProperty('onShowUpdating', defaultOption);
         _onComplete = option.getValueOfProperty('onComplete', defaultOption);
     }

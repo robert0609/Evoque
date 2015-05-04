@@ -1,15 +1,15 @@
 //Dependency: Evoque.js
-$.extend('browser', (function (self) {
+lexus.extend('browser', (function (self) {
 
     var _enableClickBackControl;
 
     self.enableClickBackControl = function () {
-        if ($.checkType(_enableClickBackControl) === type.eBoolean)
+        if (lexus.checkType(_enableClickBackControl) === type.eBoolean)
         {
             return _enableClickBackControl;
         }
         //查找文档元数据：<meta name="EvoqueClickBackControl" content="true" />
-        var $meta = $('meta[name="EvoqueClickBackControl"]');
+        var $meta = lexus('meta[name="EvoqueClickBackControl"]');
         if ($meta.length < 1)
         {
             _enableClickBackControl = false;
@@ -17,7 +17,7 @@ $.extend('browser', (function (self) {
         else
         {
             var content = $meta.getAttr('content');
-            if ($.isStringEmpty(content) || content.toLowerCase() !== 'true')
+            if (lexus.isStringEmpty(content) || content.toLowerCase() !== 'true')
             {
                 _enableClickBackControl = false;
             }
@@ -33,7 +33,7 @@ $.extend('browser', (function (self) {
     var isTriggerPushed = false;
 
     self.clickBack = function (fn) {
-        if (self.enableClickBackControl() && $.checkType(fn) === type.eFunction)
+        if (self.enableClickBackControl() && lexus.checkType(fn) === type.eFunction)
         {
             clickBackHandles.push(fn);
         }
@@ -46,7 +46,7 @@ $.extend('browser', (function (self) {
         }
         try
         {
-            $(clickBackHandles).each(function () {
+            lexus(clickBackHandles).each(function () {
                 this.call();
             });
         }

@@ -9,7 +9,7 @@ Evoque.extend('carousel', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var caller = self.evoqueTarget;
         var loop = option.getValueOfProperty('loop', defaultOption);
         var height = option.getValueOfProperty('height', defaultOption);
@@ -17,7 +17,7 @@ Evoque.extend('carousel', (function (self) {
         var onSwitched = option.getValueOfProperty('onSwitched', defaultOption);
 
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (!thisCache.containsKey('carousel'))
             {
                 thisCache.push('carousel', new carouselClass(this, loop, height, ratio, onSwitched));
@@ -28,7 +28,7 @@ Evoque.extend('carousel', (function (self) {
     self.next = function () {
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('carousel'))
             {
                 thisCache.get('carousel').next();
@@ -38,7 +38,7 @@ Evoque.extend('carousel', (function (self) {
     self.prev = function () {
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('carousel'))
             {
                 thisCache.get('carousel').prev();
@@ -49,7 +49,7 @@ Evoque.extend('carousel', (function (self) {
         var parameters = arguments;
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('carousel'))
             {
                 thisCache.get('carousel').display.apply(thisCache.get('carousel'), parameters);
@@ -58,7 +58,7 @@ Evoque.extend('carousel', (function (self) {
     };
 
     function carouselClass(element, loop, height, ratio, onSwitched) {
-        var imgFrame = $(element);
+        var imgFrame = lexus(element);
         var imgUl = imgFrame.getChild('ul');
         if (imgUl.length !== 1) {
             throw 'DOM Error!';
@@ -176,7 +176,7 @@ Evoque.extend('carousel', (function (self) {
                 return;
             }
 
-            if ($.checkType(direction) !== type.eNumber) {
+            if (lexus.checkType(direction) !== type.eNumber) {
                 direction = 0;
             }
             var transitionFlag = direction !== 0;
@@ -213,7 +213,7 @@ Evoque.extend('carousel', (function (self) {
                     transition();
                 }
                 transform(positionX);
-                if ($.checkType(onSwitched) === type.eFunction) {
+                if (lexus.checkType(onSwitched) === type.eFunction) {
                     onSwitched.call(element, {
                         imageIndex: currentIndex
                     });
@@ -231,10 +231,10 @@ Evoque.extend('carousel', (function (self) {
         }
 
         function loadImage(index) {
-            var $img = $(imgLiCache[index]).getChild('img');
+            var $img = lexus(imgLiCache[index]).getChild('img');
             var dataSrc = $img.getAttr('data-src');
             var src = $img.getAttr('src');
-            if ($.isStringEmpty(src)) {
+            if (lexus.isStringEmpty(src)) {
                 $img.setAttr('src', dataSrc);
             }
         }

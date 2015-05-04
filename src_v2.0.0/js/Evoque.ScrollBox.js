@@ -7,7 +7,7 @@ Evoque.extend('scrollBox', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var caller = self.evoqueTarget;
         var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
         if (direction !== 'vertical' && direction !== 'horizontal') {
@@ -15,7 +15,7 @@ Evoque.extend('scrollBox', (function (self) {
         }
 
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (!thisCache.containsKey('scrollBox'))
             {
                 thisCache.push('scrollBox', new scrollBoxClass(this, direction));
@@ -25,7 +25,7 @@ Evoque.extend('scrollBox', (function (self) {
 
     self.recreate = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var caller = self.evoqueTarget;
         var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
         if (direction !== 'vertical' && direction !== 'horizontal') {
@@ -33,7 +33,7 @@ Evoque.extend('scrollBox', (function (self) {
         }
 
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('scrollBox')) {
                 thisCache.del('scrollBox');
             }
@@ -42,8 +42,8 @@ Evoque.extend('scrollBox', (function (self) {
     };
 
     function scrollBoxClass(element, direction) {
-        var $frame = $(element);
-        var $content = $(element.firstElementChild);
+        var $frame = lexus(element);
+        var $content = lexus(element.firstElementChild);
         if ($content.length === 0) {
             throw 'Frame must contain one Content!';
         }

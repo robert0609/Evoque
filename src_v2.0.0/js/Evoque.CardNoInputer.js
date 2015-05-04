@@ -8,7 +8,7 @@ Evoque.extend('cardNoInputer', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        var $option = $(option);
+        var $option = lexus(option);
         var totalLength = $option.getValueOfProperty('totalLength', defaultOption);
         var boxLength = $option.getValueOfProperty('boxLength', defaultOption);
         if (totalLength === 0 || boxLength === 0) {
@@ -26,7 +26,7 @@ Evoque.extend('cardNoInputer', (function (self) {
 
     function cardInputClass(input, totalLength, boxLength) {
         var div = document.createElement('div');
-        $(div).addClass('container-div');
+        lexus(div).addClass('container-div');
         var boxNum = Math.ceil(totalLength / boxLength);
         var lastBoxLen = totalLength % boxLength;
         for (var i = 0; i < boxNum; ++i) {
@@ -38,12 +38,12 @@ Evoque.extend('cardNoInputer', (function (self) {
         }
         input.type = 'hidden';
         input.parentElement.insertBefore(div, input);
-        var $input = $(input);
-        var $boxes = $(div).getChild('input[data-index]');
+        var $input = lexus(input);
+        var $boxes = lexus(div).getChild('input[data-index]');
 
         function createBox(idx, boxLength) {
             var box = document.createElement('input');
-            var $box = $(box);
+            var $box = lexus(box);
             $box.addClass('box-input');
             box.type = 'tel';
             box.style.width = Math.ceil(boxLength * 2 / 3) + 'em';
@@ -61,7 +61,7 @@ Evoque.extend('cardNoInputer', (function (self) {
                 syncInput();
                 if (strVal.length === boxLength) {
                     var nextIdx = idx + 1;
-                    var $next = $(div).getChild('input[data-index="' + nextIdx + '"]');
+                    var $next = lexus(div).getChild('input[data-index="' + nextIdx + '"]');
                     if ($next.length > 0) {
                         $next[0].focus();
                         $next.dispatchClick();
@@ -74,9 +74,9 @@ Evoque.extend('cardNoInputer', (function (self) {
         function syncInput() {
             var valArray = new Array(boxNum);
             $boxes.each(function () {
-                var $this = $(this);
+                var $this = lexus(this);
                 var idx = Number($this.getAttr('data-index'));
-                valArray[idx] = $.isStringEmpty($this.getVal()) ? '' : $this.getVal();
+                valArray[idx] = lexus.isStringEmpty($this.getVal()) ? '' : $this.getVal();
             });
             $input.setVal(valArray.join(''));
         }

@@ -7,12 +7,12 @@ Evoque.extend('scrollNavigator', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
         var visualWidth = option.getValueOfProperty('visualWidth', defaultOption);
         var displayThingCount = option.getValueOfProperty('displayThingCount', defaultOption);
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (!thisCache.containsKey('scrollNavigator'))
             {
                 thisCache.push('scrollNavigator', new navigatorClass(this, visualWidth, displayThingCount));
@@ -24,7 +24,7 @@ Evoque.extend('scrollNavigator', (function (self) {
         var parameters = arguments;
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('scrollNavigator'))
             {
                 thisCache.get('scrollNavigator').next.apply(thisCache.get('scrollNavigator'), parameters);
@@ -36,7 +36,7 @@ Evoque.extend('scrollNavigator', (function (self) {
         var parameters = arguments;
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('scrollNavigator'))
             {
                 thisCache.get('scrollNavigator').previous.apply(thisCache.get('scrollNavigator'), parameters);
@@ -48,7 +48,7 @@ Evoque.extend('scrollNavigator', (function (self) {
         var parameters = arguments;
         var caller = self.evoqueTarget;
         caller.each(function () {
-            var thisCache = $(this).cache();
+            var thisCache = lexus(this).cache();
             if (thisCache.containsKey('scrollNavigator'))
             {
                 thisCache.get('scrollNavigator').setDisplayIndex.apply(thisCache.get('scrollNavigator'), parameters);
@@ -58,7 +58,7 @@ Evoque.extend('scrollNavigator', (function (self) {
 
     function navigatorClass(element, visualWidth, displayThingCount) {
         element.style.width = visualWidth + 'px';
-        var $container = $(element);
+        var $container = lexus(element);
         var $ul = $container.getChild('ul');
         if ($ul.length !== 1)
         {
@@ -144,7 +144,7 @@ Evoque.extend('scrollNavigator', (function (self) {
 
         function getLeft() {
             var leftStr = this.style.left;
-            if ($.isStringEmpty(leftStr)) {
+            if (lexus.isStringEmpty(leftStr)) {
                 return 0;
             }
             else {

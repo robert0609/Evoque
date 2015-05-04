@@ -1,5 +1,5 @@
 //Dependency: Evoque.js
-$.extend('lazyLoader', (function (self) {
+lexus.extend('lazyLoader', (function (self) {
     var defaultOption = {};
 
     var imgSrcAttrName = 'data-lazy-src';
@@ -8,7 +8,7 @@ $.extend('lazyLoader', (function (self) {
 
     self.init = function (option) {
         option = option || {};
-        option = $(option);
+        option = lexus(option);
 
         var lazyImgList = [];
         initLazyImgList();
@@ -19,11 +19,11 @@ $.extend('lazyLoader', (function (self) {
         function initLazyImgList() {
             lazyImgList = [];
             var scrollTop = getCurrentScrollTop();
-            var $lazyImgList = $('img[' + imgSrcAttrName + ']');
+            var $lazyImgList = lexus('img[' + imgSrcAttrName + ']');
             $lazyImgList.each(function () {
                 var obj = {
-                    imgObj: $(this),
-                    isHide: $(this).isHide(),
+                    imgObj: lexus(this),
+                    isHide: lexus(this).isHide(),
                     isLoaded: false,
                     currentTop: -1,
                     currentBottom: -1
@@ -76,20 +76,20 @@ $.extend('lazyLoader', (function (self) {
             reset: initLazyImgList,
             update: function (dom) {
                 var $appendLazyImgList = null;
-                if ($.checkType(dom) === type.eElement) {
-                    $appendLazyImgList = $(dom).getChild('img[' + imgSrcAttrName + ']');
+                if (lexus.checkType(dom) === type.eElement) {
+                    $appendLazyImgList = lexus(dom).getChild('img[' + imgSrcAttrName + ']');
                 }
                 else {
-                    $appendLazyImgList = $('img[' + imgSrcAttrName + ']');
+                    $appendLazyImgList = lexus('img[' + imgSrcAttrName + ']');
                 }
                 var scrollTop = getCurrentScrollTop();
                 $appendLazyImgList.each(function () {
-                    if ($.checkType(this.__lazyImgListFlag) === type.eBoolean && this.__lazyImgListFlag) {
+                    if (lexus.checkType(this.__lazyImgListFlag) === type.eBoolean && this.__lazyImgListFlag) {
                         return;
                     }
                     var obj = {
-                        imgObj: $(this),
-                        isHide: $(this).isHide(),
+                        imgObj: lexus(this),
+                        isHide: lexus(this).isHide(),
                         isLoaded: false,
                         currentTop: -1,
                         currentBottom: -1
@@ -106,18 +106,18 @@ $.extend('lazyLoader', (function (self) {
         };
     };
 
-    $(['load', 'reset', 'update']).each(function () {
+    lexus(['load', 'reset', 'update']).each(function () {
         var that = this;
         self[that] = function () {
-            if ($.isObjectNull(loaderInstance)) {
+            if (lexus.isObjectNull(loaderInstance)) {
                 return;
             }
             return loaderInstance[that].apply(loaderInstance, arguments);
         };
     });
 
-    $.load(function () {
-        loaderInstance = $.lazyLoader.init();
+    lexus.load(function () {
+        loaderInstance = lexus.lazyLoader.init();
     });
 
     return self;

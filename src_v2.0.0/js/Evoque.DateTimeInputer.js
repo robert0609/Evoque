@@ -10,7 +10,7 @@ Evoque.extend('dateTimePicker', (function (self) {
 
     self.create = function (option) {
         option = option || {};
-        var $option = $(option);
+        var $option = lexus(option);
         var format = $option.getValueOfProperty('format', defaultOption).toLowerCase();
         if (format !== 'datetime' && format !== 'time')
         {
@@ -25,25 +25,25 @@ Evoque.extend('dateTimePicker', (function (self) {
 
     function pickerClass(caller, format, precision) {
         var container = document.createElement('div');
-        container.id = 'evoqueDateTimePicker' + $.guid();
-        var $container = $(container);
+        container.id = 'evoqueDateTimePicker' + lexus.guid();
+        var $container = lexus(container);
         $container.addClass('ui-date-time');
         $container.hide();
         var div1 = document.createElement('div');
-        var $div1 = $(div1);
+        var $div1 = lexus(div1);
         $div1.addClass('year');
         var div2 = document.createElement('div');
-        var $div2 = $(div2);
+        var $div2 = lexus(div2);
         $div2.addClass('second');
         var divBtn = document.createElement('div');
-        var $divBtn = $(divBtn);
+        var $divBtn = lexus(divBtn);
         $divBtn.addClass('submit');
         var divConfirm = document.createElement('div');
-        var $divConfirm = $(divConfirm);
+        var $divConfirm = lexus(divConfirm);
         $divConfirm.text('确定');
         $divConfirm.addClass('button-on');
         var divClear = document.createElement('div');
-        var $divClear = $(divClear);
+        var $divClear = lexus(divClear);
         $divClear.text('清除');
         $divClear.addClass('button-on');
         divBtn.appendChild(divClear);
@@ -80,11 +80,11 @@ Evoque.extend('dateTimePicker', (function (self) {
             }
         }
 
-        var $dialog = $(caller);
+        var $dialog = lexus(caller);
         $dialog.setAttr('readonly', 'readonly');
         $dialog.click(function () {
             var val = $dialog.getVal();
-            var init = $.isStringEmpty(val) ? new Date() : $dialog.getVal().toDate();
+            var init = lexus.isStringEmpty(val) ? new Date() : $dialog.getVal().toDate();
             y.setVal(Number(init.getFullYear()));
             M.setVal(Number(init.getMonth()) + 1);
             d.setVal(Number(init.getDate()));
@@ -112,7 +112,7 @@ Evoque.extend('dateTimePicker', (function (self) {
 
         $divClear.click(function () {
             $dialog.closeCurrentDialog();
-            if (!$.isStringEmpty($dialog.getVal())) {
+            if (!lexus.isStringEmpty($dialog.getVal())) {
                 $dialog.setVal('');
                 var event = document.createEvent('HTMLEvents');
                 event.initEvent('change', true, false);
@@ -198,16 +198,16 @@ Evoque.extend('dateTimePicker', (function (self) {
          */
         function createInput(kind, onValueChanged) {
             var divBox = document.createElement('div');
-            $(divBox).addClass('item');
+            lexus(divBox).addClass('item');
             var divNum = document.createElement('div');
-            var $divNum = $(divNum);
+            var $divNum = lexus(divNum);
             $divNum.addClass('num');
             var emNum = document.createElement('input');
             emNum.type = 'text';
             emNum.style.width = '30px';
-            var $emNum = $(emNum);
+            var $emNum = lexus(emNum);
             var span = document.createElement('span');
-            var $span = $(span);
+            var $span = lexus(span);
             divNum.appendChild(emNum);
             divNum.appendChild(span);
             divBox.appendChild(divNum);
@@ -270,7 +270,7 @@ Evoque.extend('dateTimePicker', (function (self) {
                 }
                 $emNum.setVal(val);
                 originalValue = val;
-                if ($.checkType(onValueChanged) === type.eFunction)
+                if (lexus.checkType(onValueChanged) === type.eFunction)
                 {
                     onValueChanged.call(divBox, { kind: kind });
                 }
@@ -297,7 +297,7 @@ Evoque.extend('dateTimePicker', (function (self) {
                     }
                     $emNum.setVal(val);
                     originalValue = val;
-                    if ($.checkType(onValueChanged) === type.eFunction)
+                    if (lexus.checkType(onValueChanged) === type.eFunction)
                     {
                         onValueChanged.call(divBox, { kind: kind });
                     }
