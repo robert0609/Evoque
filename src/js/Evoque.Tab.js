@@ -94,7 +94,7 @@ Evoque.tab = (function (self)
 
         if (orientation === 'vertical' && verticalContentHeight > 0) {
             tabDivObj.getChild('*[data-guid="' + guid + '"]>.' + titleClass).setStyle('height', verticalContentHeight + 'px');
-            contentArray.setStyle('height', verticalContentHeight + 'px');
+            tabDivObj.getChild('*[data-guid="' + guid + '"]>.' + contentClass).setStyle('height', verticalContentHeight + 'px');
         }
 
         function tcPairClass(index, title, content)
@@ -125,11 +125,11 @@ Evoque.tab = (function (self)
                 {
                     return;
                 }
-                $(tabList[currentIndex].Title).removeClass('active');
+                $(tabList[currentIndex].Title).removeClass('current');
                 $(tabList[currentIndex].Content).hide();
             }
 
-            $(tabList[tabIndex].Title).addClass('active');
+            $(tabList[tabIndex].Title).addClass('current');
             var $content = $(tabList[tabIndex].Content);
             $content.show();
 

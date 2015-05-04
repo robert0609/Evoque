@@ -87,7 +87,7 @@ $.container = (function (self)
                 innerDisplay.call(that, e.state.toShowId, parameter, true);
                 if (autoTop)
                 {
-                    window.scrollTo(0, 0);
+                    //window.scrollTo(0, 0);
                 }
             });
         }

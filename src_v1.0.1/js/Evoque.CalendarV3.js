@@ -14,6 +14,8 @@ Evoque.extend('calendarV3', (function (self) {
 
     var weekDay = ['日', '一', '二', '三', '四', '五', '六'];
 
+    var pageScrollTop = 0;
+
     self.create = function (option) {
         option = option || {};
         option = $(option);
@@ -90,6 +92,10 @@ Evoque.extend('calendarV3', (function (self) {
         var confirmButtonText = option.getValueOfProperty('confirmButtonText', defaultShowOption);
         var onConfirm = option.getValueOfProperty('onConfirm', defaultShowOption);
         var onCancel = option.getValueOfProperty('onCancel', defaultShowOption);
+
+        //记录show出来之前页面的位置
+        pageScrollTop = document.body.scrollTop;
+
         var caller = self.evoqueTarget;
         caller.each(function () {
             var thisCache = $(this).cache();
@@ -144,6 +150,8 @@ Evoque.extend('calendarV3', (function (self) {
                 }
             }
             $element.poper.hide();
+
+            window.scrollTo(0, pageScrollTop);
         });
         var cancelCallback = null;
         var btnSelectDate = document.createElement('li');
@@ -162,6 +170,8 @@ Evoque.extend('calendarV3', (function (self) {
                 }
             }
             $element.poper.hide();
+
+            window.scrollTo(0, pageScrollTop);
         });
         var confirmCallback = null;
         btnUl.appendChild(btnCancel);
@@ -219,14 +229,20 @@ Evoque.extend('calendarV3', (function (self) {
 
         var bodyTableWrapper = document.createElement('div');
         var $bodyTableWrapper = $(bodyTableWrapper);
+        var _agent = navigator.userAgent.toLowerCase();
         $bodyTableWrapper.addClass('m-calendar-wrapper');
+        if (_agent.indexOf('iphone os 8_1_2') < 0)
+        {
+            $bodyTableWrapper.addClass('m-calendar-wrapper-niubi');
+        }
         bodyTableDiv.appendChild(bodyTableWrapper);
 
-        $bodyTableWrapper.addEventHandler('scroll', function () {
+        $bodyTableWrapper.addEventHandler('scroll', bodyTableWrapperScrollHandle);
+        function bodyTableWrapperScrollHandle() {
             var curMon = getCurrentScrollMonth(this.scrollTop);
             $(headEm).text(yearDesc(curMon));
             $(headStrong).text(curMon.getMonth() + 1);
-        });
+        }
 
         function getCurrentScrollMonth(scrollTop) {
             var $uls = $bodyTableWrapper.getChild('ul');
@@ -257,7 +273,11 @@ Evoque.extend('calendarV3', (function (self) {
             {
                 var monthUl = $monthUl[0];
                 var offsetTop = monthUl.offsetTop - monthUl.parentElement.offsetTop;
+                var isSameScrollTop = $bodyTableWrapper[0].scrollTop === offsetTop;
                 $bodyTableWrapper[0].scrollTop = offsetTop;
+                if (isSameScrollTop) {
+                    bodyTableWrapperScrollHandle.call($bodyTableWrapper[0]);
+                }
             }
         }
 
@@ -946,6 +966,7 @@ Evoque.extend('poper', (function (self) {
                 break;
             default:
                 div.style.left = '0';
+                div.style.top = '0';
                 div.style.width = docWidth + 'px';
                 break;
         }

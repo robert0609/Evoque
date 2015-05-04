@@ -121,11 +121,11 @@
     margin-top: -3px;
     border:6px solid transparent;
     border-top-color: #f60;
+    -webkit-transition: all .2s ease-out;
+    transition: all .2s ease-out;
 }
 .m-calendar-month-show .m-calendar-title b{
     -webkit-transform:rotate(-180deg);
-    -webkit-transition: all .2s ease-out;
-    transition: all .2s ease-out;
     -webkit-transform-origin:50% 3px;
     transform-origin:50% 3px;
 }
@@ -152,9 +152,12 @@
     z-index: 100;
     -webkit-transform:translateY(0);
     transform:translateY(0);
+    -webkit-transition: all .2s ease-out;
+    transition: all .2s ease-out;
 }
 .m-calendar-month ul{
     overflow: hidden;
+    border-top:1px solid #ebecf2;
 }
 .m-calendar-month li{
     float: left;
@@ -201,8 +204,6 @@
 .m-calendar-month-show .m-calendar-month{
     -webkit-transform:translateY(100%);
     transform:translateY(100%);
-    -webkit-transition: all .2s ease-out;
-    transition: all .2s ease-out;
 }
 
 /*星期*/
@@ -232,8 +233,10 @@
 
 /*日历*/
 .m-calendar-wrapper{
-    -webkit-overflow-scrolling: touch;
     overflow: auto;
+}
+.m-calendar-wrapper-niubi{
+    -webkit-overflow-scrolling: touch;
 }
 .m-calendar-days{
     overflow: hidden;
@@ -304,13 +307,34 @@
 .m-calendar-days .selected{
     color:#fff;
     background: #f60;
+    position:relative;
+}
+.m-calendar-days .selected:after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom: -1px;
+    width:100%;
+    height:1px;
+    background:#ebecf2;
+    z-index:2;
 }
 /*入住日期*/
 .m-calendar-days .range{
     color: #fff;
     background: #f90;
+    position:relative;
 }
-
+.m-calendar-days .range:after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom: -1px;
+    width:100%;
+    height:1px;
+    background:#ebecf2;
+    z-index:2;
+}
 
 .poper-dg-div{
     position: fixed;
@@ -320,12 +344,12 @@
 }
 /*自下而上*/
 .poper-bottomTop{
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%);
-    -webkit-transition: all .15s ease .01s;
-    transition: all .15s ease .01s;
+    -webkit-transform: translate3d(0,100%,0);
+    transform: translate3d(0,100%,0);
+    -webkit-transition: all .3s ease .01s;
+    transition: all .3s ease .01s;
 }
 .poper-bottomTop.show{
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
 }
