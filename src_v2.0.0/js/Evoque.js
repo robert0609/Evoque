@@ -136,9 +136,6 @@ var Evoque = (function (self)
         eObject: 'object'
     };
 
-    window.lexus = __fetcher;
-    window.$ = __fetcher;
-
     var class2type = {
         'undefined' : type.eUndefined,
         'number' : type.eNumber,
@@ -1093,6 +1090,9 @@ var Evoque = (function (self)
         return uuid.join('');
     };
     //Global method end
+
+    window.lexus = __fetcher;
+    window.$ = window.$ || __fetcher;
 
     /**
      * 按照传入的规则fn对包装集中的对象排序
