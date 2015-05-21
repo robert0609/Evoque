@@ -588,7 +588,7 @@ var Evoque = (function (self)
         }
 
         return new EvoqueClass(list);
-    };
+    }
 
     function array2Dictionary(arr)
     {
