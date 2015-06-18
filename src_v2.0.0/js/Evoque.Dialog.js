@@ -342,14 +342,14 @@ Evoque.extend('dialog', (function (self) {
                         }
                     }
                 }
-                bgObj.style.height = getbackgroundHeight() + 'px';
-                bgObjWhite.style.height = getbackgroundHeight() + 'px';
+                bgObj.style.minHeight = getbackgroundHeight() + 'px';
+                bgObjWhite.style.minHeight = getbackgroundHeight() + 'px';
             });
             //针对某些手机，在input软键盘弹出的时候，导致蒙版高度设置不对的问题，进行一些兼容
             if (lexus.hasTouchEvent()) {
                 document.addEventListener('blur', function () {
-                    bgObj.style.height = getbackgroundHeight() + 'px';
-                    bgObjWhite.style.height = getbackgroundHeight() + 'px';
+                    bgObj.style.minHeight = getbackgroundHeight() + 'px';
+                    bgObjWhite.style.minHeight = getbackgroundHeight() + 'px';
                 });
             }
 
@@ -556,8 +556,8 @@ Evoque.extend('dialog', (function (self) {
                 }
             }
 
-            bgObj.style.height = getbackgroundHeight() + 'px';
-            bgObjWhite.style.height = getbackgroundHeight() + 'px';
+            bgObj.style.minHeight = getbackgroundHeight() + 'px';
+            bgObjWhite.style.minHeight = getbackgroundHeight() + 'px';
 
             onQuiting = option.getValueOfProperty('onQuiting', defaultOption);
             onDialogShowed = option.getValueOfProperty('onDialogShowed', defaultOption);
