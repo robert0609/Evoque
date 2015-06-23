@@ -42,7 +42,8 @@ var Evoque = (function (self)
     window.mDevice = {
         other: 0,
         mx3: 1,
-        samsung: 2
+        samsung: 2,
+        xiaomi: 3
     };
     var _mAgent = mAgent.other;
     if (_agent.indexOf('android') > -1)
@@ -101,8 +102,12 @@ var Evoque = (function (self)
     if (_agent.indexOf('m353') > -1) {
         _mDevice = mDevice.mx3;
     }
-    else if (_agent.indexOf('gt-i9100g') > -1 || _agent.indexOf('gt-i9158p') > -1) {
+    else if (_agent.indexOf('gt-i9100g') > -1 || _agent.indexOf('gt-i9158p') > -1 || _agent.indexOf('sm-g9006w') > -1) {
         _mDevice = mDevice.samsung;
+    }
+    else if (_agent.indexOf('mi') > -1)
+    {
+        _mDevice = mDevice.xiaomi;
     }
 
     /**

@@ -144,11 +144,11 @@ Evoque.extend('dockForm', (function (self) {
             document.body.appendChild(div);
             evoquePage.fixBackground();
             setDivSize();
-            if (lexus.device() !== mDevice.samsung) {
+            if (checkSupportAnimation()) {
                 $div.addClass('bottomTop');
             }
             showFlag = true;
-            if (lexus.device() === mDevice.samsung) {
+            if (!checkSupportAnimation()) {
                 if (lexus.checkType(animationEndCallback) === type.eFunction) {
                     animationEndCallback.call(div);
                 }
@@ -182,7 +182,7 @@ Evoque.extend('dockForm', (function (self) {
             {
                 return;
             }
-            if (lexus.device() !== mDevice.samsung) {
+            if (checkSupportAnimation()) {
                 $div.removeClass('bottomTop');
             }
             evoquePage.restoreFixBackground();
@@ -201,6 +201,17 @@ Evoque.extend('dockForm', (function (self) {
             animationEndCallback = null;
             formHideCallback = null;
         };
+    }
+
+    function checkSupportAnimation() {
+        var ret = true;
+        if (lexus.device() === mDevice.samsung) {
+            ret = false;
+        }
+        else if (lexus.device() === mDevice.xiaomi) {
+            ret = false;
+        }
+        return ret;
     }
 
     //API

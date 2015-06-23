@@ -65,5 +65,77 @@ lexus.extend('browser', (function (self) {
         }
     };
 
+    /**
+     * URL操作工具
+     */
+    self.location = {
+        addParameter: function (query, url) {
+            if (lexus.isStringEmpty(url)) {
+                url = location.href;
+            }
+            var queryDic = {};
+            var idx = url.indexOf('?');
+            if (idx > -1)
+            {
+                queryDic = queryStr2Dic(url.substr(idx));
+                url = url.substr(0, idx);
+            }
+            for (var p in query)
+            {
+                queryDic[p] = query[p];
+            }
+            return url + queryDic2Str(queryDic);
+        },
+        removeParameter: function (parameterNames, url) {
+            if (lexus.isStringEmpty(url)) {
+                url = location.href;
+            }
+            var queryDic = {};
+            var idx = url.indexOf('?');
+            if (idx > -1)
+            {
+                queryDic = queryStr2Dic(url.substr(idx));
+                url = url.substr(0, idx);
+            }
+            lexus(parameterNames).each(function () {
+                if (this in queryDic) {
+                    delete queryDic[this];
+                }
+            });
+            return url + queryDic2Str(queryDic);
+        }
+    };
+    function queryStr2Dic(str) {
+        if (lexus.isStringEmpty(str)) {
+            return {};
+        }
+        var dic = {};
+        var kvps = str.substr(1).split('&');
+        for (var i = 0; i < kvps.length; ++i) {
+            var kv = kvps[i].split('=');
+            var k = kv[0];
+            var v = '';
+            if (kv.length > 1) {
+                v = kv[1];
+            }
+            dic[k] = v;
+        }
+        return dic;
+    }
+    function queryDic2Str(dic) {
+        var str = '';
+        var arr = [];
+        for (var k in dic) {
+            var v = dic[k];
+            var kv = k + '=' + v;
+            arr.push(kv);
+        }
+        if (arr.length > 0) {
+            str = '?' + arr.join('&');
+        }
+        return str;
+    }
+
+
     return self;
 }({})));

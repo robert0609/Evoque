@@ -28,7 +28,11 @@ Evoque.extend('dialog', (function (self) {
         //弹层的位置:'center', 'top'. default: 'center'
         direction: 'center',
         //弹层的布局样式版本:'plain', 'preset'. default: 'preset'
-        layoutVersion: 'preset'
+        layoutVersion: 'preset',
+        //是否弹层内容在内嵌的iFrame中显示，用于弹层滚动效果
+        enableScrollFrame: false,
+        //是否开启弹出层时将背景页面固定住
+        enableFixBackground: false
     };
 
     var showSource = {
@@ -197,23 +201,43 @@ Evoque.extend('dialog', (function (self) {
     }
 
     var evoquePage = (function () {
+        var _enable = false;
         var currentScrollTop = 0;
         return {
+            enable: function (v) {
+                _enable = v;
+            },
             fixBackground: function () {
+                if (!_enable) {
+                    return;
+                }
                 currentScrollTop = document.body.scrollTop;
                 var objStyle = document.body.style;
-                objStyle.setProperty('position', 'fixed');
+                objStyle.setProperty('position', 'absolute');
+                objStyle.setProperty('height', document.documentElement.clientHeight + 'px');
+                objStyle.setProperty('width', document.documentElement.clientWidth + 'px');
+                objStyle.setProperty('overflow', 'hidden');
                 objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
-                objStyle.setProperty('width', '100%');
+                /*objStyle.setProperty('position', 'fixed');
+                objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
+                objStyle.setProperty('width', '100%');*/
                 //ios6的safari上面发现在一个长页面的最底部的按钮触发弹层时，会先白屏，然后随便滚动一下就会恢复原状，不清楚原因，先暂时手动触发下页面滚动
-                window.scrollTo(0, 0);
+                //window.scrollTo(0, 0);
             },
             restoreFixBackground: function () {
+                if (!_enable) {
+                    return;
+                }
                 var objStyle = document.body.style;
                 objStyle.removeProperty('position');
-                objStyle.removeProperty('top');
+                objStyle.removeProperty('height');
                 objStyle.removeProperty('width');
-                window.scrollTo(0, currentScrollTop);
+                objStyle.removeProperty('overflow');
+                objStyle.removeProperty('top');
+                /*objStyle.removeProperty('position');
+                objStyle.removeProperty('top');
+                objStyle.removeProperty('width');*/
+                //window.scrollTo(0, currentScrollTop);
             }
         };
     }());
@@ -261,6 +285,8 @@ Evoque.extend('dialog', (function (self) {
         var originalOrientation = mOrientation.vertical;
 
         var originalDirection = 'center';
+
+        var scrollFrame = null;
 
         function exeShowContext() {
             var ctx = showContextSeq.shift();
@@ -358,6 +384,13 @@ Evoque.extend('dialog', (function (self) {
 
             contentObj = document.createElement('div');
 
+            scrollFrame = document.createElement('iframe');
+            scrollFrame.width = '100%';
+            scrollFrame.height = '100%';
+            scrollFrame.style.margin = 0;
+            scrollFrame.style.padding = 0;
+            scrollFrame.style.border = 0;
+
             buttonObj = document.createElement('div');
             lexus(buttonObj).addClass('J-pop-button');
 
@@ -424,6 +457,21 @@ Evoque.extend('dialog', (function (self) {
             return btn;
         }
 
+        function fillScrollFrame(html, height) {
+            if (lexus.isObjectNull(scrollFrame)) {
+                return;
+            }
+            dialogObj.style.height = height + 'px';
+            dialogObj.appendChild(contentObj);
+            document.body.appendChild(dialogObj);
+            contentObj.style.height = '100%';
+            contentObj.appendChild(scrollFrame);
+            var iframedocument = scrollFrame.contentDocument;
+            iframedocument.open();
+            iframedocument.write('<html><head></head><body>' + html + '</body></html>');
+            iframedocument.close();
+        }
+
         function innerShow(option) {
             init();
 
@@ -431,11 +479,22 @@ Evoque.extend('dialog', (function (self) {
             dialogObj.style.opacity = 1;
             var title = option.getValueOfProperty('title', defaultOption);
             var content = option.getValueOfProperty('content', defaultOption);
+            var enableScrollFrame = option.getValueOfProperty('enableScrollFrame', defaultOption);
             var buttonProperty = option.getValueOfProperty('button', defaultOption);
             var customButtonProperty = option.getValueOfProperty('customButton', defaultOption);
             var direction = option.getValueOfProperty('direction', defaultOption).toLowerCase();
             var layoutVersion = option.getValueOfProperty('layoutVersion', defaultOption).toLowerCase();
             var autoClose = option.getValueOfProperty('autoClose', defaultOption);
+            var enableFixBackground = option.getValueOfProperty('enableFixBackground', defaultOption);
+            evoquePage.enable(enableFixBackground);
+            var h = 0;
+            if (enableScrollFrame)
+            {
+                h = option.getValueOfProperty('height', defaultOption);
+                if (h > document.documentElement.clientHeight * 0.9) {
+                    h = document.documentElement.clientHeight * 0.9;
+                }
+            }
             if (!lexus.isStringEmpty(title)) {
                 titleObj.innerHTML = title;
                 if (layoutVersion !== 'plain') {
@@ -447,26 +506,36 @@ Evoque.extend('dialog', (function (self) {
                 var eContent = lexus('#' + content);
                 if (eContent.length > 0)
                 {
-                    //缓存内容的父节点
                     var ele = eContent[0];
-                    contentParentCache = ele.parentElement;
-                    contentObj.appendChild(ele);
-                    lexus(ele).show();
-                    if (layoutVersion === 'plain') {
-                        lexus(dialogObj).addClass('J-pop-box-transparent');
+                    if (enableScrollFrame) {
+                        fillScrollFrame(ele.outerHTML, h);
+                    }
+                    else {
+                        //缓存内容的父节点
+                        contentParentCache = ele.parentElement;
+                        contentObj.appendChild(ele);
+                        lexus(ele).show();
+                        if (layoutVersion === 'plain') {
+                            lexus(dialogObj).addClass('J-pop-box-transparent');
+                        }
                     }
                 }
                 else
                 {
-                    lexus(contentObj).html(content);
-                    if (showSrc === showSource.modalDialog) {
-                        lexus(contentObj).addClass('J-pop-bd-l');
+                    if (enableScrollFrame) {
+                        fillScrollFrame(content, h);
                     }
                     else {
-                        lexus(contentObj).addClass('J-pop-bd');
-                    }
-                    if (lexus.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
-                        lexus(dialogObj).addClass('J-pop-box-b');
+                        lexus(contentObj).html(content);
+                        if (showSrc === showSource.modalDialog) {
+                            lexus(contentObj).addClass('J-pop-bd-l');
+                        }
+                        else {
+                            lexus(contentObj).addClass('J-pop-bd');
+                        }
+                        if (lexus.isStringEmpty(buttonProperty) && customButtonProperty.length === 0 && autoClose) {
+                            lexus(dialogObj).addClass('J-pop-box-b');
+                        }
                     }
                 }
             }
@@ -478,7 +547,10 @@ Evoque.extend('dialog', (function (self) {
                     lexus(dialogObj).addClass('J-pop-box-b');
                 }
             }
-            dialogObj.appendChild(contentObj);
+            if (!enableScrollFrame)
+            {
+                dialogObj.appendChild(contentObj);
+            }
             lexus(dialogObj).addClass('J-pop-box');
             if (direction === 'top') {
                 lexus(dialogObj).addClass('J-pop-box-t');
@@ -563,7 +635,10 @@ Evoque.extend('dialog', (function (self) {
             onDialogShowed = option.getValueOfProperty('onDialogShowed', defaultOption);
             onDialogClosed = option.getValueOfProperty('onDialogClosed', defaultOption);
 
-            document.body.appendChild(dialogObj);
+            if (!enableScrollFrame)
+            {
+                document.body.appendChild(dialogObj);
+            }
             var w = option.getValueOfProperty('width', defaultOption);
             if (w === 0) {
                 w = document.documentElement.clientWidth * 0.9;
