@@ -1017,12 +1017,12 @@ Evoque.extend('poper', (function (self) {
             lexus(element).show();
             document.body.appendChild(div);
             setDivSize();
-            if (lexus.device() !== mDevice.samsung) {
+            if (checkSupportAnimation()) {
                 callbackKind = 1;
                 $div.addClass('show');
             }
             showFlag = true;
-            if (lexus.device() === mDevice.samsung) {
+            if (!checkSupportAnimation()) {
                 if (lexus.checkType(formShowCallback) === type.eFunction) {
                     formShowCallback.call(div);
                 }
@@ -1056,12 +1056,12 @@ Evoque.extend('poper', (function (self) {
             {
                 return;
             }
-            if (lexus.device() !== mDevice.samsung) {
+            if (checkSupportAnimation()) {
                 callbackKind = 2;
                 $div.removeClass('show');
             }
 
-            if (lexus.device() === mDevice.samsung) {
+            if (!checkSupportAnimation()) {
                 document.body.removeChild(div);
                 var element = this.currentShowElement;
                 lexus(element).hide();
@@ -1076,6 +1076,15 @@ Evoque.extend('poper', (function (self) {
                 formHideCallback = null;
             }
         };
+    }
+
+    function checkSupportAnimation() {
+        return true;
+//        var ret = false;
+//        if (lexus.device() !== mDevice.samsung) {
+//            ret = true;
+//        }
+//        return ret;
     }
 
     return self;
