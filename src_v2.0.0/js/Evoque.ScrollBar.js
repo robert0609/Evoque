@@ -68,15 +68,6 @@ Evoque.extend('scrollBar', (function (self) {
             this.style.removeProperty('-webkit-transition');
         });
 
-        var speedHelper = {
-            lastTime: 0,
-            lastPosition: 0,
-            getSpeed: function (currentTime, currentPosition) {
-                var dis = Math.abs(currentPosition - this.lastPosition);
-                return dis / (currentTime - this.lastTime);
-            }
-        };
-
         var scrollStartX = 0;
         var scrollEndX = 0 - contentWidth + frameWidth;
         var scrollStartY = 0;
@@ -99,8 +90,7 @@ Evoque.extend('scrollBar', (function (self) {
         var sumDistanceX = 0;
         var sumDistanceY = 0;
 
-        //由于此种模拟是禁用了content的默认触摸行为，因此它的子级元素不能触发click事件，需要手动触发
-        var handleEventDic = {};
+        var touchStateDictionary = {};
 
         $content.addEventHandler('touchstart', function (e) {
             if (e.touches.length !== 1)
@@ -109,7 +99,9 @@ Evoque.extend('scrollBar', (function (self) {
             }
             if (e.target.id !== contentId)
             {
-
+                var touchState = new TouchStateClass(e.touches[0].identifier, e.target);
+                touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
+                touchStateDictionary[e.touches[0].identifier] = touchState;
             }
             _start(e.touches[0]);
             lexus.cancelDefault(e);
@@ -119,12 +111,27 @@ Evoque.extend('scrollBar', (function (self) {
             {
                 return;
             }
+            if (e.target.id !== contentId)
+            {
+                var touchState = touchStateDictionary[e.touches[0].identifier];
+                touchState.addTouchPoint(new PointClass(e.touches[0].clientX, e.touches[0].clientY));
+            }
             _move(e.touches[0]);
         });
         $content.addEventHandler('touchend', function (e) {
             if (e.changedTouches.length !== 1 || e.touches.length !== 0)
             {
                 return;
+            }
+            if (e.target.id !== contentId)
+            {
+                var touchState = touchStateDictionary[e.changedTouches[0].identifier];
+                touchState.addTouchPoint(new PointClass(e.changedTouches[0].clientX, e.changedTouches[0].clientY));
+                touchState.over();
+                var evtTyp = touchState.touchType();
+                if (evtTyp.length > 0 && evtTyp[0].name === 'tap') {
+                    lexus(touchState.target).dispatchClick();
+                }
             }
             _end(e.changedTouches[0]);
         });
@@ -160,14 +167,6 @@ Evoque.extend('scrollBar', (function (self) {
                 if (sumDistanceY > scrollStartY || sumDistanceY < scrollEndY) {
                     sumDistanceY -= directionY * disY * 2 / 3;
                 }
-                /*else {
-                    //判断方向是否有变化，判断与上一次的时间的间隔是否过大，这两种情况都需要重新计算速度
-                    if (directionY !== originalDirection || currentTouchTime - lastTouchTime >= 100)
-                    {
-                        speedHelper.lastTime = currentTouchTime;
-                        speedHelper.lastPosition = sumDistanceY;
-                    }
-                }*/
             }
             if (directionFlags === 2)
             {
@@ -211,9 +210,6 @@ Evoque.extend('scrollBar', (function (self) {
                 else if (timespan < 100)
                 {
                     //与上一次touchmove的时间间隔小于100毫秒即认为是手指很快的滑动的行为，此时需要计算惯性滑动距离
-                    /*var speed = speedHelper.getSpeed(currentTouchTime, sumDistanceY);
-                    var decelerateTime = speed / 0.006;
-                    var momentumDistance = speed * decelerateTime - 0.006 * decelerateTime * decelerateTime / 2;*/
                     sumDistanceY += directionY * 100;
                     //判断滑动是否超出范围了
                     if (sumDistanceY > scrollStartY || sumDistanceY < scrollEndY) {
@@ -275,7 +271,58 @@ Evoque.extend('scrollBar', (function (self) {
         }
     }
 
+    //判断触摸行为来模拟点击行为的辅助类
+    function TouchStateClass(identifier, target)
+    {
+        var identifier = identifier;
+        this.target = target;
 
+        this.touchStartTime = null;
+        this.touchEndTime = null;
+        this.touchPointList = [];
+        this.rangeX = 0;
+        this.rangeY = 0;
+
+        this.addTouchPoint = function (point) {
+            if (this.touchPointList.length > 0)
+            {
+                var sp = this.touchPointList[0];
+                var rx = Math.abs(point.x - sp.x);
+                var ry = Math.abs(point.y - sp.y);
+                this.rangeX = Math.max(this.rangeX, rx);
+                this.rangeY = Math.max(this.rangeY, ry);
+            }
+            else {
+                this.touchStartTime = point.timestamp;
+            }
+            this.touchPointList.push(point);
+        };
+
+        this.over = function () {
+            if (this.touchPointList.length > 0) {
+                this.touchEndTime = this.touchPointList[this.touchPointList.length - 1].timestamp;
+            }
+        };
+
+        this.touchType = function () {
+            var types = [];
+            var touchSpan = this.touchEndTime - this.touchStartTime;
+            //tap
+            if (touchSpan < 750 && this.rangeX < 4 && this.rangeY < 4)
+            {
+                types.push({ name: 'tap' });
+                return types;
+            }
+            return types;
+        };
+    }
+
+    function PointClass(x, y)
+    {
+        this.x = x;
+        this.y = y;
+        this.timestamp = new Date();
+    }
 
     return self;
 }({})));
