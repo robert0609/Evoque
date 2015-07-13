@@ -213,11 +213,11 @@ Evoque.extend('dialog', (function (self) {
                 }
                 currentScrollTop = document.body.scrollTop;
                 var objStyle = document.body.style;
-                objStyle.setProperty('position', 'absolute');
+                //objStyle.setProperty('position', 'absolute');
                 objStyle.setProperty('height', document.documentElement.clientHeight + 'px');
                 objStyle.setProperty('width', document.documentElement.clientWidth + 'px');
                 objStyle.setProperty('overflow', 'hidden');
-                objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
+                objStyle.setProperty('margin-top', (0 - currentScrollTop) + 'px');
                 /*objStyle.setProperty('position', 'fixed');
                 objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
                 objStyle.setProperty('width', '100%');*/
@@ -229,11 +229,11 @@ Evoque.extend('dialog', (function (self) {
                     return;
                 }
                 var objStyle = document.body.style;
-                objStyle.removeProperty('position');
+                //objStyle.removeProperty('position');
                 objStyle.removeProperty('height');
                 objStyle.removeProperty('width');
                 objStyle.removeProperty('overflow');
-                objStyle.removeProperty('top');
+                objStyle.removeProperty('margin-top');
                 /*objStyle.removeProperty('position');
                 objStyle.removeProperty('top');
                 objStyle.removeProperty('width');*/
