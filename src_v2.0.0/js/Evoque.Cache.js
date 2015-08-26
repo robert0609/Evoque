@@ -8,6 +8,11 @@ lexus.extend('cache', (function (self) {
     var __global = new cacheClass();
     var __elementCacheKeyProperty = 'elementCache';
 
+    /**
+     * 创建页面级缓存、会话级缓存、持久级缓存
+     * @param option
+     * @return {*}
+     */
     self.create = function (option) {
         var lvl = getLevel(option);
         switch (lvl) {
@@ -138,7 +143,10 @@ lexus.extend('cache', (function (self) {
         }
     }
 
-    //API
+    /**
+     * 获取跟当前DOM元素绑定的页面级(page)缓存
+     * @return {*}
+     */
     Evoque.cache = function () {
         if (this.length !== 1)
         {
