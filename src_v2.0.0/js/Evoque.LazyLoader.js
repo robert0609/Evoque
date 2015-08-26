@@ -1,4 +1,4 @@
-//Dependency: Evoque.js
+//Dependency: Evoque.js, Evoque.Cache.js
 lexus.extend('lazyLoader', (function (self) {
     var defaultOption = {};
 
@@ -55,7 +55,13 @@ lexus.extend('lazyLoader', (function (self) {
                     obj.currentBottom = scrollTop + rec.bottom;
                 }
                 //判断是否该元素滚动到可视范围
-                if (viewportTop <= obj.currentBottom && viewportBottom >= obj.currentTop) {
+                if (viewportTop <= obj.currentBottom && viewportBottom >= obj.currentTop)
+                {
+                    var defaultSrc = obj.imgObj.getAttr('src');
+                    obj.imgObj.cache().set('defaultSrc', defaultSrc);
+                    obj.imgObj.addEventHandler('error', function () {
+                        $(this).setAttr('src', $(this).cache().get('defaultSrc'));
+                    });
                     obj.imgObj.setAttr('src', obj.imgObj.getAttr(imgSrcAttrName));
                     obj.isLoaded = true;
                 }
@@ -116,7 +122,7 @@ lexus.extend('lazyLoader', (function (self) {
         };
     });
 
-    lexus.load(function () {
+    lexus(function () {
         loaderInstance = lexus.lazyLoader.init();
     });
 
