@@ -84,8 +84,8 @@ lexus.extend('imageCompressor', (function (self) {
     function compress(srcImg, ratio, index, onResult) {
         var that = this;
         var _agent = navigator.userAgent.toLowerCase();
-        //针对android4.4.4版本的小米手机的webView
-        if (_agent.indexOf('android 4.4.4') && _agent.indexOf('mi') && lexus.app() !== mApp.ucbrowser && lexus.app() !== mApp.qqbrowser) {
+        //针对android4.4.4版本的小米手机的webView，exif有兼容性问题，因此不使用该插件获取图片元数据
+        if (_agent.indexOf('android 4.4.4')>0 && _agent.indexOf('mi') >0 && lexus.app() !== mApp.ucbrowser && lexus.app() !== mApp.qqbrowser) {
             var scaleSize = getScaledSize(srcImg.width, srcImg.height);
             var canvas = document.createElement('canvas');
             canvas.width = scaleSize.width;
@@ -104,19 +104,23 @@ lexus.extend('imageCompressor', (function (self) {
             EXIF.getData(srcImg, function() {
                 var o = EXIF.getTag(srcImg, 'Orientation');
                 var scaleSize = null;
+                var r = 1;
                 if (o === 5 || o === 6 || o === 7 || o === 8)
                 {
                     scaleSize = getScaledSize(srcImg.height, srcImg.width);
+                    r=scaleSize.height / srcImg.width;
                 }
                 else
                 {
                     scaleSize = getScaledSize(srcImg.width, srcImg.height);
+                    r=scaleSize.width / srcImg.width;
                 }
+               // var r = scaleSize.width / srcImg.width;
                 var canvas = document.createElement('canvas');
                 canvas.width = scaleSize.width;
                 canvas.height = scaleSize.height;
                 var ctx = canvas.getContext("2d");
-                var r = scaleSize.width / srcImg.width;
+               
                 ctx.scale(r, r);
                 if (o === 3 || o === 4)
                 {
@@ -134,6 +138,7 @@ lexus.extend('imageCompressor', (function (self) {
                     ctx.translate(0 - srcImg.width, 0);
                 }
                 ctx.drawImage(srcImg, 0, 0);
+              //  ratio = 800 / srcImg.width; 
                 var imgData = canvas.toDataURL("image/jpeg", ratio);
                 if (lexus.checkType(onResult) === type.eFunction) {
                     onResult.call(that, { resultImageData: imgData, imageIndex: index });

@@ -415,8 +415,8 @@ Evoque.control = (function (self)
             aDown.addClass('sub');
             aDown.setAttr('href', 'javascript:void(0);');
             aDown.addEventHandler('click', function () {
-                var val = input1.getVal().toDate();
-                if (val > today)
+                var val = input1.getVal().toDate().getYMD();
+                if (val - today > 0)
                 {
                     val.addDay(-1);
                     if (beforeValChange.call(input, -1) === false)
@@ -431,7 +431,7 @@ Evoque.control = (function (self)
             aUp.addClass('add');
             aUp.setAttr('href', 'javascript:void(0);');
             aUp.addEventHandler('click', function () {
-                var val = input1.getVal().toDate();
+                var val = input1.getVal().toDate().getYMD();
                 val.addDay(1);
                 if (beforeValChange.call(input, 1) === false)
                 {
@@ -460,8 +460,8 @@ Evoque.control = (function (self)
 
             function setUpDownStatus()
             {
-                var val = input1.getVal().toDate();
-                if (val > today)
+                var val = input1.getVal().toDate().getYMD();
+                if (val - today > 0)
                 {
                     aDown.removeClass('disabled');
                 }
@@ -477,7 +477,7 @@ Evoque.control = (function (self)
                     {
                         v = today;
                     }
-                    var flg = v == input1.getVal().toDate();
+                    var flg = v == input1.getVal().toDate().getYMD();
                     if (flg)
                     {
                         return;
@@ -609,6 +609,7 @@ Evoque.control = (function (self)
         initPoint: 0,
         description: [],
         readonly: false,
+        showDescription: false,
         onPointChanged: function (arg) {}
     };
 
@@ -649,6 +650,8 @@ Evoque.control = (function (self)
         {
             pointLevels = defaultOption_Rate.pointLevels;
         }
+
+        var showDescription = option.getValueOfProperty('showDescription', defaultOption_Rate);
         var initPoint = option.getValueOfProperty('initPoint', defaultOption_Rate);
         var description = option.getValueOfProperty('description', defaultOption_Rate);
         var readonly = option.getValueOfProperty('readonly', defaultOption_Rate);
@@ -706,6 +709,9 @@ Evoque.control = (function (self)
         var desSpan = document.createElement('span');
         var $desSpan = lexus(desSpan);
         $desSpan.addClass('description');
+        if (showDescription === false) {
+            $desSpan.hide();
+        }
         div.appendChild(desSpan);
         resetInitPoint(true);
 

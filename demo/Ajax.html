@@ -4,12 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cookie.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Ajax.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Cookie.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         $(function () {
         });
@@ -18,7 +18,6 @@
             $.ajax.get({
                 url : 'http://appcache.evoque.me/api/ajaxdata',
                 returnType : 'json',
-                crossOrigin: true,
                 onSuccess : function (returnObj) {
                     $.dialog.alert(JSON.stringify(returnObj));
                 },
@@ -29,25 +28,22 @@
         }
         function postData() {
             $.ajax.post({
-                url : 'http://appcache.evoque.me/AjaxMvcData/PostData',
+                url : 'http://appcache.evoque.me/api/ajaxdata',
                 parameter: {
-                    Id: '10001',
-                    Name: 'Test'
+                    id: '0001',
+                    Name: '一号'
                 },
-                crossOrigin: true,
                 onSuccess : function (returnObj) {
                     $.dialog.alert(returnObj);
                 },
                 onFail : function (e) {
-                    //$.dialog.alert(e.type);
+                    $.dialog.alert(e.type);
                 }
             });
         }
         function getDataWithAuth() {
             $.ajax.get({
                 url : 'http://appcache.evoque.me/api/ajaxcookie/username',
-                crossOrigin: true,
-                withCredentials: true,
                 onSuccess : function (returnObj) {
                     var cookieValue = $.cookie.get('CookieId');
                     if ($.isStringEmpty(cookieValue)) {
@@ -64,12 +60,11 @@
         }
         function postDataWithAuth() {
             $.cookie.set('CookieId', 'password', {
+                expires: (new Date()).addDay(1),
                 domain: '.evoque.me'
-            })
+            });
             $.ajax.post({
-                url : 'http://appcache.evoque.me/api/ajaxcookie',
-                crossOrigin: true,
-                withCredentials: true,
+                url : 'http://appcache.evoque.me/api/ajaxcookie/',
                 onSuccess : function (returnObj) {
                     $.dialog.alert(returnObj);
                 },
@@ -78,6 +73,10 @@
                 }
             });
         }
+
+        function UCAjax() {
+            $.loadPage('http://a.app.qq.com/o/simple.jsp?pkgname=com.tujia.hotel');
+        }
     </script>
 </head>
 <body>
@@ -85,5 +84,6 @@
     <button onclick="postData();">跨域Post</button><br>
     <button onclick="getDataWithAuth();">跨域Get，带Cookie</button><br>
     <button onclick="postDataWithAuth();">跨域Post，带Cookie</button><br>
+    <button onclick="UCAjax();">下载Android途家App</button><br>
 </body>
 </html>

@@ -105,18 +105,26 @@ Evoque.extend('dialog', (function (self) {
         if (lexus.isObjectNull(ctx)) {
             return;
         }
+        var timeoutSpan = 60;
+        var timeoutHandler = function () {
+            ctx.show({
+                content: '抱歉，你的网络不太好，请稍后重新刷新页面!'
+            });
+        };
+        //草泥马的UC浏览器在showLoading页面跳转时，有时候会不触发pageHide事件，导致这个loading层关不掉，只能等待timeout。为了屏蔽这个Fucking Problem，如果是UC浏览器的场景，在callback不为空的时候，将timeout时间缩短至1秒。狗日的UC！小米自带的浏览器也是这熊德行，android的浏览器都干掉
+        if (lexus.checkType(callback) === type.eFunction && lexus.agent() === mAgent.android)
+        {
+            timeoutSpan = 1;
+            timeoutHandler = function () { };
+        }
         ctx.show({
             content: loadingMsg,
             onQuiting: function () {
                 return false;
             },
             autoClose: false,
-            timeout: 60,
-            onTimeout: function () {
-                ctx.show({
-                    content: '抱歉，你的网络不太好，请稍后重新刷新页面!'
-                });
-            },
+            timeout: timeoutSpan,
+            onTimeout: timeoutHandler,
             layoutVersion: 'plain',
             __source: showSource.messageBox
         }, callback);
@@ -163,7 +171,7 @@ Evoque.extend('dialog', (function (self) {
     };
 
     /**
-     * 关闭所有文本框，关联在全局$对象上
+     * 关闭所有文本框，关联在全局lexus对象上
      */
     lexus.closeAllDialogs = function () {
         for (var pName in dialogCache) {
@@ -237,7 +245,7 @@ Evoque.extend('dialog', (function (self) {
                 /*objStyle.removeProperty('position');
                 objStyle.removeProperty('top');
                 objStyle.removeProperty('width');*/
-                //window.scrollTo(0, currentScrollTop);
+                window.scrollTo(0, currentScrollTop);
             }
         };
     }());
@@ -287,6 +295,13 @@ Evoque.extend('dialog', (function (self) {
         var originalDirection = 'center';
 
         var scrollFrame = null;
+
+        //dialog在页面顶部时的样式class
+        var topDialogClassName = 'J-pop-box-t';
+        if (lexus.app() === mApp.weixin)
+        {
+            topDialogClassName = 'J-pop-box-wx';
+        }
 
         function exeShowContext() {
             var ctx = showContextSeq.shift();
@@ -356,7 +371,7 @@ Evoque.extend('dialog', (function (self) {
                 if (o === originalOrientation) {
                     dialogObj.style.width = originalDialogWidth + 'px';
                     if (originalDirection === 'center') {
-                        $dialog.removeClass('J-pop-box-t');
+                        $dialog.removeClass(topDialogClassName);
                     }
                 }
                 else {
@@ -364,7 +379,7 @@ Evoque.extend('dialog', (function (self) {
                     if (originalDirection === 'center')
                     {
                         if (dialogObj.clientHeight > windowHeight) {
-                            $dialog.addClass('J-pop-box-t');
+                            $dialog.addClass(topDialogClassName);
                         }
                     }
                 }
@@ -553,7 +568,7 @@ Evoque.extend('dialog', (function (self) {
             }
             lexus(dialogObj).addClass('J-pop-box');
             if (direction === 'top') {
-                lexus(dialogObj).addClass('J-pop-box-t');
+                lexus(dialogObj).addClass(topDialogClassName);
             }
             if (!lexus.isStringEmpty(buttonProperty) || customButtonProperty.length > 0)
             {
@@ -661,7 +676,7 @@ Evoque.extend('dialog', (function (self) {
             //show出来之后再判断下高度，超长则更改dialog的定位
             if (originalDirection === 'center' && originalDialogHeight > originalWindowHeight) {
                 originalDirection = 'top';
-                lexus(dialogObj).addClass('J-pop-box-t');
+                lexus(dialogObj).addClass(topDialogClassName);
             }
         }
 

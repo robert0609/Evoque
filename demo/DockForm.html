@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="EvoqueEnableTapEvent" content="false">
+    <meta name="EvoqueEnableTapEvent" content="true">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <!--<script type="text/javascript" src="../src/js/Evoque.js"></script>-->
@@ -10,15 +10,19 @@
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cache.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.DockForm.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.ScrollBox.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.DockForm.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.ScrollBox.css" />
     <script type="text/javascript">
         $(function () {
+            //$('#dockForm').setStyle('height', document.documentElement.clientHeight + 'px');
             $('#b1')[0].addEventListener('click', function () {
                 console.debug('click is happened!');
                 $('#dockForm').showDockForm({
                     direction: 'bottom',
                     onShow: function () {
                         console.debug('form show');
+                        $('#dockForm').scrollBox.create();
                     },
                     onHide: function () {
                         console.debug('form hide');
@@ -42,12 +46,12 @@
         }
     </script>
 </head>
-<body>
+<body style="height: 5000px;">
     <header>Header!!!!!!!!!!!!!</header>
     <div id="b1" style="width: 200px; height: 200px; background-color: green;">Click me!</div>
     <div class="touchable" style="border-color: green; border-width: 2px; border-style: solid; width: 300px;height: 200px; display: none;">Touchable Element 1</div>
     <!--<div class="dockform-dg-div" style="background-color: blue; bottom: 0; left: 0; width: 100%; height: 200px; -webkit-transform: translateY(0%);">blue</div>-->
-    <section id="dockForm" style="background-color: #1e90ff; display: none;height: 400px; overflow: auto;">
+    <section id="dockForm" style="background-color: #1e90ff; display: none; height: 400px;">
         <div>
 
             黄兴国的动作也不得不有了变化。一开始他接触媒体知无不言，到后来对于媒体造成的过大影响力也会有所顾忌。他原来可以说领导一个“维权小组”，到后来声称“我们就是沃尔玛工会委员会，不是‘维权小组’，这是统一的口径”。工会的一名委员在讨论中说，以工会的名义组织起维权活动，等于是把总工会绑上了维权的战车，这样各方都投鼠忌器，“要是以其他的名义，早就被打压下去了”。

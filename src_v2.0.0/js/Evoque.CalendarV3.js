@@ -113,7 +113,7 @@ Evoque.extend('calendarV3', (function (self) {
         var minDay = Number(minDate.getDate());
         var minWeek = Number(minDate.getDay());
         if (maxDate.equalMin()) {
-            maxDate = new Date(minYear, minMonth + 12, minDay - 1);
+            maxDate = new Date(minYear, minMonth, minDay + 180);
         }
         var maxYear = Number(maxDate.getFullYear());
         var maxMonth = Number(maxDate.getMonth());
@@ -230,8 +230,8 @@ Evoque.extend('calendarV3', (function (self) {
         var bodyTableWrapper = document.createElement('div');
         var $bodyTableWrapper = lexus(bodyTableWrapper);
         var _agent = navigator.userAgent.toLowerCase();
-        $bodyTableWrapper.addClass('m-calendar-wrapper');
-        if (_agent.indexOf('iphone os 8_1_2') < 0)
+        $bodyTableWrapper.addClass('m-calendar-wrapper'); 
+        if (_agent.indexOf('iphone os 8_1') < 0 && _agent.indexOf('iphone os 8_2') < 0)
         {
             $bodyTableWrapper.addClass('m-calendar-wrapper-niubi');
         }
@@ -755,7 +755,13 @@ Evoque.extend('calendarV3', (function (self) {
                             scrollToMonth(minDate);
                         }
                     },
-                    onHide: function () {}
+                    onHide: function () {
+                        if (lexus(headDiv).getClassList().contains('m-calendar-month-show'))
+                        {
+                            lexus(headDiv).removeClass('m-calendar-month-show');
+                            lexus(bodyDiv).removeClass('m-calendar-month-show');
+                        }
+                    }
                 });
             },
             findDayCell: function (date) {
@@ -967,7 +973,7 @@ Evoque.extend('poper', (function (self) {
             default:
                 div.style.left = '0';
                 div.style.top = '0';
-                div.style.width = docWidth + 'px';
+                div.style.width = '100%';
                 break;
         }
         var formShowCallback = null;

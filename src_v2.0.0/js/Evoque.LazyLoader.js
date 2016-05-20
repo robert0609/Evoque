@@ -28,11 +28,13 @@ lexus.extend('lazyLoader', (function (self) {
                     currentTop: -1,
                     currentBottom: -1
                 };
-                if (!obj.isHide) {
-                    var rec = this.getBoundingClientRect();
-                    obj.currentTop = scrollTop + rec.top;
-                    obj.currentBottom = scrollTop + rec.bottom;
+                //隐藏的img不计入监控
+                if (obj.isHide) {
+                    return;
                 }
+                var rec = this.getBoundingClientRect();
+                obj.currentTop = scrollTop + rec.top;
+                obj.currentBottom = scrollTop + rec.bottom;
                 lazyImgList.push(obj);
                 this.__lazyImgListFlag = true;
             });
@@ -59,13 +61,16 @@ lexus.extend('lazyLoader', (function (self) {
                 {
                     var defaultSrc = obj.imgObj.getAttr('src');
                     obj.imgObj.cache().set('defaultSrc', defaultSrc);
-                    obj.imgObj.addEventHandler('error', function () {
-                        $(this).setAttr('src', $(this).cache().get('defaultSrc'));
-                    });
+                    obj.imgObj.addEventHandler('error', imageLoadError);
                     obj.imgObj.setAttr('src', obj.imgObj.getAttr(imgSrcAttrName));
                     obj.isLoaded = true;
                 }
             }
+        }
+
+        function imageLoadError() {
+            $(this).setAttr('src', $(this).cache().get('defaultSrc'));
+            $(this).removeEventHandler('error', imageLoadError);
         }
 
         function getCurrentScrollTop() {
@@ -100,11 +105,13 @@ lexus.extend('lazyLoader', (function (self) {
                         currentTop: -1,
                         currentBottom: -1
                     };
-                    if (!obj.isHide) {
-                        var rec = this.getBoundingClientRect();
-                        obj.currentTop = scrollTop + rec.top;
-                        obj.currentBottom = scrollTop + rec.bottom;
+                    //隐藏的img不计入监控
+                    if (obj.isHide) {
+                        return;
                     }
+                    var rec = this.getBoundingClientRect();
+                    obj.currentTop = scrollTop + rec.top;
+                    obj.currentBottom = scrollTop + rec.bottom;
                     lazyImgList.push(obj);
                     this.__lazyImgListFlag = true;
                 });

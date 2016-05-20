@@ -65,6 +65,28 @@ lexus.extend('browser', (function (self) {
         }
     };
 
+    try
+    {
+        Object.defineProperty(location, 'query', {
+            get: function () {
+                if (!location.__queryDic) {
+                    location.__queryDic = queryStr2Dic(location.search);
+                }
+                return location.__queryDic;
+            }
+        });
+    }
+    catch (e)
+    {
+        //经过测试，ios7版本的safari中不支持使用Object.defineProperty方法在location对象上扩展属性，会报出异常“Attempting to change access mechanism for an unconfiguable property”，故这样来扩展
+        window.location.query = (function () {
+            if (!location.__queryDic) {
+                location.__queryDic = queryStr2Dic(location.search);
+            }
+            return location.__queryDic;
+        }());
+    }
+
     /**
      * URL操作工具
      */
@@ -75,16 +97,28 @@ lexus.extend('browser', (function (self) {
             }
             var queryDic = {};
             var idx = url.indexOf('?');
-            if (idx > -1)
-            {
-                queryDic = queryStr2Dic(url.substr(idx));
-                url = url.substr(0, idx);
+            var anchorIdx = url.indexOf('#');
+            var anchor = '';
+            if (idx > -1) {
+                if (anchorIdx > -1) {
+                    url = url.substr(0, idx);
+                    queryDic = queryStr2Dic(url.substr(idx, anchorIdx - idx));
+                    anchor = url.substr(anchorIdx);
+                }
+                else {
+                    queryDic = queryStr2Dic(url.substr(idx));
+                    url = url.substr(0, idx);
+                }
+            }
+            else if (anchorIdx > -1) {
+                url = url.substr(0, anchorIdx);
+                anchor = url.substr(anchorIdx);
             }
             for (var p in query)
             {
                 queryDic[p] = query[p];
             }
-            return url + queryDic2Str(queryDic);
+            return url + queryDic2Str(queryDic) + anchor;
         },
         removeParameter: function (parameterNames, url) {
             if (lexus.isStringEmpty(url)) {
@@ -92,17 +126,30 @@ lexus.extend('browser', (function (self) {
             }
             var queryDic = {};
             var idx = url.indexOf('?');
+            var anchorIdx = url.indexOf('#');
+            var anchor = '';
             if (idx > -1)
             {
-                queryDic = queryStr2Dic(url.substr(idx));
-                url = url.substr(0, idx);
+                if (anchorIdx > -1) {
+                    url = url.substr(0, idx);
+                    queryDic = queryStr2Dic(url.substr(idx, anchorIdx - idx));
+                    anchor = url.substr(anchorIdx);
+                }
+                else {
+                    queryDic = queryStr2Dic(url.substr(idx));
+                    url = url.substr(0, idx);
+                }
+            }
+            else if (anchorIdx > -1) {
+                url = url.substr(0, anchorIdx);
+                anchor = url.substr(anchorIdx);
             }
             lexus(parameterNames).each(function () {
                 if (this in queryDic) {
                     delete queryDic[this];
                 }
             });
-            return url + queryDic2Str(queryDic);
+            return url + queryDic2Str(queryDic) + anchor;
         }
     };
     function queryStr2Dic(str) {

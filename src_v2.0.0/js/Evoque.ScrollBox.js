@@ -65,20 +65,11 @@ Evoque.extend('scrollBox', (function (self) {
         var scrollEnd = 0 - contentRange + frameRange;
 
         var position = 0;
-        var dragSpeed = 0;
-        var dragTime = 0;
         $content.drag(function (e) {
             var m = e.detail.moveY;
             if (direction === 'horizontal') {
                 m = e.detail.moveX;
             }
-            var currentTime = (new Date()).getTime();
-            if (dragTime > 0)
-            {
-                dragSpeed = m * 1000 / (currentTime - dragTime);
-            }
-            dragTime = currentTime;
-            //console.debug('drag event: dragTime-' + dragTime + ';dragSpeed-' + dragSpeed);
             position += m;
             if (position > scrollStart) {
                 position = scrollStart;
@@ -87,10 +78,6 @@ Evoque.extend('scrollBox', (function (self) {
                 position = scrollEnd;
             }
             transform(position);
-        });
-        $content.addEventHandler('touchend', function () {
-            dragTime = 0;
-            dragSpeed = 0;
         });
         if (direction === 'horizontal') {
             $content.swipeLeft(function () {
@@ -112,15 +99,8 @@ Evoque.extend('scrollBox', (function (self) {
             this.style.removeProperty('-webkit-transition');
         });
 
-        function getCacheDistance() {
-            var d = 300;
-            if (dragSpeed > 0) {
-                d = dragSpeed * 0.3;
-            }
-            return d;
-        }
+        var cacheDistance = 300;
         function move(endFlag) {
-            var cacheDistance = getCacheDistance();
             var endPosition = position - cacheDistance;
             if (endPosition < scrollEnd) {
                 endPosition = scrollEnd;

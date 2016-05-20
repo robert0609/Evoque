@@ -85,8 +85,6 @@
 .m-calendar-title {
     position:relative;
     z-index:1;
-    display:-webkit-box;
-    -webkit-box-sizing:border-box;
     height:100%;
     overflow:hidden;
     height:48px;
@@ -94,16 +92,14 @@
     font-size:20px;
     border-top:1px solid #ccc;
     background-color: #fff;
-    -webkit-box-align:center;
-    -webkit-box-pack:center;
+    text-align:center;
 }
 .m-calendar-title p {
+    margin-top:9px;
     position:relative;
     display:inline-block;
     overflow:visible;
     padding:0 20px;
-    text-align:center;
-    -webkit-backface-visibility:hidden
 }
 .m-calendar-title em {
     display:inline-block;
@@ -154,6 +150,7 @@
     transform:translateY(0);
     -webkit-transition: all .2s ease-out;
     transition: all .2s ease-out;
+    z-index: 10;
 }
 .m-calendar-month ul{
     overflow: hidden;
@@ -202,8 +199,8 @@
 }
 /*月份选择显示动画*/
 .m-calendar-month-show .m-calendar-month{
-    -webkit-transform:translateY(100%);
-    transform:translateY(100%);
+    -webkit-transform:translate3D(0,100%,0);
+    transform:translate3D(0,100%,0);
 }
 
 /*星期*/
@@ -211,7 +208,6 @@
     border-top:1px solid #ccc;
     border-bottom:1px solid #ccc;
     color:#333;
-    -webkit-transform:translate3d(0,0,0);
     overflow: hidden;
 }
 .m-calendar-weekday div {
@@ -302,6 +298,10 @@
 /*当天*/
 .m-calendar-days .today em{
     color: #f60;
+}
+/*满房*/
+.m-calendar-days .fullInventory{
+    color: #dadee5;
 }
 /*入住、离店日期*/
 .m-calendar-days .selected{

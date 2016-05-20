@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<span class="keyword">function</span> _end(e) {
+<span class="comment">//[1]</span>
+<span class="comment">//进行必要的计算</span>
+<span class="keyword">var</span> duration = utils.getTime() - <span class="keyword">this</span>.startTime,
+newY = Math.round(<span class="keyword">this</span>.y),
+distanceY = Math.abs(newY - <span class="keyword">this</span>.startY);
+
+<span class="keyword">this</span>.endTime = utils.getTime();
+
+<span class="comment">//[2]</span>
+<span class="comment">//最后的位置也要滑过去</span>
+<span class="keyword">this</span>.scrollTo(newX, newY);  <span class="comment">// ensures that the last position is rounded</span>
+
+<span class="comment">//[3]</span>
+<span class="comment">//实现惯性滑动</span>
+<span class="keyword">if</span> ( <span class="keyword">this</span>.options.momentum && duration < <span class="number">300</span> ) {
+momentumY = <span class="keyword">this</span>.hasVerticalScroll ? utils.momentum(<span class="keyword">this</span>.y, <span class="keyword">this</span>.startY, duration, <span class="keyword">this</span>.maxScrollY, <span class="keyword">this</span>.options.bounce ? <span class="keyword">this</span>.wrapperHeight : <span class="number">0</span>, <span class="keyword">this</span>.options.deceleration) : { destination: newY, duration: <span class="number">0</span> };
+newY = momentumY.destination;
+time = Math.max(momentumX.duration, momentumY.duration);
+<span class="keyword">this</span>.isInTransition = <span class="number">1</span>;
+}
+
+<span class="keyword">if</span> ( newX != <span class="keyword">this</span>.x || newY != <span class="keyword">this</span>.y ) {
+<span class="keyword">this</span>.scrollTo(newX, newY, time, easing);
+<span class="keyword">return</span>;
+}
+
+<span class="comment">//[4]</span>
+<span class="comment">//触发滑动结束事件</span>
+<span class="keyword">this</span>._execEvent(<span class="string">'scrollEnd'</span>);
+}
+</body>
+</html>

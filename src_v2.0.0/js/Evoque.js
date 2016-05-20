@@ -99,7 +99,8 @@ var Evoque = (function (self)
         _mApp = mApp._360browser;
     }
     var _mDevice = mDevice.other;
-    if (_agent.indexOf('m353') > -1) {
+    if (_agent.indexOf('m353') > -1 || _agent.indexOf('m351') > -1)
+    {
         _mDevice = mDevice.mx3;
     }
     else if (_agent.indexOf('gt-i9100g') > -1 || _agent.indexOf('gt-i9158p') > -1 || _agent.indexOf('sm-g9006w') > -1) {
@@ -477,7 +478,7 @@ var Evoque = (function (self)
         var args = arguments;
         return this.replace(/\{(\d+)\}/g, function (m, g) {
             var v = args[parseInt(g)];
-            return v == undefined ? m : v;
+            return v == undefined ? "" : v;
         });
     };
 
@@ -898,32 +899,39 @@ var Evoque = (function (self)
     {
         //DOM标准
         if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
-            window.addEventListener('scroll', function (e) {
-                var bodyH = document.body.scrollHeight;
-                var winH = document.documentElement.clientHeight;
-                if (bodyH <= winH)
+            if (_hasTouchEvent) {
+                document.body.addEventListener('touchmove', callback);
+            }
+            else {
+                window.addEventListener('scroll', callback);
+            }
+        }
+
+        function callback(e) {
+            var bodyH = document.body.scrollHeight;
+            var winH = document.documentElement.clientHeight;
+            if (bodyH <= winH)
+            {
+                return;
+            }
+            var h = bodyH - winH;
+            var bo = h / 4;
+            if (__fetcher.checkType(checkHandle) === type.eFunction)
+            {
+                if (checkHandle.call(window) === false)
                 {
                     return;
                 }
-                var h = bodyH - winH;
-                var bo = h / 4;
-                if (__fetcher.checkType(checkHandle) === type.eFunction)
-                {
-                    if (checkHandle.call(window) === false)
-                    {
-                        return;
-                    }
-                }
-                var t = document.documentElement.scrollTop;
-                if (t == 0)
-                {
-                    t = document.body.scrollTop;
-                }
-                if (h - t <= bo)
-                {
-                    fn.call(window, { currentScrollTop: t });
-                }
-            });
+            }
+            var t = document.documentElement.scrollTop;
+            if (t == 0)
+            {
+                t = document.body.scrollTop;
+            }
+            if (h - t <= bo)
+            {
+                fn.call(window, { currentScrollTop: t });
+            }
         }
     };
 
@@ -1093,6 +1101,58 @@ var Evoque = (function (self)
             }
         }
         return uuid.join('');
+    };
+
+    //动作时间线
+    var actionLine = {};
+    /**
+     * 触发某个动作，整个页面周期只触发一次
+     * @param action 动作标识
+     */
+    __fetcher.trigger = function (action) {
+        if (actionLine.hasOwnProperty(action)) {
+            var context = actionLine[action];
+            if (context.triggered) {
+                throw '该动作' + action + '已经触发，不能再次触发';
+            }
+            context.triggered = true;
+            __fetcher(context.callbacks).each(function () {
+                this.call();
+            });
+            context.callbacks = [];
+        }
+        else {
+            actionLine[action] = {
+                callbacks: [],
+                triggered: true
+            };
+        }
+    };
+
+    /**
+     * 等待某个动作被触发之后，执行回调
+     * @param action 动作标识
+     * @param callback 回调
+     */
+    __fetcher.waitingFor = function (action, callback) {
+        if (__fetcher.checkType(callback) !== type.eFunction) {
+            callback = function () { };
+        }
+        if (actionLine.hasOwnProperty(action)) {
+            var context = actionLine[action];
+            if (context.triggered) {
+                callback.call();
+            }
+            else {
+                context.callbacks.push(callback);
+            }
+        }
+        else {
+            actionLine[action] = {
+                callbacks: [callback],
+                triggered: false
+            };
+        }
     };
     //Global method end
 
@@ -2136,6 +2196,26 @@ var Evoque = (function (self)
             }
         }
     }
+
+    __fetcher.keepPageState = function (restoreCallback, saveCallback) {
+        var shareState = {};
+
+        if (restoreCallback != null) {
+            window.addEventListener("pageshow", function (event) {
+                if (!event.persisted) {
+                    return;
+                }
+
+                restoreCallback.call(this, event, shareState);
+            });
+        }
+
+        if (saveCallback != null) {
+            window.addEventListener("pagehide", function (event) {
+                saveCallback.call(this, event, shareState);
+            });
+        }
+    };
 
     /**
      * 扩展全局功能。扩展之后调用方式：$.name.method()

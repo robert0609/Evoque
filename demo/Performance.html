@@ -4,17 +4,18 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Performance.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Performance.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         $.load(function () {
-            $.performance.report();
+            //$.performance.report();
         });
     </script>
 </head>
 <body>
+    <button onclick="$.performance.report();">show</button>
     <div>Performance API</div>
 </body>
 </html>

@@ -4,12 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Browser.js"></script>
     <script type="text/javascript">
-        $(function () {
-            $('#ad').html(location.hash);
-        });
-
         function addSearch()
         {
             alert($.checkType(NaN));
@@ -22,10 +19,15 @@
 //                location.search += 's=5';
 //            }
         }
+
+        function showQuery() {
+            $('#ad').text(JSON.stringify(location.query));
+        }
     </script>
 </head>
 <body>
 <button onclick="addSearch();">addSearch</button>
+<button onclick="showQuery();">showQuery</button>
 <div id="ad"></div>
 </body>
 </html>

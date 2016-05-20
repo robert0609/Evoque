@@ -6,45 +6,75 @@
     <title></title>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cache.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.CalendarV3.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.CalendarV2.js"></script>
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
     <link rel="stylesheet" href="../src_v1.0.1/style/webapp.css">
-    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.CalendarV3.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.CalendarV2.css" />
     <script type="text/javascript">
         function show() {
-            $('#a').calendarV3.setActiveDate(new Date(2015, 8, 28), new Date(2015, 8, 30));
-            $('#a').calendarV3.show();
-            //$('#a').calendarV2.setActiveDate(new Date(2014, 7, 28), new Date(2014, 8, 20));
+//            $.dialog.showModalDialog({
+//                //对话框内容，可以是文本字符串，也可以是要显示的div的id
+//                content:'a',
+//                autoClose: false,
+//                onDialogShowed: function () {
+//                    $('#a').calendarV2.create({
+//                        startDate: new Date(2013, 7, 13),
+//                        displayMode: 'waterfall',
+//                        onSelected: function (e, arg) {
+//                            $('#a').alert(arg.selectDate);
+//                        }
+//                    });
+//                }
+//            });
+            $('#a').calendarV2.setActiveDate(new Date(2014, 7, 28), new Date(2014, 8, 20));
         }
         function reset() {
-
-            //$('#a').calendarV2.reset();
+            $('#a').calendarV2.reset();
         }
 
 
         $(function () {
-            $('#a').calendarV3.create({
-//                startDate: new Date(2014, 4, 13),
-//                endDate: new Date(2014, 5, 13),
-                displayMode: 'waterfall',
-                pickMode: 'range',
+            $('#a').calendarV2.create({
+                startDate: new Date(1980, 4, 13),
+                endDate: new Date(2014, 5, 13),
+                displayMode: 'switch',
+                pickMode: 'single',
                 onRenderDateTd: function (arg) {
                     var td = arg.renderTarget;
                     var $td = $(td);
                     var tdDate = arg.tdDate;
-                    var tder = arg.controller;
                     var today = (new Date()).getYMD();
+                    var d = tdDate.getDate();
+                    $td.text(d);
+                    var span = document.createElement('span');
+                    td.appendChild(span);
                     var minus = tdDate - today;
                     if (minus == 0)
                     {
-                        tder.today();
-                        tder.title = '今日';
+                        $(span).text('今日');
                     }
                     else if (minus == 86400000)
                     {
-                        tder.today();
-                        tder.title = '明日';
+                        $(span).text('明日');
+                    }
+                },
+                onSelected: function (e, arg) {
+                    if ($.checkType(arg.selectDate) === type.eDate) {
+                        alert(arg.selectDate.toCustomString());
+                    }
+                    else {
+                        var $s = arg.findDayTd(arg.selectDateStart);
+                        $s.removeClass('checkout');
+                        $s.addClass('checkin');
+                        $s.getChild('span').text('入住');
+                        if (!$.isObjectNull(arg.selectDateEnd))
+                        {
+                            var $e = arg.findDayTd(arg.selectDateEnd);
+                            $e.removeClass('checkin');
+                            $e.addClass('checkout');
+                            $e.getChild('span').text('离店');
+                        }
                     }
                 }
             });
@@ -54,8 +84,7 @@
 <body>
 <button onclick="show();">show</button>
 <button onclick="reset();">reset</button>
-<div id="a" style="display: none;"></div>
-
+<div id="a"></div>
 <div id="overflow" style="height: 400px; overflow: auto;">
 </div>
 

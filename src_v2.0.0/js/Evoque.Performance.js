@@ -49,9 +49,9 @@ lexus.extend('performance', (function (self) {
         panel = document.createElement('div');
         panel.id = 'performance_panel';
         panel.style.textAlign = 'left';
-        panel.style.height = document.documentElement.clientHeight * 0.8 + 'px';
+        //panel.style.height = document.documentElement.clientHeight * 0.8 + 'px';
         panel.style.backgroundColor = '#FFF';
-        panel.style.overflow = 'auto';
+        //panel.style.overflow = 'auto';
         document.body.appendChild(panel);
     }
 

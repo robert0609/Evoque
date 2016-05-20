@@ -44,26 +44,22 @@ Evoque.extend('dockForm', (function (self) {
 
     var evoquePage = (function () {
         var currentScrollTop = 0;
-        function disableScrollHandler(e)
-        {
-            lexus.cancelDefault(e);
-        }
         return {
             fixBackground: function () {
-                /*currentScrollTop = document.body.scrollTop;
-                var objStyle = document.body.style;
-                objStyle.setProperty('position', 'fixed');
-                objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
-                objStyle.setProperty('width', '100%');*/
-                lexus(document.body).addEventHandler('touchstart', disableScrollHandler);
+                //currentScrollTop = document.body.scrollTop;
+                //var objStyle = document.body.style;
+                //objStyle.setProperty('position', 'fixed');
+                //objStyle.setProperty('top', (0 - currentScrollTop) + 'px');
+                //objStyle.setProperty('width', '100%');
+                ////ios6的safari上面发现在一个长页面的最底部的按钮触发弹层时，会先白屏，然后随便滚动一下就会恢复原状，不清楚原因，先暂时手动触发下页面滚动
+                //window.scrollTo(0, 0);
             },
             restoreFixBackground: function () {
-                /*var objStyle = document.body.style;
-                objStyle.removeProperty('position');
-                objStyle.removeProperty('top');
-                objStyle.removeProperty('width');
-                window.scrollTo(0, currentScrollTop);*/
-                lexus(document.body).removeEventHandler('touchstart', disableScrollHandler);
+                //var objStyle = document.body.style;
+                //objStyle.removeProperty('position');
+                //objStyle.removeProperty('top');
+                //objStyle.removeProperty('width');
+                //window.scrollTo(0, currentScrollTop);
             }
         };
     }());

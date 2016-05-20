@@ -4,9 +4,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src/js/Evoque.Container.js"></script>
-    <link rel="stylesheet" href="../src/style/Evoque.Container.css">
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Ajax.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Container.js"></script>
+    <link rel="stylesheet" href="../src_v2.0.0/style/Evoque.Container.css">
     <script type="text/javascript">
 
         var container;
@@ -16,11 +17,28 @@
             container = $.container.create({
                 divIdList: ['d1', 'd2'],
                 startDivId: 'd1',
-                onShow: function () {},
+                onShow: function () {
+                    if (this.id === 'd1') {
+                        $.ajax.post({
+                            url : 'http://10.66.1.186:4002/AjaxMvcData/PostData',
+                            parameter: {
+                                Id: '10001',
+                                Name: 'Test'
+                            },
+                            crossOrigin: true,
+                            onSuccess : function (returnObj) {
+                                //$.dialog.alert(returnObj);
+                            },
+                            onFail : function (e) {
+                                //$.dialog.alert(e.type);
+                            }
+                        });
+                    }
+                },
                 onHide: function () {},
                 enableHistory: true,
-                switchEffect: 'right2left'
-                //switchEffect: 'bottom2top'
+                //switchEffect: 'right2left'
+                switchEffect: 'bottom2top'
             });
         });
         function click1()

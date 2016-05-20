@@ -4,26 +4,52 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <title></title>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cache.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Dialog.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/adapter/Evoque.Dialog.Adapter.js"></script>
-    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.ScrollBox.js"></script>
-    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.Dialog.css" />
-    <link rel="stylesheet" type="text/css" href="../src_v1.0.1/style/Evoque.ScrollBox.css" />
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Cache.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.ScrollBox.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.ScrollBox.css" />
     <script type="text/javascript">
         function click()
         {
-//            var i = 0;
-            //调用dialog控件显示
+            $('video').addEventHandler('play', function () {
+                $('video').addEventHandler('emptied', playFailed);
+                $('video').addEventHandler('error', playFailed);
+                $('video').addEventHandler('stalled', stalledHandler);
+            });
+            function playFailed() {
+                $.dialog.showMessageBox({
+                    content: 'videoPlayFailed'
+                });
+            }
+            function stalledHandler() {
+                $.dialog.showMessageBox({
+                    content: 'videoLoading'
+                });
+            }
+
             $.dialog.showModalDialog({
-                content:'article',
-                width:document.documentElement.clientWidth * 0.9,
-                onDialogShowed: function () {
-                    $('#articleScroll').scrollBox.create();
-                },
+                content: 'camera-dialog',
+                //弹层的布局样式版本:'plain', 'preset'. default: 'preset'
+                layoutVersion: 'plain',
+                enableFixBackground: true,
                 autoClose: false
             });
+            //$('#camera-dialog').show();
+
+
+//            var i = 0;
+            //调用dialog控件显示
+//            $.dialog.showModalDialog({
+//                content:'article',
+//                width:document.documentElement.clientWidth * 0.9,
+//                onDialogShowed: function () {
+//                    $('#articleScroll').scrollBox.create();
+//                },
+//                autoClose: false
+//            });
 //            window.setTimeout(function () {
 //                $.dialog.closeCurrentDialog();
 //            }, 2000);
@@ -139,7 +165,7 @@
 </head>
 <body style="height: 5000px;"><p>Result: <output id="result"></output></p>
     <a href="javascript:click()">click here, show dialogs!</a>
-
+<!--<video webkit-playsinline="webkit-playsinline" x-webkit-airplay="allow" width="100%" preload="auto" poster="http://10.2.13.78:2006/mobile/images/h5/houseDetail/video_bg1.jpg" src="http://r.live.360.cn/live_camera/36053728753/index.m3u8"></video>-->
     <div id="dialog" style="background-color: green; display: none; height: 700px;">
         <h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6>
         <button id="subBtn" onclick="showSub();">show sub dialog!</button>
@@ -173,5 +199,16 @@
 
     <iframe>
     </iframe>
+
+<div id="camera-dialog" style="display: none;">
+    <div id="">
+        <iframe style="width: 100%;" src="http://m.tujia.com">
+        </iframe>
+        <!--<p>一点点实践（把官网</p>-->
+        <!--<video webkit-playsinline="webkit-playsinline" x-webkit-airplay="allow" style="top: 0px;;" width="100%" preload="auto" poster11="http://10.2.13.78:2006/mobile/images/h5/houseDetail/video_bg1.jpg" src="http://r.live.360.cn/live_camera/36053728753/index.m3u8"></video>-->
+    </div>
+</div>
+
+
 </body>
 </html>

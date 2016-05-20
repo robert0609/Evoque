@@ -4,11 +4,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <script type="text/javascript" src="../src_v1.0.1/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v1.0.1/js/Evoque.Cookie.js"></script>
     <script type="text/javascript" src="../src/js/eDebugger.js"></script>
     <title>GUID</title>
     <script type="text/javascript">
         $(function () {
-            eDebugger.output($.guid());
+            $.cookie.set('testCookie', $.guid(), {
+                expires: e1,
+                domain: serverDomain
+            });
         });
     </script>
 </head>

@@ -13,9 +13,11 @@ lexus.extend('ajax', (function (self) {
         onSuccess : function (returnObj) {},
         onFail : function () {},
         // seconds
-        timeOut : 30,
-        crossOrigin: false,
-        withCredentials: false
+        timeOut: 30,
+        //默认开启跨域
+        crossOrigin: true,
+        withCredentials: true,
+        withTimestamp: true
     };
 
     var _cacheInstance = null;
@@ -55,6 +57,8 @@ lexus.extend('ajax', (function (self) {
             }
         };
         var urlTemp = option.getValueOfProperty('url', defaultOption);
+        //CORS跨域请求的URL如果是目录的话一定要以'/'结尾，否则在预检请求OPTIONS的时候会报：Response for preflight is invalid (redirect)
+        urlTemp = formatPath(urlTemp);
         var spliter = '';
         if (urlTemp.indexOf('?') > -1)
         {
@@ -65,20 +69,25 @@ lexus.extend('ajax', (function (self) {
             spliter = '?';
         }
         var parameterGet = option.getValueOfProperty('parameter', defaultOption);
-        var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
+        var crossOrigin = true;
         if (crossOrigin) {
             var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
             if (withCredentials) {
                 xmlhttp.withCredentials = 'true';
             }
         }
-        //针对IE对ajax请求结果的缓存机制，增加时间戳参数
-        parameterGet.timestamp = (new Date()).getTime();
-        xmlhttp.open('get', urlTemp + spliter + serializeQuery(parameterGet), true);
-        bindEvent(xmlhttp, option);
-        if (!crossOrigin) {
-            xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+        var withTimestamp = option.getValueOfProperty('withTimestamp', defaultOption);
+        if (withTimestamp)
+        {
+            //针对IE对ajax请求结果的缓存机制，增加时间戳参数
+            parameterGet.timestamp = (new Date()).getTime();
         }
+        xmlhttp.open('get', urlTemp + spliter + serializeQuery(parameterGet), true);
+        bindEvent(xmlhttp, option, {
+            url: urlTemp,
+            parameter: parameterGet
+        });
+        xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
         xmlhttp.send();
         if (!xmlhttp.evoque_sptTimeout)
         {
@@ -99,7 +108,7 @@ lexus.extend('ajax', (function (self) {
     {
         checkOption(option);
         option = lexus(option);
-        var crossOrigin = option.getValueOfProperty('crossOrigin', defaultOption);
+        var crossOrigin = true;
         var xmlhttp = new XMLHttpRequest();
         var fnResult = {
             abort: function () {
@@ -109,25 +118,31 @@ lexus.extend('ajax', (function (self) {
                 xmlhttp.abort();
             }
         };
-        xmlhttp.open('post', option.getValueOfProperty('url', defaultOption), true);
+        var urlTemp = option.getValueOfProperty('url', defaultOption);
+        //CORS跨域请求的URL如果是目录的话一定要以'/'结尾，否则在预检请求OPTIONS的时候会报：Response for preflight is invalid (redirect)
+        urlTemp = formatPath(urlTemp);
+        var parameterPost = option.getValueOfProperty('parameter', defaultOption);
+        xmlhttp.open('post', urlTemp, true);
         if (crossOrigin) {
             var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
             if (withCredentials) {
                 xmlhttp.withCredentials = 'true';
             }
         }
-        bindEvent(xmlhttp, option);
-        if (!crossOrigin) {
-            xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
-        }
+        bindEvent(xmlhttp, option, {
+            url: urlTemp,
+            parameter: parameterPost
+        });
+        xmlhttp.setRequestHeader('x-requested-with', 'XMLHttpRequest');
 
-        if (!crossOrigin && window.FormData) {
+        if (window.FormData)
+        {
             // 使用FormData传递post数据，无须设置Content-Type. xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-            xmlhttp.send(serializeForm(option.getValueOfProperty('parameter', defaultOption), option[0].form));
+            xmlhttp.send(serializeForm(parameterPost, option[0].form));
         }
         else {
             xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-            var pain = option.getValueOfProperty('parameter', defaultOption);
+            var pain = parameterPost;
             var frm = option[0].form;
             if (frm) {
                 for (var i = 0; i < frm.length; ++i)
@@ -158,6 +173,7 @@ lexus.extend('ajax', (function (self) {
     self.postCrossOrigin = function (option) {
         checkOption(option);
         option.crossOrigin = true;
+        option.withCredentials = true;
         return self.post(option);
     };
 
@@ -171,6 +187,50 @@ lexus.extend('ajax', (function (self) {
         {
             throw 'url is empty!';
         }
+    }
+
+    function formatPath(path) {
+        if (lexus.isStringEmpty(path)) {
+            return '';
+        }
+        var query = '';
+        var anchor = '';
+        if (path.indexOf('?') > 0) {
+            var arr = path.split('?');
+            path = arr[0];
+            query = arr[1];
+            if (query.indexOf('#') > 0) {
+                var arr1 = query.split('#');
+                query = arr1[0];
+                anchor = arr1[1];
+            }
+        }
+        else if (path.indexOf('#') > 0) {
+            var arr = path.split('#');
+            path = arr[0];
+            anchor = arr[1];
+        }
+
+        var isDirectory = true;
+        if (path.lastIndexOf('.') > 0) {
+            isDirectory = false;
+        }
+        var isAbsoluteUrl = /^https?:\/\/[^\/]/i.test(path);
+        var firstChar = path.charAt(0);
+        var lastChar = path.charAt(path.length - 1);
+        if (!isAbsoluteUrl && firstChar != '/') {
+            path = '/' + path;
+        }
+        if (isDirectory && lastChar != '/') {
+            path += '/';
+        }
+        if (!lexus.isStringEmpty(query)) {
+            path = path + '?' + query;
+        }
+        if (!lexus.isStringEmpty(anchor)) {
+            path = path + '#' + anchor;
+        }
+        return path;
     }
 
     function serializeQuery(parameter)
@@ -240,7 +300,7 @@ lexus.extend('ajax', (function (self) {
         return value;
     }
 
-    function bindEvent(xmlhttp, option)
+    function bindEvent(xmlhttp, option, debugInfo)
     {
         var returnType = option.getValueOfProperty('returnType', defaultOption).toLowerCase();
         var onSuccess = option.getValueOfProperty('onSuccess', defaultOption);
@@ -292,10 +352,15 @@ lexus.extend('ajax', (function (self) {
                     if (!isFailed)
                     {
                         isFailed = true;
+                        if (!$.isObjectNull(debugInfo)) {
+                            console.log(JSON.stringify(debugInfo));
+                            console.log('failed');
+                            console.log(xmlhttp.status);
+                        }
                         onFail({ type: 'failed', xhrContext: xmlhttp });
                     }
                 }
-                xmlhttp = null;
+                //xmlhttp = null;
             }
         };
         xmlhttp.onerror = function () {
@@ -306,25 +371,43 @@ lexus.extend('ajax', (function (self) {
             if (!isFailed)
             {
                 isFailed = true;
-                onFail({ type: 'error' });
+                if (!$.isObjectNull(debugInfo)) {
+                    console.log(JSON.stringify(debugInfo));
+                    console.log('error');
+                    console.log(xmlhttp.status);
+                }
+                onFail({ type: 'error', xhrContext: xmlhttp });
             }
-            xmlhttp = null;
+            //xmlhttp = null;
         };
         xmlhttp.ontimeout = function () {
             if (!isFailed)
             {
                 isFailed = true;
-                onFail({ type: 'timeout' });
+                if (!$.isObjectNull(debugInfo)) {
+                    console.log(JSON.stringify(debugInfo));
+                    console.log('timeout');
+                    console.log(xmlhttp.status);
+                }
+                onFail({ type: 'timeout', xhrContext: xmlhttp });
             }
-            xmlhttp = null;
+            //xmlhttp = null;
         };
         xmlhttp.onabort = function () {
+            //if (!xmlhttp.evoque_sptTimeout) {
+            //    clearTimeout(xmlhttp.timeoutId);
+            //}
             if (!isFailed)
             {
                 isFailed = true;
-                onFail({ type: 'abort' });
+                if (!$.isObjectNull(debugInfo)) {
+                    console.log(JSON.stringify(debugInfo));
+                    console.log('abort');
+                    console.log(xmlhttp.status);
+                }
+                onFail({ type: 'abort', xhrContext: xmlhttp });
             }
-            xmlhttp = null;
+            //xmlhttp = null;
         };
     }
 

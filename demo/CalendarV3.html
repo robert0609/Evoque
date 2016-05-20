@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Cache.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.CalendarV3.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
+    <link rel="stylesheet" href="../src_v2.0.0/style/webapp.css">
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.CalendarV3.css" />
+    <script type="text/javascript">
+        function show(e) {
+            //$('#a').calendarV3.setActiveDate(new Date(2015, 8, 28), new Date(2015, 8, 30));
+            $('#a').calendarV3.show({
+                onConfirm: function (arg) {
+                    var sd = arg.selectDateStart;
+                    var ed = arg.selectDateEnd;
+                    alert(sd.toCustomString() + '至' + ed.toCustomString());
+                }
+            });
+            //$('#a').calendarV2.setActiveDate(new Date(2014, 7, 28), new Date(2014, 8, 20));
+        }
+        function reset() {
+
+            $('#a').calendarV3.reset();
+        }
+
+
+        $(function () {
+            $('#a').calendarV3.create({
+                startDate: new Date(2015, 5, 24),
+                displayMode: 'waterfall',
+                pickMode: 'range',
+                onRenderDateTd: function (arg) {
+                    var td = arg.renderTarget;
+                    var $td = $(td);
+                    var tdDate = arg.tdDate;
+                    var tder = arg.controller;
+                    var today = (new Date()).getYMD();
+                    var minus = tdDate - today;
+                    if (minus == 0)
+                    {
+                        tder.today();
+                        tder.title = '今日';
+                    }
+                    else if (minus == 86400000)
+                    {
+                        tder.today();
+                        tder.title = '明日';
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<button onclick="show(event);">show</button>
+<button onclick="reset();">reset</button>
+<div id="a" style="display: none;"></div>
+
+<div id="overflow" style="height: 400px; overflow: auto;">
+</div>
+
+</body>
+</html>

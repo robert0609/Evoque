@@ -29,6 +29,9 @@
     </script>
     <script type="text/javascript">
         window.addEventListener('load', function () {
+
+            var oo = Object.getOwnPropertyDescriptor(window, 'location');
+            console.debug(oo);
             /*if (window.devicePixelRatio)
             {
                 eDebugger.outputVar('deviceSize', {
