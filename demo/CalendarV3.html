@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -6,15 +6,15 @@
     <title></title>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Cache.js"></script>
-    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.CalendarV3.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.CalendarV4.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
     <link rel="stylesheet" href="../src_v2.0.0/style/webapp.css">
-    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.CalendarV3.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.CalendarV4.css" />
     <script type="text/javascript">
         function show(e) {
-            //$('#a').calendarV3.setActiveDate(new Date(2015, 8, 28), new Date(2015, 8, 30));
-            $('#a').calendarV3.show({
+            //$('#a').calendarV4.setActiveDate(new Date(2015, 8, 28), new Date(2015, 8, 30));
+            $('#a').calendarV4.show({
                 onConfirm: function (arg) {
                     var sd = arg.selectDateStart;
                     var ed = arg.selectDateEnd;
@@ -25,12 +25,12 @@
         }
         function reset() {
 
-            $('#a').calendarV3.reset();
+            $('#a').calendarV4.reset();
         }
 
 
         $(function () {
-            $('#a').calendarV3.create({
+            $('#a').calendarV4.create({
                 startDate: new Date(2015, 5, 24),
                 displayMode: 'waterfall',
                 pickMode: 'range',

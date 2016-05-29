@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.SliderButton.css" />
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dom.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.SliderButton.js"></script>
+</head>
+<body>
+    <div id="sliderButton"></div>
+
+    <script type="text/javascript">
+        (function () {
+            $('#sliderButton').sliderButton.init({
+                min: 200,
+                max: 800,
+                valueChanged: function (arg) {
+                    console.debug(arg);
+                }
+            });
+        }());
+    </script>
+</body>
+</html>

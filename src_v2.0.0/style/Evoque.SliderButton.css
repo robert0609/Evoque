@@ -1,0 +1,40 @@
+﻿.range {
+    height: 2px;
+    width: 80%;
+    margin: 10%;
+    background: #f60;
+    position: relative;
+}
+
+.range .min, .range .max {
+    position: absolute;
+    height: 100%;
+    background: #000;
+}
+
+.range .min {
+    left: 0;
+}
+
+.range .max {
+    right: 0;
+}
+
+.range .handle {
+    position: absolute;
+    top: -9px;
+    width: 20px;
+    height: 20px;
+    background: #44d39f;
+    border-radius: 50%;
+    opacity: .9;
+    z-index: 1;
+}
+
+.range .min .handle {
+    right: -10px;
+}
+
+.range .max .handle {
+    left: -10px;
+}
