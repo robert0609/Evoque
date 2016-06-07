@@ -94,7 +94,7 @@ Evoque.extend('sliderButton', (function (self) {
             var touchX = e.touches[0].clientX;
             //减去偏移量
             touchX -= offsetLeftMove;
-            var percentValue = ((1 - (touchX - sliderLeft) / sliderWidth) * 100).toFixed(10);
+            var percentValue = Number(((1 - (touchX - sliderLeft) / sliderWidth) * 100).toFixed(10));
             if (percentValue >= leftBtnMoveMinPercent && percentValue <= 100) {
                 var newCurrentMin = (min + valueSpan * (1 - percentValue / 100)).round5();
                 if (newCurrentMin !== currentMin) {
@@ -129,7 +129,7 @@ Evoque.extend('sliderButton', (function (self) {
             var touchX = e.touches[0].clientX;
             //减去偏移量
             touchX -= offsetRightMove;
-            var percentValue = ((touchX - sliderLeft) / sliderWidth * 100).toFixed(10);
+            var percentValue = Number(((touchX - sliderLeft) / sliderWidth * 100).toFixed(10));
             if (percentValue >= rightBtnMoveMinPercent && percentValue <= 100) {
                 var newCurrentMax = (min + valueSpan * percentValue / 100).round5();
                 if (newCurrentMax !== currentMax)
@@ -159,13 +159,23 @@ Evoque.extend('sliderButton', (function (self) {
                 newMax = max;
             if (lexus.checkType(o.min) === type.eNumber) {
                 newMin = o.min.round5();
+                if (newMin < min) {
+                    newMin = min;
+                }
             }
             if (lexus.checkType(o.max) === type.eNumber) {
                 newMax = o.max.round5();
+                if (newMax > max) {
+                    newMax = max;
+                }
             }
-            if (newMin > newMax) {
+            if (newMin > newMax || (newMin === currentMin && newMax === currentMax)) {
                 return;
             }
+            valueChanged.call(elem, {
+                min: newMin,
+                max: newMax
+            });
             currentMin = newMin;
             currentMax = newMax;
             evoqueLeftDistance.setStyle('right', (max - currentMin) / (max - min) * 100 + '%');

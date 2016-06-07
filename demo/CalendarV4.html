@@ -6,32 +6,19 @@
     <title></title>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Cache.js"></script>
-    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.CalendarV3.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.CalendarV4.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.DockFormV2.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
     <link rel="stylesheet" href="../src_v2.0.0/style/webapp.css">
-    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.CalendarV3.css" />
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.CalendarV4.css" />
     <script type="text/javascript">
-        function show(e) {
-            //$('#a').calendarV3.setActiveDate(new Date(2015, 8, 28), new Date(2015, 8, 30));
-            $('#a').calendarV3.show({
-                onConfirm: function (arg) {
-                    var sd = arg.selectDateStart;
-                    var ed = arg.selectDateEnd;
-                    alert(sd.toCustomString() + '至' + ed.toCustomString());
-                }
-            });
-            //$('#a').calendarV2.setActiveDate(new Date(2014, 7, 28), new Date(2014, 8, 20));
+        function show() {
+            $('#dock').dockFormV2.show();
         }
-        function reset() {
-
-            $('#a').calendarV3.reset();
-        }
-
-
         $(function () {
-            $('#a').calendarV3.create({
-                startDate: new Date(2015, 5, 24),
+            $('#a').calendarV4.create({
+                startDate: new Date(2016, 5, 1),
                 displayMode: 'waterfall',
                 pickMode: 'range',
                 onRenderDateTd: function (arg) {
@@ -51,18 +38,32 @@
                         tder.today();
                         tder.title = '明日';
                     }
+                },
+                onCancel: function () {
+                    $('#dock').dockFormV2.hide();
                 }
             });
+            $('#a').calendarV4.setActiveDate(new Date(2016, 5, 1), new Date(2016, 5, 2));
+
+            $('#dock').dockFormV2.init({
+                content: 'a',
+                onShow: function () {
+                    $('#a').calendarV4.adaptFrame(document.documentElement.clientHeight - 45);
+                    console.debug('show');
+                },
+                onHide: function () {
+                    console.debug('hide');
+                }
+            });
+
+
         });
     </script>
 </head>
 <body>
-<button onclick="show(event);">show</button>
-<button onclick="reset();">reset</button>
-<div id="a" style="display: none;"></div>
-
-<div id="overflow" style="height: 400px; overflow: auto;">
-</div>
-
+    <button onclick="show();" style="z-index: 100; position: absolute;">show</button>
+    <div id="dock" style="top:45px; z-index:5;">
+    </div>
+    <div id="a" style="display: none;"></div>
 </body>
 </html>

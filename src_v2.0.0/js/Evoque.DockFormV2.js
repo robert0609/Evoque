@@ -4,8 +4,8 @@ Evoque.extend('dockFormV2', (function (self) {
         content: '',
         // top|bottom|left|right. default: bottom
         direction: 'bottom',
-        onShow: function () { },
-        onHide: function () { }
+        onPopup: function () { },
+        onPackup: function () { }
     };
 
     var dockGroupAttr = 'data-dock-group';
@@ -27,15 +27,59 @@ Evoque.extend('dockFormV2', (function (self) {
             return;
         }
         var dir = option.getValueOfProperty('direction', defaultOption).toLowerCase();
-        var onShow = option.getValueOfProperty('onShow', defaultOption);
-        var onHide = option.getValueOfProperty('onHide', defaultOption);
+        var onPopup = option.getValueOfProperty('onPopup', defaultOption);
+        var onPackup = option.getValueOfProperty('onPackup', defaultOption);
 
         var caller = self.evoqueTarget;
         if (caller.length > 0) {
             var element = caller[0];
             if (lexus.isObjectNull(element.__dockForm)) {
-                element.__dockForm = new dockFormClass(element, evoqueContent[0], dir, onShow, onHide);
+                element.__dockForm = new dockFormClass(element, evoqueContent[0], dir, onPopup, onPackup);
             }
+        }
+    };
+
+    self.popup = function (popupCompleted) {
+        var caller = self.evoqueTarget;
+        if (caller.length > 0) {
+            var element = caller[0];
+            if (lexus.isObjectNull(element.__dockForm)) {
+                return;
+            }
+            //判断是否有互斥的dockForm，如果有则收起其他互斥的dockForm
+            var grp = caller.getAttr(dockGroupAttr);
+            var breakFlag = false;
+            if (!lexus.isStringEmpty(grp))
+            {
+                var evoqueGrp = lexus('*[' + dockGroupAttr + '="' + grp + '"]');
+                if (evoqueGrp.length > 1) {
+                    evoqueGrp.each(function () {
+                        var evoqueThis = lexus(this);
+                        if (evoqueThis.dockFormV2.guid() !== element.__dockForm.guid() && evoqueThis.dockFormV2.isPopup()) {
+                            evoqueThis.dockFormV2.packup(function () {
+                                element.__dockForm.popup(popupCompleted);
+                            });
+                            breakFlag = true;
+                            return false;
+                        }
+                    });
+                }
+            }
+            if (!breakFlag)
+            {
+                element.__dockForm.popup(popupCompleted);
+            }
+        }
+    };
+
+    self.packup = function (packupCompleted) {
+        var caller = self.evoqueTarget;
+        if (caller.length > 0) {
+            var element = caller[0];
+            if (lexus.isObjectNull(element.__dockForm)) {
+                return;
+            }
+            element.__dockForm.packup(packupCompleted);
         }
     };
 
@@ -46,37 +90,46 @@ Evoque.extend('dockFormV2', (function (self) {
             if (lexus.isObjectNull(element.__dockForm)) {
                 return;
             }
-            //判断是否有互斥的dockForm，如果有则收起其他互斥的dockForm
-            var grp = caller.getAttr(dockGroupAttr);
-            if (!lexus.isStringEmpty(grp))
-            {
-                var evoqueGrp = lexus('*[' + dockGroupAttr + '="' + grp + '"]');
-                if (evoqueGrp.length > 1) {
-                    evoqueGrp.each(function () {
-                        lexus(this).dockFormV2.hide();
-                    });
-                    setTimeout(function () {
-                        element.__dockForm.show();
-                    }, 300);
-                    return;
-                }
-            }
             element.__dockForm.show();
         }
     };
 
-    self.hide = function (hideCompleted) {
+    self.hide = function () {
         var caller = self.evoqueTarget;
         if (caller.length > 0) {
             var element = caller[0];
             if (lexus.isObjectNull(element.__dockForm)) {
                 return;
             }
-            element.__dockForm.hide(hideCompleted);
+            element.__dockForm.hide();
         }
     };
 
-    function dockFormClass(dockElement, contentElement, direction, onShow, onHide) {
+    self.isPopup = function () {
+        var caller = self.evoqueTarget;
+        if (caller.length > 0) {
+            var element = caller[0];
+            if (lexus.isObjectNull(element.__dockForm)) {
+                return false;
+            }
+            return element.__dockForm.isPopup();
+        }
+        return false;
+    };
+
+    self.guid = function () {
+        var caller = self.evoqueTarget;
+        if (caller.length > 0) {
+            var element = caller[0];
+            if (lexus.isObjectNull(element.__dockForm)) {
+                return null;
+            }
+            return element.__dockForm.guid();
+        }
+        return null;
+    };
+
+    function dockFormClass(dockElement, contentElement, direction, onPopup, onPackup) {
         switch (direction) {
             case 'top':
                 break;
@@ -98,45 +151,69 @@ Evoque.extend('dockFormV2', (function (self) {
         dockElement.appendChild(contentElement);
         evoqueContentElement.show();
 
-        var hideCompletedCallback = null;
+        var popupCompletedCallback = null;
+        var packupCompletedCallback = null;
 
-        var isShow = false;
+        var __instanceId = lexus.guid();
+
+        var isPopup = false;
         evoqueContentElement.addEventHandler('transitionEnd', function () {
-            if (isShow) {
-                onShow.call(contentElement);
+            if (isPopup) {
+                onPopup.call(contentElement);
+                if (lexus.checkType(popupCompletedCallback) === type.eFunction) {
+                    popupCompletedCallback.call(contentElement);
+                }
             }
             else {
-                onHide.call(contentElement);
-                if (lexus.checkType(hideCompletedCallback) === type.eFunction) {
-                    hideCompletedCallback.call(contentElement);
+                onPackup.call(contentElement);
+                if (lexus.checkType(packupCompletedCallback) === type.eFunction) {
+                    packupCompletedCallback.call(contentElement);
                 }
             }
         }, { useEventPrefix: true });
 
         var that = this;
-        this.show = function () {
-            if (isShow) {
+        this.popup = function (popupCompleted) {
+            if (isPopup) {
                 return;
             }
-            isShow = true;
+            isPopup = true;
+            popupCompletedCallback = popupCompleted;
             lexus(backgroundElement).click(closeMe);
             document.body.appendChild(backgroundElement);
             evoqueContentElement.addClass('show');
         };
 
-        this.hide = function (hideCompleted) {
-            if (!isShow) {
+        this.packup = function (packupCompleted) {
+            if (!isPopup) {
                 return;
             }
-            isShow = false;
-            hideCompletedCallback = hideCompleted;
+            isPopup = false;
+            packupCompletedCallback = packupCompleted;
             evoqueContentElement.removeClass('show');
             document.body.removeChild(backgroundElement);
             lexus(backgroundElement).removeEventHandler('click', closeMe);
         };
 
+        this.show = function () {
+            evoqueContentElement.show();
+            lexus(backgroundElement).show();
+        };
+        this.hide = function () {
+            evoqueContentElement.hide();
+            lexus(backgroundElement).hide();
+        };
+
+        this.isPopup = function () {
+            return isPopup;
+        };
+
+        this.guid = function () {
+            return __instanceId;
+        };
+
         function closeMe() {
-            that.hide();
+            that.packup();
         }
     }
 
@@ -156,7 +233,10 @@ Evoque.extend('dockFormV2', (function (self) {
         if (lexus.checkType(bgElement) === type.eElement) {
             return bgElement;
         }
-        appendStyle(bgStyle);
+        var style = document.createElement('style');
+        style.innerHTML = bgStyle;
+        document.head.appendChild(style);
+
         bgElement = document.createElement('div');
         lexus(bgElement).addClass('dockformV2-bg-div');
         bgElement.style.height = getbackgroundHeight() + 'px';
