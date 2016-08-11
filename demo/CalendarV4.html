@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.CalendarV4.css" />
     <script type="text/javascript">
         function show() {
-            $('#dock').dockFormV2.show();
+            $('#dock').dockFormV2.popup();
         }
         $(function () {
             $('#a').calendarV4.create({
@@ -40,18 +40,19 @@
                     }
                 },
                 onCancel: function () {
-                    $('#dock').dockFormV2.hide();
+                    $('#dock').dockFormV2.packup();
                 }
             });
-            $('#a').calendarV4.setActiveDate(new Date(2016, 5, 1), new Date(2016, 5, 2));
+            $('#a')[0].style.height = (document.documentElement.clientHeight - 45) + 'px';
+            //$('#a').calendarV4.setActiveDate(new Date(2016, 5, 1), new Date(2016, 5, 2));
 
             $('#dock').dockFormV2.init({
                 content: 'a',
-                onShow: function () {
+                onPopup: function () {
                     $('#a').calendarV4.adaptFrame(document.documentElement.clientHeight - 45);
                     console.debug('show');
                 },
-                onHide: function () {
+                onPackup: function () {
                     console.debug('hide');
                 }
             });
@@ -61,8 +62,8 @@
     </script>
 </head>
 <body>
-    <button onclick="show();" style="z-index: 100; position: absolute;">show</button>
-    <div id="dock" style="top:45px; z-index:5;">
+    <button onclick="show();">show</button>
+    <div id="dock" style="top:45px;position:absolute;width:100%;">
     </div>
     <div id="a" style="display: none;"></div>
 </body>

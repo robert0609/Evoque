@@ -35,8 +35,6 @@
                 }
 
         .menu {
-            position: fixed;
-            width:100%;
             margin: 0;
             padding: 0;
         }
@@ -49,7 +47,7 @@
         <li>排序</li>
         <li>更多</li>
     </ul>
-    <div id="dock" style="top:45px;">
+    <div id="dock">
     </div>
     <div id="content" style="height:500px;background:red;display:none;">
         这里是下拉层
@@ -59,20 +57,20 @@
         (function () {
             $('#dock').dockFormV2.init({
                 content: 'content',
-                onShow: function () {
-                    console.debug('show');
+                onPopup: function () {
+                    console.debug('popup');
                 },
-                onHide: function () {
-                    console.debug('hide');
+                onPackup: function () {
+                    console.debug('packup');
                 }
             });
 
             $('#show').click(function () {
-                $('#dock').dockFormV2.show();
+                $('#dock').dockFormV2.popup();
             });
 
             $('#hide').click(function () {
-                $('#dock').dockFormV2.hide();
+                $('#dock').dockFormV2.packup();
             });
         }());
     </script>

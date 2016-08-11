@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -14,30 +14,6 @@
     <script type="text/javascript">
         function click()
         {
-            $('video').addEventHandler('play', function () {
-                $('video').addEventHandler('emptied', playFailed);
-                $('video').addEventHandler('error', playFailed);
-                $('video').addEventHandler('stalled', stalledHandler);
-            });
-            function playFailed() {
-                $.dialog.showMessageBox({
-                    content: 'videoPlayFailed'
-                });
-            }
-            function stalledHandler() {
-                $.dialog.showMessageBox({
-                    content: 'videoLoading'
-                });
-            }
-
-            $.dialog.showModalDialog({
-                content: 'camera-dialog',
-                //弹层的布局样式版本:'plain', 'preset'. default: 'preset'
-                layoutVersion: 'plain',
-                enableFixBackground: true,
-                autoClose: false
-            });
-            //$('#camera-dialog').show();
 
 
 //            var i = 0;
@@ -85,18 +61,18 @@
 //                direction: 'center',
 //                layoutVersion: 'plain'
 //            });
-            /*$.dialog.showModalDialog({
-                content:'dialog',
+            $.dialog.showModalDialog({
+                content:'dialog1',
                 button:'yes|no',
                 onQuiting: function () {
-                    alert('onQuiting---2');
+                    //alert('onQuiting---2');
                 },
                 onDialogClosed: function () {
-                    alert('onDialogClosed---2');
+                    //alert('onDialogClosed---2');
                 },
                 autoClose: false,
                 direction: 'top'
-            });*/
+            });
 /*            $.dialog.showLoading('loading...', function () {
                 $.loadPage('/demo/demo.html');
             });*/
@@ -146,30 +122,19 @@
             $.dialog.closeAll();
         });
     </script>
-    <!--<script type="text/javascript">-->
-        <!--$(function () {-->
-            <!--window.addEventListener('load', function () {-->
-                <!--$('#result').text('load');-->
-            <!--});-->
-            <!--window.addEventListener('unload', function () {-->
-                <!--$('#result').text('unload');-->
-            <!--});-->
-            <!--window.addEventListener('pageshow', function () {-->
-                <!--$('#result').text('pageshow');-->
-            <!--});-->
-            <!--window.addEventListener('pagehide', function () {-->
-                <!--$('#result').text('pagehide');-->
-            <!--});-->
-        <!--});-->
-    <!--</script>-->
 </head>
-<body style="height: 5000px;"><p>Result: <output id="result"></output></p>
+<body style="height: 5000px;">
+    <p style="height: 1000px;">Result: <output id="result"></output></p>
     <a href="javascript:click()">click here, show dialogs!</a>
-<!--<video webkit-playsinline="webkit-playsinline" x-webkit-airplay="allow" width="100%" preload="auto" poster="http://10.2.13.78:2006/mobile/images/h5/houseDetail/video_bg1.jpg" src="http://r.live.360.cn/live_camera/36053728753/index.m3u8"></video>-->
+
     <div id="dialog" style="background-color: green; display: none; height: 700px;">
         <h1>h1</h1><h2>h2</h2><h3>h3</h3><h4>h4</h4><h5>h5</h5><h6>h6</h6>
         <button id="subBtn" onclick="showSub();">show sub dialog!</button>
         <button id="resizeBtn" onclick="resize();">resize dialog!</button>
+    </div>
+    <div id="dialog1" style="background-color: green; display: none;">
+        <div style="position:absolute;left:0;top:0"><input type="text" placeholder="请输入一些文字" /></div>
+        <div style="height:60px;"></div>
     </div>
 
     <div id="loading" style="display: none;">
@@ -197,17 +162,6 @@
 
     <div id="console"></div>
 
-    <iframe>
-    </iframe>
-
-<div id="camera-dialog" style="display: none;">
-    <div id="">
-        <iframe style="width: 100%;" src="http://m.tujia.com">
-        </iframe>
-        <!--<p>一点点实践（把官网</p>-->
-        <!--<video webkit-playsinline="webkit-playsinline" x-webkit-airplay="allow" style="top: 0px;;" width="100%" preload="auto" poster11="http://10.2.13.78:2006/mobile/images/h5/houseDetail/video_bg1.jpg" src="http://r.live.360.cn/live_camera/36053728753/index.m3u8"></video>-->
-    </div>
-</div>
 
 
 </body>

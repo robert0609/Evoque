@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/TouchSlide.js"></script>
+</head>
+<style>
+    li {
+        overflow:hidden
+    }
+    img {
+        transform: translateX(0);
+        width: 120%;
+    }
+    .moveleft img{
+        transform: translateX(-10%);
+        -webkit-transition: all 3s linear;
+    }
+
+
+</style>
+<body>
+    <div id="sliderbanner" class="carousel-show">
+        <div id="wrapper" class="hd">
+            <ul id="scroller">
+                <li data-id="idx0">
+                    <img data-src="http://pic.tujia.com/upload/mobileconfig/day_160803/thumb/201608030934576582_560_315.jpg" />
+                </li>    
+                <li data-id="idx1">     
+                    <img data-src="http://pic.tujia.com/upload/mobileconfig/day_160808/thumb/201608081104322227_560_315.jpg" />
+                </li>    
+                <li data-id="idx2">     
+                    <img data-src="http://pic.tujia.com/upload/mobileconfig/day_160727/thumb/201607271630583995_560_315.jpg" />
+                </li>
+            </ul>
+        </div>
+        <!--<ul id="indicator" class="bd"><li class="on">1</li><li class="">2</li><li class="">3</li></ul>-->
+    </div>
+
+
+    <script type="text/javascript">
+        (function () {
+            var wrapper = document.getElementById("sliderbanner");
+            var slider = TouchSlide({
+                wrapper: wrapper,
+                indicator: "#indicator",
+                mainbody: "#scroller",
+                effect: "leftLoop",
+                titOnClassName: "on",
+                autoPage: false,
+                sizeRate: 560 / 315,
+                autoPlay: false,
+                interTime: 5000,
+                switchLoad: "data-src",
+                startFun: function (i, c) {
+                    var $li = $('*[data-id="idx' + i + '"]');
+                    $li.removeClass('moveleft')
+                },
+                endFun: function (i, c) {
+                    var $li = $('*[data-id="idx' + i + '"]');
+                    $li.addClass('moveleft')
+                }
+            });
+        }());
+    </script>
+</body>
+</html>

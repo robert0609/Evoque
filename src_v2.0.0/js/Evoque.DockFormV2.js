@@ -4,6 +4,8 @@ Evoque.extend('dockFormV2', (function (self) {
         content: '',
         // top|bottom|left|right. default: bottom
         direction: 'bottom',
+        onBeforePopup: function () { },
+        onBeforePackup: function () { },
         onPopup: function () { },
         onPackup: function () { }
     };
@@ -11,7 +13,7 @@ Evoque.extend('dockFormV2', (function (self) {
     var dockGroupAttr = 'data-dock-group';
     
     var bottomStyleSheet = null;
-    var bottomStyle = 'body{margin: 0;}.dock-bottom-actionsheet{position: relative;}.dock-bottom-content{position: absolute;left: 0;bottom: 0;margin: 0;padding: 0;width: 100%;z-index: -1;-webkit-transform:translate(0,0);transform:translate(0,0);-webkit-backface-visibility: hidden;backface-visibility: hidden;-webkit-transition: -webkit-transform .3s;transition: transform .3s;}.dock-bottom-content.show{-webkit-transform:translate(0,100%);transform:translate(0,100%);}';
+    var bottomStyle = '.dock-bottom-content{height: 0;overflow: hidden;-webkit-transition: height .3s;transition: height .3s;}';
 
     var bgStyle = '.dockformV2-bg-div{position: absolute;top: 0;left: 0;width: 100%;background: #777;opacity: 0.5;z-index: 1;margin: 0;padding: 0;filter: progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75);}';
 
@@ -27,6 +29,8 @@ Evoque.extend('dockFormV2', (function (self) {
             return;
         }
         var dir = option.getValueOfProperty('direction', defaultOption).toLowerCase();
+        var onBeforePopup = option.getValueOfProperty('onBeforePopup', defaultOption);
+        var onBeforePackup = option.getValueOfProperty('onBeforePackup', defaultOption);
         var onPopup = option.getValueOfProperty('onPopup', defaultOption);
         var onPackup = option.getValueOfProperty('onPackup', defaultOption);
 
@@ -34,7 +38,7 @@ Evoque.extend('dockFormV2', (function (self) {
         if (caller.length > 0) {
             var element = caller[0];
             if (lexus.isObjectNull(element.__dockForm)) {
-                element.__dockForm = new dockFormClass(element, evoqueContent[0], dir, onPopup, onPackup);
+                element.__dockForm = new dockFormClass(element, evoqueContent[0], dir, onBeforePopup, onBeforePackup, onPopup, onPackup);
             }
         }
     };
@@ -129,7 +133,7 @@ Evoque.extend('dockFormV2', (function (self) {
         return null;
     };
 
-    function dockFormClass(dockElement, contentElement, direction, onPopup, onPackup) {
+    function dockFormClass(dockElement, contentElement, direction, onBeforePopup, onBeforePackup, onPopup, onPackup) {
         switch (direction) {
             case 'top':
                 break;
@@ -142,12 +146,12 @@ Evoque.extend('dockFormV2', (function (self) {
                 break;
         }
 
-        var backgroundElement = appendBackground();
+        //var backgroundElement = appendBackground();
 
         var evoqueDockElement = lexus(dockElement);
         var evoqueContentElement = lexus(contentElement);
-        evoqueDockElement.addClass('dock-bottom-actionsheet');
-        evoqueContentElement.addClass('dock-bottom-content');
+        dockElement.__guid = lexus.guid();
+        evoqueDockElement.addClass('dock-bottom-content');
         dockElement.appendChild(contentElement);
         evoqueContentElement.show();
 
@@ -157,7 +161,10 @@ Evoque.extend('dockFormV2', (function (self) {
         var __instanceId = lexus.guid();
 
         var isPopup = false;
-        evoqueContentElement.addEventHandler('transitionEnd', function () {
+        evoqueDockElement.addEventHandler('transitionEnd', function (e) {
+            if (e.target.__guid !== dockElement.__guid) {
+                return;
+            }
             if (isPopup) {
                 onPopup.call(contentElement);
                 if (lexus.checkType(popupCompletedCallback) === type.eFunction) {
@@ -178,10 +185,14 @@ Evoque.extend('dockFormV2', (function (self) {
                 return;
             }
             isPopup = true;
+            var beforeResult = onBeforePopup.call(contentElement);
+            if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult) {
+                return;
+            }
             popupCompletedCallback = popupCompleted;
-            lexus(backgroundElement).click(closeMe);
-            document.body.appendChild(backgroundElement);
-            evoqueContentElement.addClass('show');
+            //lexus(backgroundElement).click(closeMe);
+            //dockElement.appendChild(backgroundElement);
+            dockElement.style.height = contentElement.clientHeight + 'px';
         };
 
         this.packup = function (packupCompleted) {
@@ -189,19 +200,23 @@ Evoque.extend('dockFormV2', (function (self) {
                 return;
             }
             isPopup = false;
+            var beforeResult = onBeforePackup.call(contentElement);
+            if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult) {
+                return;
+            }
             packupCompletedCallback = packupCompleted;
-            evoqueContentElement.removeClass('show');
-            document.body.removeChild(backgroundElement);
-            lexus(backgroundElement).removeEventHandler('click', closeMe);
+            dockElement.style.height = '0px';
+            //dockElement.removeChild(backgroundElement);
+            //lexus(backgroundElement).removeEventHandler('click', closeMe);
         };
 
         this.show = function () {
-            evoqueContentElement.show();
-            lexus(backgroundElement).show();
+            evoqueDockElement.show();
+            //lexus(backgroundElement).show();
         };
         this.hide = function () {
-            evoqueContentElement.hide();
-            lexus(backgroundElement).hide();
+            evoqueDockElement.hide();
+            //lexus(backgroundElement).hide();
         };
 
         this.isPopup = function () {
@@ -215,6 +230,25 @@ Evoque.extend('dockFormV2', (function (self) {
         function closeMe() {
             that.packup();
         }
+
+        function appendBackground() {
+            if (lexus.checkType(bgElement) === type.eElement) {
+                return bgElement;
+            }
+            var style = document.createElement('style');
+            style.innerHTML = bgStyle;
+            document.head.appendChild(style);
+
+            bgElement = document.createElement('div');
+            lexus(bgElement).addClass('dockformV2-bg-div');
+            bgElement.style.height = getbackgroundHeight() + 'px';
+
+            return bgElement;
+        }
+
+        function getbackgroundHeight() {
+            return document.documentElement.clientHeight - dockElement.getBoundingClientRect().top;
+        }
     }
 
     function appendStyle(cssHtml) {
@@ -227,25 +261,6 @@ Evoque.extend('dockFormV2', (function (self) {
         document.head.appendChild(style);
         bottomStyleSheet = style.sheet;
         return bottomStyleSheet;
-    }
-
-    function appendBackground() {
-        if (lexus.checkType(bgElement) === type.eElement) {
-            return bgElement;
-        }
-        var style = document.createElement('style');
-        style.innerHTML = bgStyle;
-        document.head.appendChild(style);
-
-        bgElement = document.createElement('div');
-        lexus(bgElement).addClass('dockformV2-bg-div');
-        bgElement.style.height = getbackgroundHeight() + 'px';
-
-        return bgElement;
-    }
-
-    function getbackgroundHeight() {
-        return document.documentElement.clientHeight;
     }
 
     return self;
