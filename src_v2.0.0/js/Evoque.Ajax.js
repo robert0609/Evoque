@@ -70,12 +70,6 @@ lexus.extend('ajax', (function (self) {
         }
         var parameterGet = option.getValueOfProperty('parameter', defaultOption);
         var crossOrigin = true;
-        if (crossOrigin) {
-            var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
-            if (withCredentials) {
-                xmlhttp.withCredentials = 'true';
-            }
-        }
         var withTimestamp = option.getValueOfProperty('withTimestamp', defaultOption);
         if (withTimestamp)
         {
@@ -83,6 +77,12 @@ lexus.extend('ajax', (function (self) {
             parameterGet.timestamp = (new Date()).getTime();
         }
         xmlhttp.open('get', urlTemp + spliter + serializeQuery(parameterGet), true);
+        if (crossOrigin) {
+            var withCredentials = option.getValueOfProperty('withCredentials', defaultOption);
+            if (withCredentials) {
+                xmlhttp.withCredentials = 'true';
+            }
+        }
         bindEvent(xmlhttp, option, {
             url: urlTemp,
             parameter: parameterGet

@@ -1033,12 +1033,6 @@ var Evoque = (function (self)
     };
 
     /**
-     * 根据传入的html内容创建dom
-     * @param html 目的地X坐标
-     */
-    __fetcher.createDom = function (html) { };
-
-    /**
      * 判断是否支持触屏事件
      * @return {Boolean}
      */

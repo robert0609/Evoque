@@ -63,18 +63,39 @@ Evoque.extend('sliderButton', (function (self) {
         var evoqueLeftDistance = evoqueElem.getChild('.min');
         var evoqueRightDistance = evoqueElem.getChild('.max');
 
-        var recElem = elem.getBoundingClientRect();
-        var recLeftBtn = evoqueLeftBtn[0].getBoundingClientRect();
-        var recRightBtn = evoqueRightBtn[0].getBoundingClientRect();
+        var gottenSize = false;
 
-        var sliderWidth = recElem.right - recElem.left;
-        var leftBtnWidth = recLeftBtn.right - recLeftBtn.left;
-        var rightBtnWidth = recRightBtn.right - recRightBtn.left;
+        var recElem;
+        var recLeftBtn;
+        var recRightBtn;
 
-        var leftBtnWidthPercent = leftBtnWidth / sliderWidth * 100;
-        var rightBtnWidthPercent = rightBtnWidth / sliderWidth * 100;
+        var sliderWidth;
+        var leftBtnWidth;
+        var rightBtnWidth;
 
-        var sliderLeft = recElem.left - leftBtnWidth / 2;
+        var leftBtnWidthPercent;
+        var rightBtnWidthPercent;
+
+        var sliderLeft;
+
+        function getSize() {
+            if (gottenSize) {
+                return;
+            }
+            gottenSize = true;
+            recElem = elem.getBoundingClientRect();
+            recLeftBtn = evoqueLeftBtn[0].getBoundingClientRect();
+            recRightBtn = evoqueRightBtn[0].getBoundingClientRect();
+
+            sliderWidth = recElem.right - recElem.left;
+            leftBtnWidth = recLeftBtn.right - recLeftBtn.left;
+            rightBtnWidth = recRightBtn.right - recRightBtn.left;
+
+            leftBtnWidthPercent = leftBtnWidth / sliderWidth * 100;
+            rightBtnWidthPercent = rightBtnWidth / sliderWidth * 100;
+
+            sliderLeft = recElem.left - leftBtnWidth / 2;
+        }
 
         var offsetLeftMove = 0;
         var leftBtnMoveMinPercent = 0;
@@ -82,6 +103,7 @@ Evoque.extend('sliderButton', (function (self) {
             if (e.touches.length !== 1) {
                 return;
             }
+            getSize();
             var touchX = e.touches[0].clientX;
             offsetLeftMove = touchX - evoqueLeftBtn[0].getBoundingClientRect().left;
             leftBtnMoveMinPercent = 100 - Number(evoqueRightDistance[0].style.left.trim('%')) + rightBtnWidthPercent;
@@ -117,6 +139,7 @@ Evoque.extend('sliderButton', (function (self) {
             if (e.touches.length !== 1) {
                 return;
             }
+            getSize();
             var touchX = e.touches[0].clientX;
             offsetRightMove = touchX - evoqueRightBtn[0].getBoundingClientRect().left;
             rightBtnMoveMinPercent = 100 - Number(evoqueLeftDistance[0].style.right.trim('%')) + leftBtnWidthPercent;
@@ -159,17 +182,11 @@ Evoque.extend('sliderButton', (function (self) {
                 newMax = max;
             if (lexus.checkType(o.min) === type.eNumber) {
                 newMin = o.min.round5();
-                if (newMin < min) {
-                    newMin = min;
-                }
             }
             if (lexus.checkType(o.max) === type.eNumber) {
                 newMax = o.max.round5();
-                if (newMax > max) {
-                    newMax = max;
-                }
             }
-            if (newMin > newMax || (newMin === currentMin && newMax === currentMax)) {
+            if (newMin > newMax || newMin >= max || newMax <= min || (newMin === currentMin && newMax === currentMax)) {
                 return;
             }
             valueChanged.call(elem, {
@@ -178,8 +195,10 @@ Evoque.extend('sliderButton', (function (self) {
             });
             currentMin = newMin;
             currentMax = newMax;
-            evoqueLeftDistance.setStyle('right', (max - currentMin) / (max - min) * 100 + '%');
-            evoqueRightDistance.setStyle('left', (currentMax - min) / (max - min) * 100 + '%');
+            var dMin = newMin < min ? min : newMin,
+                dMax = newMax > max ? max : newMax;
+            evoqueLeftDistance.setStyle('right', (max - dMin) / (max - min) * 100 + '%');
+            evoqueRightDistance.setStyle('left', (dMax - min) / (max - min) * 100 + '%');
         };
     }
 

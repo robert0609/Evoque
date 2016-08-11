@@ -58,11 +58,13 @@ Evoque.extend('dockFormV2', (function (self) {
                 var evoqueGrp = lexus('*[' + dockGroupAttr + '="' + grp + '"]');
                 if (evoqueGrp.length > 1) {
                     evoqueGrp.each(function () {
-                        var evoqueThis = lexus(this);
-                        if (evoqueThis.dockFormV2.guid() !== element.__dockForm.guid() && evoqueThis.dockFormV2.isPopup()) {
-                            evoqueThis.dockFormV2.packup(function () {
+                        if (lexus.isObjectNull(this.__dockForm)) {
+                            return;
+                        }
+                        if (this.__dockForm.guid() !== element.__dockForm.guid() && this.__dockForm.isPopup()) {
+                            this.__dockForm.packup(function () {
                                 element.__dockForm.popup(popupCompleted);
-                            });
+                            }, true);
                             breakFlag = true;
                             return false;
                         }
@@ -153,12 +155,13 @@ Evoque.extend('dockFormV2', (function (self) {
         dockElement.__guid = lexus.guid();
         evoqueDockElement.addClass('dock-bottom-content');
         dockElement.appendChild(contentElement);
-        evoqueContentElement.show();
+        evoqueContentElement.hide();
 
         var popupCompletedCallback = null;
         var packupCompletedCallback = null;
 
         var __instanceId = lexus.guid();
+        var __isPassivePackup = false;
 
         var isPopup = false;
         evoqueDockElement.addEventHandler('transitionEnd', function (e) {
@@ -172,10 +175,14 @@ Evoque.extend('dockFormV2', (function (self) {
                 }
             }
             else {
-                onPackup.call(contentElement);
+                onPackup.call(contentElement, {
+                    isPassive: __isPassivePackup
+                });
+                __isPassivePackup = false;
                 if (lexus.checkType(packupCompletedCallback) === type.eFunction) {
                     packupCompletedCallback.call(contentElement);
                 }
+                evoqueContentElement.hide();
             }
         }, { useEventPrefix: true });
 
@@ -185,8 +192,10 @@ Evoque.extend('dockFormV2', (function (self) {
                 return;
             }
             isPopup = true;
+            evoqueContentElement.show();
             var beforeResult = onBeforePopup.call(contentElement);
             if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult) {
+                evoqueContentElement.hide();
                 return;
             }
             popupCompletedCallback = popupCompleted;
@@ -195,11 +204,14 @@ Evoque.extend('dockFormV2', (function (self) {
             dockElement.style.height = contentElement.clientHeight + 'px';
         };
 
-        this.packup = function (packupCompleted) {
+        this.packup = function (packupCompleted, isPassivePackup) {
             if (!isPopup) {
                 return;
             }
             isPopup = false;
+            if (lexus.checkType(isPassivePackup) === type.eBoolean && isPassivePackup) {
+                __isPassivePackup = true;
+            }
             var beforeResult = onBeforePackup.call(contentElement);
             if (lexus.checkType(beforeResult) === type.eBoolean && !beforeResult) {
                 return;

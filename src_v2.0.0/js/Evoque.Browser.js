@@ -116,7 +116,7 @@ lexus.extend('browser', (function (self) {
             }
             for (var p in query)
             {
-                queryDic[p] = query[p];
+                queryDic[p] = encodeURIComponent(query[p]);
             }
             return url + queryDic2Str(queryDic) + anchor;
         },
