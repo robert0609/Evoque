@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>JS数据类型测试页面</title>
+    <script type="text/javascript">
+        (function () {
+            //测试原始类型和包装类型
+            var n = 10.45;
+            var b = true;
+            var s = 'this is a string';
+            var wn = new Number(10.45);
+            var wb = new Boolean(true);
+            var ws = new String('this is a string');
+            console.debug('n的类型是：' + typeof n);
+            console.debug('b的类型是：' + typeof b);
+            console.debug('s的类型是：' + typeof s);
+            console.debug('wn的类型是：' + typeof wn);
+            console.debug('wb的类型是：' + typeof wb);
+            console.debug('ws的类型是：' + typeof ws);
+
+            console.debug('n instanceof Number：' + (n instanceof Number));
+            console.debug('b instanceof Boolean：' + (b instanceof Boolean));
+            console.debug('s instanceof String：' + (s instanceof String));
+            console.debug('wn instanceof Number：' + (wn instanceof Number));
+            console.debug('wb instanceof Boolean：' + (wb instanceof Boolean));
+            console.debug('ws instanceof String：' + (ws instanceof String));
+
+            console.debug('n的构造器是：' + n.constructor);
+            console.debug('b的构造器是：' + b.constructor);
+            console.debug('s的构造器是：' + s.constructor);
+            console.debug('wn的构造器是：' + wn.constructor);
+            console.debug('wb的构造器是：' + wb.constructor);
+            console.debug('ws的构造器是：' + ws.constructor);
+
+            //测试字符串的各种创建方式，以及比较结果
+            var s1 = 'this is a string';
+            var ws1 = new String(s);
+            console.debug('s的类型是：' + typeof s);
+            console.debug('s1的类型是：' + typeof s1);
+            console.debug('ws的类型是：' + typeof ws);
+            console.debug('ws1的类型是：' + typeof ws1);
+            console.debug('s == s1结果：' + (s == s1));
+            console.debug('s == ws结果：' + (s == ws));
+            console.debug('s == ws1结果：' + (s == ws1));
+            console.debug('s1 == ws结果：' + (s1 == ws));
+            console.debug('s1 == ws1结果：' + (s1 == ws1));
+            console.debug('ws == ws1结果：' + (ws == ws1));
+            console.debug('s === s1结果：' + (s === s1));
+            console.debug('s === ws结果：' + (s === ws));
+            console.debug('s === ws1结果：' + (s === ws1));
+            console.debug('s1 === ws结果：' + (s1 === ws));
+            console.debug('s1 === ws1结果：' + (s1 === ws1));
+            console.debug('ws === ws1结果：' + (ws === ws1));
+
+            //测试数值的各种创建方式，以及比较结果
+            var n1 = n;
+            var wn1 = new Number(n);
+            console.debug('n的类型是：' + typeof n);
+            console.debug('n1的类型是：' + typeof n1);
+            console.debug('wn的类型是：' + typeof wn);
+            console.debug('wn1的类型是：' + typeof wn1);
+            console.debug('n == n1结果：' + (n == n1));
+            console.debug('n == wn结果：' + (n == wn));
+            console.debug('n == wn1结果：' + (n == wn1));
+            console.debug('n1 == wn结果：' + (n1 == wn));
+            console.debug('n1 == wn1结果：' + (n1 == wn1));
+            console.debug('wn == wn1结果：' + (wn == wn1));
+            console.debug('n === n1结果：' + (n === n1));
+            console.debug('n === wn结果：' + (n === wn));
+            console.debug('n === wn1结果：' + (n === wn1));
+            console.debug('n1 === wn结果：' + (n1 === wn));
+            console.debug('n1 === wn1结果：' + (n1 === wn1));
+            console.debug('wn === wn1结果：' + (wn === wn1));
+            
+            //测试Boolean()/Number()/String()转换成的变量的类型是什么
+            var bb1 = Boolean('true');
+            var bb2 = Boolean('false');
+            var bb3 = Boolean('True');
+            var bb4 = Boolean('False');
+            var bb5 = Boolean(0);
+            console.debug('bb1的值是：' + bb1 + '; 类型是：' + typeof bb1);
+            console.debug('bb2的值是：' + bb2 + '; 类型是：' + typeof bb2);
+            console.debug('bb3的值是：' + bb3 + '; 类型是：' + typeof bb3);
+            console.debug('bb4的值是：' + bb4 + '; 类型是：' + typeof bb4);
+            console.debug('bb5的值是：' + bb5 + '; 类型是：' + typeof bb5);
+
+            var nn1 = Number(true);
+            var nn2 = Number(false);
+            var nn3 = Number('234');
+            console.debug('nn1的值是：' + nn1 + '; 类型是：' + typeof nn1);
+            console.debug('nn2的值是：' + nn2 + '; 类型是：' + typeof nn2);
+            console.debug('nn3的值是：' + nn3 + '; 类型是：' + typeof nn3);
+
+            var ss1 = String(true);
+            var ss2 = String(false);
+            var ss3 = String(27673);
+            console.debug('ss1的值是：' + ss1 + '; 类型是：' + typeof ss1);
+            console.debug('ss2的值是：' + ss2 + '; 类型是：' + typeof ss2);
+            console.debug('ss3的值是：' + ss3 + '; 类型是：' + typeof ss3);
+
+            //测试数据类型隐式转换的规则
+        }());
+    </script>
+</head>
+<body>
+
+</body>
+</html>

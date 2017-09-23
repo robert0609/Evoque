@@ -33,7 +33,8 @@ var Evoque = (function (self)
         safaribrowser: 8,
         _360browser: 9,
         operabrowser: 10,
-        chromebrowser: 11
+        chromebrowser: 11,
+        alipay: 12
     };
     /**
      * 标识当前的移动设备种类
@@ -54,7 +55,7 @@ var Evoque = (function (self)
     {
         _mAgent = mAgent.ios;
     }
-    else if (_agent.indexOf('windows phone') > -1)
+    else if (_agent.indexOf('windows') > -1)
     {
         _mAgent = mAgent.windows;
     }
@@ -62,6 +63,9 @@ var Evoque = (function (self)
     if (_agent.indexOf('micromessenger') > -1)
     {
         _mApp = mApp.weixin;
+    }
+    else if (_agent.indexOf('alipay') > -1) {
+        _mApp = mApp.alipay;
     }
     else if (_agent.indexOf('mqqbrowser') > -1)
     {
@@ -163,22 +167,35 @@ var Evoque = (function (self)
     var core_sort = Array.prototype.sort;
     function core_addReadyHandler(fn, useCapture)
     {
-        //DOM标准
-        if (document.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
-            document.addEventListener('DOMContentLoaded', fn, useCapture);
+        //兼容resourceLazyLoad.js
+        if (!!window.LazyLoad)
+        {
+            resourceLazyLoadAdapter.loadCompleted(fn);
+        }
+        else
+        {
+            //DOM标准
+            if (document.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
+                document.addEventListener('DOMContentLoaded', fn, useCapture);
+            }
         }
     }
 
     function core_addLoadedHandler(fn, useCapture)
     {
-        var evtName = 'load';
-        if ((_mAgent === mAgent.ios) || (_mAgent === mAgent.android && (_mApp === mApp.qqbrowser || _mApp === mApp.ucbrowser)))
-        {
-            evtName = 'pageshow';
+        //兼容resourceLazyLoad.js
+        if (!!window.LazyLoad) {
+            resourceLazyLoadAdapter.loadCompleted(fn);
         }
-        //DOM标准
-        if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
-            window.addEventListener(evtName, fn, useCapture);
+        else {
+            var evtName = 'load';
+            if ((_mAgent === mAgent.ios) || (_mAgent === mAgent.android && (_mApp === mApp.qqbrowser || _mApp === mApp.ucbrowser))) {
+                evtName = 'pageshow';
+            }
+            //DOM标准
+            if (window.addEventListener && __fetcher.checkType(fn) === type.eFunction) {
+                window.addEventListener(evtName, fn, useCapture);
+            }
         }
     }
 
@@ -208,6 +225,22 @@ var Evoque = (function (self)
      */
     Date.prototype.copy = function () {
         return new Date(this.getTime());
+    };
+
+    /**
+     * 将时间按照指定的UTC小时偏移量转换成新的时间
+     * @parameter timezoneOffset: UTC小时偏移量
+     * @return {Date}
+     */
+    Date.prototype.convert = function (timezoneOffset) {
+        if (timezoneOffset < -11 || timezoneOffset > 12) {
+            throw 'timezoneOffset is error!';
+        }
+        // timezoneOffset有可能是小数，因此这里换算成分钟来计算
+        var utcMinutes = this.getUTCMinutes();
+        var result = this.copy();
+        result.setMinutes(utcMinutes + Math.round(timezoneOffset * 60));
+        return result;
     };
 
     /**
@@ -1928,7 +1961,7 @@ var Evoque = (function (self)
         return arg;
     }
 
-    if (_hasTouchEvent)
+    if (_hasTouchEvent && _mApp !== mApp.alipay)
     {
         var touchEventType = {
             tap: 'tap',

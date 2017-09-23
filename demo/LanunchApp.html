@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -70,5 +70,20 @@
             },10)
         };
     </script>
+
+    <a href="tujia://com.tujia.hotel/unitdetail?id=2800" id="openTujiaApp">tujia app</a>
+    <!--<script type="text/javascript">
+        document.getElementById('openTujiaApp').onclick = function () {
+            // 通过iframe的方式试图打开APP，如果能正常打开，会直接切换到APP，并自动阻止a标签的默认行为
+            // 否则打开a标签的href链接
+            var ifr = document.createElement('iframe');
+            ifr.src = 'ctrip://wireless/InlandHotel?checkInDate=20170421&checkOutDate=20170422&hotelId=1486685&hotelDataType=1';
+            ifr.style.display = 'none';
+            document.body.appendChild(ifr);
+            window.setTimeout(function () {
+                document.body.removeChild(ifr);
+            }, 10)
+        };
+    </script>-->
 </body>
 </html>

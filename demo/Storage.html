@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -20,23 +20,53 @@
                     url:e.url
                 }));
             });
+
+
+            var val = '{"unitInfo":{},"messageId":"1_3428020","sendTime":"2017-04-10T02:36:47.174Z","fromUserId":2003078273,"toUserId":1002498685,"content":"5678","messageType":0,"hasRead":false}';
+            console.debug(JSON.parse(val, dateReviver));
         });
 
         function getSession() {
             $(document).dialog.message(sessionStorage.getItem('username'));
         }
         function setSession() {
-            sessionStorage.setItem('username', 'evoque');
-            //sessionStorage.username = { id: 123, name: 'yangxu' };//这样存储是不行的，storage会自动把object toString()处理
+            try {
+                sessionStorage.setItem('username', 'evoque');
+                //sessionStorage.username = { id: 123, name: 'yangxu' };//这样存储是不行的，storage会自动把object toString()处理
+            }
+            catch (e) {
+                alert(e.message);
+            }
         }
         function getLocal() {
             $(document).dialog.message(localStorage.getItem('globalname'));
         }
         function setLocal() {
-            localStorage.setItem('globalname', 'yyyy');
+            try {
+                localStorage.setItem('globalname', 'yyyy');
+            }
+            catch (e) {
+                alert(e.message);
+            }
         }
         function delLocal() {
             localStorage.removeItem('globalname');
+        }
+
+
+        function dateReviver(key, value) {
+            var a;
+            if (typeof value === 'string') {
+                a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)/.exec(value);
+                if (a) {
+                    var utc = new Date(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]);
+                    var offset = (new Date()).getTimezoneOffset();
+                    var localMinute = utc.getMinutes() - offset;
+                    utc.setMinutes(localMinute);
+                    return utc;
+                }
+            }
+            return value;
         }
     </script>
 </head>

@@ -3,7 +3,8 @@ lexus.extend('cookie', (function (self) {
     var defaultOption = {
         expires: (new Date()).addDay(1),
         path: '/',
-        domain: ''
+        domain: '',
+        isSession: false
     };
 
     self.checkEnable = function () {
@@ -41,6 +42,10 @@ lexus.extend('cookie', (function (self) {
         document.cookie = key + '=' + originalVal + '; expires=' + date.toUTCString() + '; path=/';
     };
 
+    self.clear = function (key, option) {
+        return setCookie(key, '', option, true);
+    };
+
     function getCookie(key)
     {
         var arrCookie = document.cookie.split('; ');
@@ -55,7 +60,7 @@ lexus.extend('cookie', (function (self) {
         return '';
     }
 
-    function setCookie(key, val, option)
+    function setCookie(key, val, option, clearFlag)
     {
         //获取当前时间
         var date = new Date();
@@ -72,6 +77,7 @@ lexus.extend('cookie', (function (self) {
         var expires = option.getValueOfProperty('expires', defaultOption);
         var path = option.getValueOfProperty('path', defaultOption);
         var domain = option.getValueOfProperty('domain', defaultOption);
+        var isSession = option.getValueOfProperty('isSession', defaultOption);
         var strVal = null;
         switch (lexus.checkType(val))
         {
@@ -85,19 +91,36 @@ lexus.extend('cookie', (function (self) {
                 strVal = val;
                 break;
         }
-        if (!lexus.isStringEmpty(strVal)) {
-            var strCookie = key + '=' + strVal + '; expires=' + expires.toUTCString();
+        if ($.checkType(clearFlag) === type.eBoolean && clearFlag) {
+            var strCookie = key + '=';
             if (lexus.isStringEmpty(path)) {
                 strCookie += '; path=/';
             }
             else {
                 strCookie += '; path=' + path;
             }
-            if (!lexus.isStringEmpty(domain) && domain.toLowerCase() !== 'localhost')
-            {
+            if (!lexus.isStringEmpty(domain) && domain.toLowerCase() !== 'localhost') {
                 strCookie += '; domain=' + domain;
             }
             document.cookie = strCookie;
+        }
+        else {
+            if (!lexus.isStringEmpty(strVal)) {
+                var strCookie = key + '=' + strVal;
+                if (!isSession) {
+                    strCookie += '; expires=' + expires.toUTCString();
+                }
+                if (lexus.isStringEmpty(path)) {
+                    strCookie += '; path=/';
+                }
+                else {
+                    strCookie += '; path=' + path;
+                }
+                if (!lexus.isStringEmpty(domain) && domain.toLowerCase() !== 'localhost') {
+                    strCookie += '; domain=' + domain;
+                }
+                document.cookie = strCookie;
+            }
         }
     }
 

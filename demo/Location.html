@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -23,6 +23,14 @@
         function showQuery() {
             $('#ad').text(JSON.stringify(location.query));
         }
+
+        (function () {
+            var url = $.browser.location.addParameter({ a: 'aa' }, 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd4cfb061f13454d1&redirect_uri=https%3a%2f%2fpassport.tujia.com%2fH5Site%2fWechatPayCallback%2f%3fcallbackUrl%3dhttp%253a%252f%252f10.2.21.126%253a2048%252fMPay2%252fWxPayCallback%253foid%253d226533%2526pid%253d215104%2526onum%253dvipcard%2526type%253d2%2526cid%253d5712021&response_type=code&scope=snsapi_base#wechat_redirect');
+
+            //var url = $.browser.location.addParameter({ a: 'aa' }, 'https://open.weixin.qq.com/connect/oauth2/authorize#wechat_redirect');
+
+            console.debug(url);
+        }());
     </script>
 </head>
 <body>

@@ -82,7 +82,7 @@ lexus.extend('lazyLoader', (function (self) {
             return scrollTop;
         }
 
-        return {
+        loaderInstance = {
             load: loadImage,
             reset: initLazyImgList,
             update: function (dom) {
@@ -130,7 +130,7 @@ lexus.extend('lazyLoader', (function (self) {
     });
 
     lexus(function () {
-        loaderInstance = lexus.lazyLoader.init();
+        self.init();
     });
 
     return self;

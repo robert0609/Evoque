@@ -31,26 +31,27 @@
 
         $(function () {
             $('#a').calendarV3.create({
-                startDate: new Date(2015, 5, 24),
+                startDate: new Date(2017, 4, 8),
                 displayMode: 'waterfall',
                 pickMode: 'range',
+                timezoneOffset: -13,
                 onRenderDateTd: function (arg) {
-                    var td = arg.renderTarget;
-                    var $td = $(td);
-                    var tdDate = arg.tdDate;
-                    var tder = arg.controller;
-                    var today = (new Date()).getYMD();
-                    var minus = tdDate - today;
-                    if (minus == 0)
-                    {
-                        tder.today();
-                        tder.title = '今日';
-                    }
-                    else if (minus == 86400000)
-                    {
-                        tder.today();
-                        tder.title = '明日';
-                    }
+                    //var td = arg.renderTarget;
+                    //var $td = $(td);
+                    //var tdDate = arg.tdDate;
+                    //var tder = arg.controller;
+                    //var today = (new Date()).getYMD();
+                    //var minus = tdDate - today;
+                    //if (minus == 0)
+                    //{
+                    //    tder.today();
+                    //    tder.title = '今日';
+                    //}
+                    //else if (minus == 86400000)
+                    //{
+                    //    tder.today();
+                    //    tder.title = '明日';
+                    //}
                 }
             });
         });

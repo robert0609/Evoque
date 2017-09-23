@@ -9,10 +9,34 @@ Evoque.extend('calendarV3', (function (self) {
         //显示模式: waterfall:瀑布展示从开始日算起的6个月的日历; switch:左右按钮切换上下月的日历
         displayMode: 'switch',
         //选择模式: single|range
-        pickMode: 'single'
+        pickMode: 'single',
+        //显示的时间相对UTC时间的偏移量，范围：-11~+12，为-12表示就取当地客户端时间展示
+        timezoneOffset: -12
     };
 
     var weekDay = ['日', '一', '二', '三', '四', '五', '六'];
+
+    function newDate(timezoneOffset) {
+        if (timezoneOffset >= -11 && timezoneOffset <= 12) {
+            return (new Date()).convert(timezoneOffset);
+        }
+        else {
+            return new Date();
+        }
+    }
+
+    function convertBeijingTimeToLocalTime(beijingTime, timezoneOffset) {
+        if (timezoneOffset >= -11 && timezoneOffset <= 12) {
+            timezoneOffset = Math.round(timezoneOffset * 60);
+            var d = beijingTime.copy();
+            var m = d.getMinutes();
+            d.setMinutes(m - 480 + timezoneOffset);
+            return d.getYMD();
+        }
+        else {
+            return beijingTime;
+        }
+    }
 
     var pageScrollTop = 0;
 
@@ -20,9 +44,14 @@ Evoque.extend('calendarV3', (function (self) {
         option = option || {};
         option = lexus(option);
         var caller = self.evoqueTarget;
-        defaultOption.startDate = (new Date()).getYMD();
+        var timezoneOffset = option.getValueOfProperty('timezoneOffset', defaultOption);
+        defaultOption.startDate = (newDate(timezoneOffset)).getYMD();
         var startDate = option.getValueOfProperty('startDate', defaultOption);
         var endDate = option.getValueOfProperty('endDate', defaultOption);
+        startDate = convertBeijingTimeToLocalTime(startDate, timezoneOffset);
+        if (!endDate.equalMin()) {
+            endDate = convertBeijingTimeToLocalTime(endDate, timezoneOffset);
+        }
         var mode = option.getValueOfProperty('displayMode', defaultOption).toLowerCase();
         if (mode !== 'switch' && mode !== 'waterfall') {
             throw 'Mode is error! It must be one of ["switch", "waterfall"]';
@@ -40,7 +69,7 @@ Evoque.extend('calendarV3', (function (self) {
             var thisCache = lexus(this).cache();
             if (!thisCache.containsKey('calendar_v2'))
             {
-                thisCache.push('calendar_v2', new calendarClass(this, startDate, endDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected));
+                thisCache.push('calendar_v2', new calendarClass(this, startDate, endDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected, timezoneOffset));
             }
         });
     };
@@ -106,7 +135,7 @@ Evoque.extend('calendarV3', (function (self) {
         });
     };
 
-    function calendarClass(element, minDate, maxDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected)
+    function calendarClass(element, minDate, maxDate, mode, pickMode, onRenderDateTd, onBeforeSelect, onSelected, timezoneOffset)
     {
         var minYear = Number(minDate.getFullYear());
         var minMonth = Number(minDate.getMonth());
@@ -284,7 +313,7 @@ Evoque.extend('calendarV3', (function (self) {
 
         function yearDesc(date) {
             var y = date.getFullYear();
-            var curY = (new Date()).getFullYear();
+            var curY = (newDate(timezoneOffset)).getFullYear();
             if (y === curY) {
                 return '今年';
             }
@@ -443,18 +472,18 @@ Evoque.extend('calendarV3', (function (self) {
                         {
                             tder.canClick = true;
                             tder.day = date.getDate();
-                            //判断今天还是明天
-                            var today = (new Date()).getYMD();
-                            var minus = date - today;
-                            if (minus == 0)
-                            {
-                                tder.today();
-                                tder.title = '今天';
-                            }
-                            else if (minus == 86400000)
-                            {
-                                tder.today();
-                                tder.title = '明天';
+                            if (timezoneOffset < -11 || timezoneOffset > 12) {
+                                //判断今天还是明天
+                                var today = (new Date()).getYMD();
+                                var minus = date - today;
+                                if (minus == 0) {
+                                    tder.today();
+                                    tder.title = '今天';
+                                }
+                                else if (minus == 86400000) {
+                                    tder.today();
+                                    tder.title = '明天';
+                                }
                             }
                             if (lexus.checkType(onRenderDateTd) === type.eFunction)
                             {

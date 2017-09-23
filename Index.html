@@ -9,6 +9,7 @@
     <script type="text/javascript" src="per.js"></script>
     <link rel="stylesheet" type="text/css" href="src_v1.0.1/style/Evoque.Dialog.css" />
     <script type="text/javascript" src="src/js/eDebugger.js"></script>
+    <!--<script type="text/javascript" src="debuggap.js"></script>-->
     <script type="text/javascript">
         function newClass() {
             this.p1 = 'p1value';
@@ -23,9 +24,10 @@
         }
 
         $(function () {
-            var obj = new newClass();
-            console.debug(obj);
-            obj.f1();
+            //var obj = new newClass();
+            //console.debug(obj);
+            //obj.f1();
+            alert($.app());
         });
     </script>
     <script type="text/javascript">
@@ -149,8 +151,10 @@
     <div id="d1" style="height: 300px; display: none;">dadva</div>
     <div id="d2" style="height: 200px; display: block;">123241</div>
 </div>-->
+    <a href="tujia://com.tujia.hotel/go/home?apponly=1&index=4">App发现频道</a>
     <div id="ua"></div>
     <ul>
+        <li><a href="tujia://?userid=1">call tujia app</a></li>
         <li><a href="./demo/App.html" onclick="redirect();">ApplicationCache</a></li>
         <li><a href="./demo/App.html">App</a></li>
         <li><a href="./demo/Ajax.html">Ajax</a></li>

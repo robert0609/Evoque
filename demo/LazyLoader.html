@@ -1,22 +1,32 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
-    <script type="text/javascript" src="../src_v1.0.1/js/exif.js"></script>
+    <!--<script type="text/javascript" src="../src_v1.0.1/js/exif.js"></script>-->
+    <script type="text/javascript" src="../src_v2.0.0/js/lazyload.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Cache.js"></script>
-    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.LazyLoader.js"></script>
+    <!--<script type="text/javascript" src="../src_v2.0.0/js/Evoque.LazyLoader.js"></script>-->
     <script type="text/javascript" src="../src_v2.0.0/js/Evoque.Dialog.js"></script>
     <script type="text/javascript" src="../src_v2.0.0/js/adapter/Evoque.Dialog.Adapter.js"></script>
+    <script type="text/javascript" src="../src_v2.0.0/js/Evoque.SliderButton.js"></script>
     <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
-    <script type="text/javascript" src="../src/js/eDebugger.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.SliderButton.css" />
+    <!--<script type="text/javascript" src="../src/js/eDebugger.js"></script>-->
     <style>
         img{
             width: 100%;
         }
     </style>
+    <!--<script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            LazyLoad.js(['../src_v2.0.0/js/Evoque.js', '../src_v2.0.0/js/Evoque.Cache.js', '../src_v2.0.0/js/Evoque.Dialog.js', '../src_v2.0.0/js/adapter/Evoque.Dialog.Adapter.js', '../src_v2.0.0/js/Evoque.LazyLoader.js'], function () {
+                $.lazyLoader.init();
+            });
+        });
+    </script>-->
 </head>
 <body>
 <ul>
@@ -35,10 +45,24 @@
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/landlordunit/day_140118/thumb/201401180150594247_640_400.jpg"></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/unit/day_130314/thumb/201303141107373874_640_400.jpg"></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/unit/day_130924/thumb/201309241012188915_640_400.jpg"></li>
+    <li><a href="https://m.tujia.com">go to m.tujia.com</a></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/unit/day_121204/thumb/201212041122487437_640_400.jpg"></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/landlordunit/day_130816/thumb/201308160621327021_640_400.jpg"></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/unit/day_120809/thumb/201208090940303_640_400.jpg"></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/unit/day_130111/thumb/201301110116119937_640_400.jpg"></li>
     <li><img src="http://staticfile.tujia.com/Mobile/Images/h5/load_img/tujia_640_400.png" data-lazy-src="http://staticfile.tujia.com/upload/unit/day_130208/thumb/201302081026208674_640_400.jpg"></li>
+</ul>
+    <div id="sliderButton"></div>
+    <script type="text/javascript">
+        (function () {
+            $('#sliderButton').sliderButton.init({
+                min: 200,
+                max: 800,
+                valueChanged: function (arg) {
+                    console.debug(arg);
+                }
+            });
+        }());
+    </script>
 </body>
 </html>

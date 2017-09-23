@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -12,6 +12,24 @@
     <link rel="stylesheet" type="text/css" href="../src_v2.0.0/style/Evoque.Dialog.css" />
     <script type="text/javascript">
         $(function () {
+            
+
+            //$.ajax.get({
+            //    url: 'http://am.me/sitegroup/fetch/',
+            //    returnType: 'json',
+            //    crossOrigin: true,
+            //    onSuccess: function (returnJson) {
+            //        if (returnJson.IsSuccess) {
+            //            console.log('onSuccess=true');
+            //        }
+            //        else {
+            //            console.log('onSuccess=false');
+            //        }
+            //    },
+            //    onFail: function () {
+            //        console.log('failed');
+            //    }
+            //});
         });
 
         function getData() {
@@ -43,7 +61,7 @@
         }
         function getDataWithAuth() {
             $.ajax.get({
-                url : 'http://appcache.evoque.me/api/ajaxcookie/username',
+                url: 'http://appcache.evoque.me/AjaxMvcData/GetCookie/username',
                 onSuccess : function (returnObj) {
                     var cookieValue = $.cookie.get('CookieId');
                     if ($.isStringEmpty(cookieValue)) {

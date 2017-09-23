@@ -101,9 +101,9 @@ lexus.extend('browser', (function (self) {
             var anchor = '';
             if (idx > -1) {
                 if (anchorIdx > -1) {
-                    url = url.substr(0, idx);
                     queryDic = queryStr2Dic(url.substr(idx, anchorIdx - idx));
                     anchor = url.substr(anchorIdx);
+                    url = url.substr(0, idx);
                 }
                 else {
                     queryDic = queryStr2Dic(url.substr(idx));
@@ -111,8 +111,8 @@ lexus.extend('browser', (function (self) {
                 }
             }
             else if (anchorIdx > -1) {
-                url = url.substr(0, anchorIdx);
                 anchor = url.substr(anchorIdx);
+                url = url.substr(0, anchorIdx);
             }
             for (var p in query)
             {
@@ -131,9 +131,9 @@ lexus.extend('browser', (function (self) {
             if (idx > -1)
             {
                 if (anchorIdx > -1) {
-                    url = url.substr(0, idx);
                     queryDic = queryStr2Dic(url.substr(idx, anchorIdx - idx));
                     anchor = url.substr(anchorIdx);
+                    url = url.substr(0, idx);
                 }
                 else {
                     queryDic = queryStr2Dic(url.substr(idx));
@@ -141,8 +141,8 @@ lexus.extend('browser', (function (self) {
                 }
             }
             else if (anchorIdx > -1) {
-                url = url.substr(0, anchorIdx);
                 anchor = url.substr(anchorIdx);
+                url = url.substr(0, anchorIdx);
             }
             lexus(parameterNames).each(function () {
                 if (this in queryDic) {
